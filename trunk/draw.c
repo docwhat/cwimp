@@ -145,8 +145,12 @@ const UInt cbtnVal[10] = {
 };
 
 static Char **val2name = (CharPtr[]) { NoneString,
-                                       "10", "two", "three",
-                                       "four", "5", "six" };
+                                       TenString,
+                                       TwoString,
+                                       ThreeString,
+                                       FourString,
+                                       FiveString,
+                                       SixString };
 
 /*
  * This function is based heavily on the DrawIntro and DrawBlinds

@@ -236,7 +236,7 @@ void ScoreRoll() {
   if ( aCounting[ stor.cube[1].value ] == NumCubes ) {
     x = stor.cube[1].value;
     if ( x == 1 ) {
-      PlayerLost( stor.currplayer, "SuperNova: You loose" );
+      PlayerLost( stor.currplayer, SuperNovaString );
       return;
     }
     if ( x == 6 ) {
@@ -402,7 +402,7 @@ void ScoreRoll() {
       stor.player[stor.currplayer].TWcount++;
       DialogOK( frmTrainWreck, stor.currplayer, -1 );
       if( stor.player[stor.currplayer].TWcount >= stor.nTrainWrecks ) {
-	PlayerLost( stor.currplayer, "Too many Train Wrecks" );
+	PlayerLost( stor.currplayer, TooManyTWString );
       }
     }
   }
@@ -505,7 +505,7 @@ void TurnLogic() {
 	  DialogOK( frmLeader, stor.currplayer, -1 );
 	} else {
 	  /* Well, we didn't beat the leader... */
-	  PlayerLost( stor.currplayer, "Didn't beat the leader" );
+	  PlayerLost( stor.currplayer, LostToLeaderString );
 	}
 	
       } /* If(stor.leader < 0) ... */
