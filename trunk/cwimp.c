@@ -148,6 +148,17 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 /* Get preferences, open (or create) app database */
 static Word StartApplication(void)
 {
+  DWord romversion;
+  Int err;
+
+  err = FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romversion);
+
+  /* We *must* be version 2 or greater */
+  if( err || (romversion < 0x02003000) ) {
+    FrmAlert(alertVersion);
+    return(1);
+  }
+
   FrmGotoForm(MainForm);
   LoadCubes();
   return 0;
@@ -185,7 +196,10 @@ DWord PilotMain(Word cmd, Ptr cmdPBP, Word launchFlags)
 
 
     err = StartApplication();
-    if (err) return err;
+    if (err) {
+      FrmCloseAllForms();
+      return err;
+    }
 	
     EventLoop();
     StopApplication();

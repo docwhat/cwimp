@@ -216,6 +216,15 @@ BEGIN
 END
 
 
+ALERT ID alertVersion
+ERROR
+BEGIN
+	TITLE "OS Version"
+	MESSAGE "This program needs OS version 2.0 or greater to run\n"
+	BUTTONS "OK" 
+END
+
+
 FORM ID frmNextPlayer AT (30 CENTER@160/2 110 85)
 MODAL
 SAVEBEHIND
