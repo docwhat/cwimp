@@ -1,9 +1,16 @@
 ## Makefile for CWimp
 
+## Set the Language
+## To compile with a different language, make sure the
+## proper statusmsg.xx.txt exists, then type:
+##    make LANGUAGE=xx
+## where xx in the country code.
+## Possible Values: en
+LANGUAGE = en
+
 TARGET	:= cwimp
 APPNAME	:= "CWimp"
 APPID	:= "CWmp"
-LANGUAGE = en
 URL 	:= "http://docwhat.gerf.org/cwimp/"
 
 # mystart.c MUST go first
@@ -41,7 +48,7 @@ CRT0		:= /usr/m68k-palmos-coff/lib/crt0.o
 
 VERSION=$(shell $(FIXVERSION) version)
 
-all: $(TARGET).prc
+all: $(TARGET).$(LANGUAGE).prc
 
 deps/%.d: $(PREDEPENDS) $(DEPEND) %.c
 	@echo -- Making dependency info for $*.c
@@ -62,7 +69,7 @@ $(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
 	@echo -- Fixing version and building $@
 	$(FIXVERSION) $<
 
-$(TARGET).prc: $(TARGET)Rsc.h objs/code0000.cwimp.grc
+$(TARGET).$(LANGUAGE).prc: $(TARGET)Rsc.h objs/code0000.cwimp.grc
 	@echo -- Building $@
 	cd objs && \
 	$(BUILDPRC) ../$(TARGET).prc $(APPNAME) $(APPID) *.grc *.bin
