@@ -305,15 +305,15 @@ void DrawStayButton() {
     return;
   }
 
-  if( stor.YMNWTBYM ) {
-    ShowControl( btn_Stay, 0 );
-    SetStatus( DS_YMNWTBYM );
-    return;
-  }
-
   if( stor.flash ) {
     ShowControl( btn_Stay, 0 );
     SetStatus( DS_MustClearFlash );
+    return;
+  }
+
+  if( stor.YMNWTBYM ) {
+    ShowControl( btn_Stay, 0 );
+    SetStatus( DS_YMNWTBYM );
     return;
   }
 
@@ -488,9 +488,6 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 	  case check_Suspend:
 	    ToggleCheck(check_Suspend, flag_Suspend   );
 	    break;
-	  case check_Insurance:
-	    ToggleCheck(check_Insurance, flag_Insurance );
-	    break;
 
 	  }
 	  break;
@@ -528,11 +525,13 @@ void DialogVarients() {
   CtlSetValue( GetObjectPtr(check_nTW      ), stor.flags & flag_nTW       );
   CtlSetValue( GetObjectPtr(check_FullHouse), stor.flags & flag_FullHouse );
   CtlSetValue( GetObjectPtr(check_Suspend  ), stor.flags & flag_Suspend   );
-  CtlSetValue( GetObjectPtr(check_Insurance), stor.flags & flag_Insurance );
 
   // Fill in WinScore with previous value.
   StrIToA( tmpString, stor.nTrainWrecks );
   SetFieldTextFromStr( fldnTrainWrecks, tmpString );
+
+  StrIToA( tmpString, stor.nSuspend );
+  SetFieldTextFromStr( fldnSuspend, tmpString );
 
   // Set the focus to this field so the user can just start typing.
   fldIndex =  FrmGetObjectIndex(frm, fldnTrainWrecks);
@@ -549,6 +548,14 @@ void DialogVarients() {
     stor.nTrainWrecks = StrAToI( text );
   } else {
     stor.nTrainWrecks = 3;
+  }    
+
+  fldIndex =  FrmGetObjectIndex(frm, fldnSuspend);
+  text = FldGetTextPtr( FrmGetObjectPtr( frm, fldIndex ) );
+  if( text != NULL ) {
+    stor.nSuspend = StrAToI( text );
+  } else {
+    stor.nSuspend = 10;
   }    
     
   // Delete the form, we're not using it
@@ -568,20 +575,10 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
   Char msg[(MaxName * 2) + 128];
   Word fieldname = 0;
   
-  // Save previous form
-  prevForm = FrmGetActiveForm();
-  // Init new form
-  frm = FrmInitForm( frmname );
-
-  // Set it
-  FrmSetActiveForm(frm);
-  FrmDrawForm(frm);
-
-  // Fill it...
   switch ( frmname ) {
   case frmNextPlayer: 
     fieldname = fldNextPlayer;
-    if( stor.numplayers > 1 ) {
+    if( (stor.numplayers + stor.numcomputers) > 1 ) {
       StrPrintF( msg, NextPlayerString,
 		 stor.player[p1].name,
 		 stor.player[p2].name,
@@ -590,6 +587,18 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
       StrPrintF( msg, "%s", NextSoloPlayerString, NULL );
     }
     break;
+
+  case frmSuspend: 
+    if( (stor.numplayers + stor.numcomputers) == 1 ) {
+      return;
+    }
+    fieldname = fldSuspend;
+    StrPrintF( msg, SuspendString,
+	       stor.player[p1].name,
+	       stor.player[p2].name,
+	       NULL);
+    break;
+
 
   case frmLost:
     fieldname = fldLost;
@@ -637,10 +646,22 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
     break;
 
   default:
-    ErrNonFatalDisplayIf( 1, "DialogOK: fall through: Programmer sucks." );
+    ErrDisplay( "DialogOK: fall through: Programmer sucks." );
+    return;
   }
 
-  ErrNonFatalDisplayIf( fieldname == 0,
+  // Save previous form
+  prevForm = FrmGetActiveForm();
+  // Init new form
+  frm = FrmInitForm( frmname );
+
+  // Set it
+  FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
+
+
+  // Fill it...
+  ErrFatalDisplayIf( fieldname == 0,
 			"DialogOK: ZeroField: Programmer sucks." );
   SetFieldTextFromStr( fieldname, msg );
 
@@ -980,6 +1001,7 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	    }
 	    break;
 
+#if 0
 	  case cbtn_0: SetComputers( 0 ); break;
 	  case cbtn_1: SetComputers( 1 ); break;
 	  case cbtn_2: SetComputers( 2 ); break;
@@ -990,7 +1012,18 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	  case cbtn_7: SetComputers( 7 ); break;
 	  case cbtn_8: SetComputers( 8 ); break;
 	  case cbtn_9: SetComputers( 9 ); break;
-
+#else
+	  case cbtn_0: 
+	  case cbtn_1: 
+	  case cbtn_2: 
+	  case cbtn_3: 
+	  case cbtn_4: 
+	  case cbtn_5: 
+	  case cbtn_6: 
+	  case cbtn_7: 
+	  case cbtn_8: 
+	  case cbtn_9: SetComputers( 0 ); break;
+#endif
 	  case pbtn_1: SetPlayers( 1 ); break;
 	  case pbtn_2: SetPlayers( 2 ); break;
 	  case pbtn_3: SetPlayers( 3 ); break;

@@ -28,7 +28,7 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 7
+#define storVersion 8
 #define NumCubes    5  // Number of cubes
 #define MaxPlayers 10  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
@@ -55,6 +55,8 @@ struct Storage {
 			* number of the player                             */
   Int     status;      /* Used for picking messages out of statusmsg.c     */
   Short   nTrainWrecks;/* Count for nTrainWrecks rule                      */
+  Short   nSuspend;    /* Count for Suspend rule                           */
+  Short   suspendcount;/* Current number of flash tries for suspend        */
   Short   currscore;
   Short   scorethisturn;
   Short   scorethisroll;
@@ -68,10 +70,16 @@ struct Storage {
   struct {
     Boolean computer;
     Boolean lost;
-    Char   name[MaxName+1];
-    Short  score;
-    Short  insurance;
-    Short  TWcount;
+    Char    name[MaxName+1];
+    Short   score;
+    struct {
+      Short   flash;
+      Int     status;
+      Short   currscore;
+      Short   scorethisturn;
+      Short   scorethisroll;
+    } suspend;
+    Short   TWcount;
   } player[MaxPlayers];
 };
 
@@ -83,7 +91,6 @@ struct Storage {
 #define flag_nTW             (1<< 3)
 #define flag_FullHouse       (1<< 4) 
 #define flag_Suspend         (1<< 5)
-#define flag_Insurance       (1<< 6)
 /* Preferences: */
 #define flag_NextPlayerPopUp (1<< 7)
 

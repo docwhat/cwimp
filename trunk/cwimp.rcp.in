@@ -83,7 +83,7 @@ FIXVER: LOOP END
 END
 
 
-FORM ID frmVariants AT (CENTER@160/2 CENTER@160/2 100 130)
+FORM ID frmVariants AT (CENTER@160/2 CENTER@160/2 100 144)
 MODAL
 HELPID HelpVariants
 SAVEBEHIND
@@ -93,13 +93,18 @@ TITLE "Variations"
    CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO )
    CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO )
    CHECKBOX "Full House"       ID check_FullHouse AT ( 5 PREVBOTTOM AUTO AUTO )
-   CHECKBOX "Suspend"          ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
    CHECKBOX "Insurance Points" ID check_Insurance AT ( 5 PREVBOTTOM AUTO AUTO )
-   CHECKBOX "(n)Train Wrecks"  ID check_nTW       AT ( 5 PREVBOTTOM AUTO AUTO )
+
+   CHECKBOX "(n)Suspend"       ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
+   LABEL "n = " ID AUTOID AT (25 PREVBOTTOM) 
+   FIELD ID fldnSuspend AT (PREVRIGHT+2 PREVTOP 10 11)
+	 UNDERLINED MAXCHARS 2 NUMERIC
+
+   CHECKBOX "(n)Train Wrecks"  ID check_nTW     AT ( 5 PREVBOTTOM+1 AUTO AUTO)
    LABEL "n = " ID AUTOID AT (25 PREVBOTTOM) 
    FIELD ID fldnTrainWrecks AT (PREVRIGHT+2 PREVTOP 10 11)
 	 UNDERLINED MAXCHARS 2 NUMERIC
-   BUTTON "Done" ID btn_OK_frmVariants AT (5 130-15 AUTO AUTO)
+   BUTTON "Done" ID btn_OK_frmVariants AT (5 144-15 AUTO AUTO)
 END
 
 ##
@@ -323,6 +328,19 @@ BEGIN
 END
 
 
+FORM ID frmSuspend AT (35 CENTER@160/2 120 85)
+MODAL
+SAVEBEHIND
+HELPID DS_Suspend
+BEGIN
+    TITLE "Suspended!"
+    FORMBITMAP AT (2 20) BITMAP bmpSuspend
+    FIELD ID fldSuspend AT (36 12 84 63) NONEDITABLE FONT 0 MULTIPLELINES
+
+    BUTTON "oh." ID AUTOID7 AT (3 70 AUTO AUTO)
+END
+
+
 
 ##
 ##
@@ -346,6 +364,7 @@ BITMAP ID bmpTrainWreck	"images/trainwreck.bmp"	COMPRESS
 BITMAP ID bmpNobodyWon	"images/nobodywon.bmp"	COMPRESS
 BITMAP ID bmpBump	"images/bump.bmp"	COMPRESS
 BITMAP ID bmpSampler	"images/sampler.bmp"	COMPRESS
+BITMAP ID bmpSuspend	"images/suspend.bmp"	COMPRESS
 
 BITMAP ID bmpBlank	"images/cubeblank.bmp"	COMPRESS
 

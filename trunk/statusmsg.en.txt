@@ -109,6 +109,21 @@ extra points.
 .
 
 
+CSTRING: SuspendString
+%s's turn has been suspended
+
+It is now %s's turn.
+
+.
+
+DS_Suspend: Suspended!
+Your turn has been suspended because you took more that the allowed
+number of rolls to clear a flash.  When it becomes your turn again,
+you will pick up where you left off, trying to clear your flash.
+Your turn score will remain as it was.
+.
+
+
 CSTRING: TrainWreckString
 %s has had %d Train Wreck(s) (of %d max).
 .
@@ -270,11 +285,13 @@ Sampler, worth 50 points.
 FullHouse:\n
 ToDo
 
-Suspend:\n
-ToDo
-
 Insurance Points:\n
 ToDo
+
+Suspend:\n
+If you take more than (n) rolls to clear a Flash, your turn will be suspended
+and your turn will be ended.  Upon it being your turn again, then your
+previous turn will be restored, including score.
 
 (n)TrainWrecks:\n
 If a player gets (n) Train Wrecks, then that play is out of the game.  If

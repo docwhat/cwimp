@@ -65,10 +65,10 @@ int RollCube (void)
 
   switch( n++ ) {
   case 1: return 2;
-  case 2: return 4;
-  case 3: return 3;
-  case 4: return 6;
-  default: n=1; return 5; break;
+  case 2: return 2;
+  case 3: return 2;
+  case 4: return 2;
+  default: n=1; return 2; break;
   }
 
   return n;
@@ -86,6 +86,33 @@ int RollCube (void)
   return ((genrand() %6) + 1);;
 }
 #endif
+
+/* Suspend is used by the suspend variation to store the turn */
+static void suspend( Short p ) {
+  stor.player[p].suspend.flash		= stor.flash;
+  stor.player[p].suspend.status		= stor.status;
+  stor.player[p].suspend.currscore	= stor.currscore;
+  stor.player[p].suspend.scorethisturn	= stor.scorethisturn;
+  stor.player[p].suspend.scorethisroll	= stor.scorethisroll;
+}
+
+/* Unsuspend does the opposite of Suspend for the same reason */
+static void unsuspend( Short p ) {
+  stor.flash		= stor.player[p].suspend.flash;
+  stor.status		= stor.player[p].suspend.status;
+  stor.currscore	= stor.player[p].suspend.currscore;
+  stor.scorethisturn	= stor.player[p].suspend.scorethisturn;
+  stor.scorethisroll	= stor.player[p].suspend.scorethisroll;
+  DrawStatus();
+  stor.flash =
+    stor.status =
+    stor.currscore =
+    stor.scorethisturn =
+    stor.scorethisroll = 0;
+}
+
+
+
 
 /* RollEm -- Rolls all 5 and draws them.
  * Args:    None
@@ -116,6 +143,18 @@ void Roll(void)
   }
 
   ScoreRoll();
+  if( stor.flags & flag_Suspend ) {
+    if( stor.flash > 0 ) {
+      stor.suspendcount++;
+    } else {
+      stor.suspendcount = 0;
+    }
+    if( stor.suspendcount > stor.nSuspend ) {
+      suspend( stor.currplayer );
+      NextPlayer();
+      return;
+    }
+  }
   TurnLogic();
 }
 
@@ -538,16 +577,18 @@ void NextPlayer() {
 	return;
   }
   
-  if ( stor.flags & flag_NextPlayerPopUp ) {
-    //    DialogNextPlayer( prevplayer, stor.currplayer );
-    DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
-    DrawState();
+  if( stor.player[prevplayer].suspend.flash > 0 ) {
+    DialogOK( frmSuspend, prevplayer, stor.currplayer );
   } else {
-    if( !StayBit ) {
-      SetStatus( DS_TurnOver );
-      SysTaskDelay(1*sysTicksPerSecond);
+    if( stor.flags & flag_NextPlayerPopUp ) {
+      DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
+    } else {
+      if( !StayBit ) {
+	SetStatus( DS_TurnOver );
+	SysTaskDelay(1*sysTicksPerSecond);
+      }
+      SetStatus( DS_NextPlayer );
     }
-    SetStatus( DS_NextPlayer );
   }
 
   // Clear scores
@@ -555,6 +596,14 @@ void NextPlayer() {
     stor.scorethisturn = 0;
   stor.currscore = stor.player[stor.currplayer].score;
   StayBit = false;
+
+  if( stor.flags & flag_Suspend ) {
+    stor.suspendcount = 0;
+    if( stor.player[stor.currplayer].suspend.flash > 0 ) {
+      unsuspend( stor.currplayer );
+    }
+  }
+
   DrawState();
 
 }
@@ -611,6 +660,8 @@ void Defaults(void) {
   stor.openingroll = 35;
   stor.numplayers = 1;
   stor.numcomputers = 0;
+  stor.nTrainWrecks = 3;
+  stor.nSuspend = 10;
   stor.winscore = 300;
   stor.flags = 0 | flag_NextPlayerPopUp;
   
@@ -651,7 +702,6 @@ void ResetCubes(void)
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
   stor.currscore = 0;
-  stor.nTrainWrecks = 3;
 
   stor.currplayer = -1; // No Game Running
 
@@ -684,6 +734,7 @@ void NewGame()
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
   stor.currplayer = 0;
+  stor.suspendcount = 0;
 
   for (x = 0; x < NumCubes; x++) {
     stor.cube[x].value = stor.cube[x].keep = false;
@@ -694,8 +745,12 @@ void NewGame()
     stor.player[x].lost      = false;
     /* We don't need to set name */
     stor.player[x].score     = 0;
-    stor.player[x].insurance = 0;
     stor.player[x].TWcount   = 0;
+    stor.player[x].suspend.flash		= 0;
+    stor.player[x].suspend.status		= 0;
+    stor.player[x].suspend.currscore		= 0;
+    stor.player[x].suspend.scorethisturn	= 0;
+    stor.player[x].suspend.scorethisroll	= 0;
   }
 
   StayBit = false;

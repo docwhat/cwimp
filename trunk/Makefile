@@ -13,7 +13,9 @@ LIBS =
 
 CC = m68k-palmos-coff-gcc
 
-CFLAGS = -Wall -g -O2 -DDEBUG 
+CFLAGS = -Wall -g -O2 -DDEBUG -DERROR_CHECK_LEVEL=ERROR_CHECK_FULL
+# ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
+#
 # Debug Rolling turns of 'rigged' rolling
 #-DDEBUGROLL
 
@@ -71,10 +73,10 @@ objs/$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
 
 clean:
 	rm -f objs/* *~ *.bak core $(TARGET)Rsc.h
-	rm -f $(STATUSMSGS)
 
 veryclean: clean
 	rm -f ChangeLog $(TARGET).prc TAGS
+	rm -f $(STATUSMSGS) rm -f $(TARGET).rcp
 
 spotless: veryclean
 	rm -rf deps objs $(TARGET).*.zip $(TARGET.)*.zip.dsc
