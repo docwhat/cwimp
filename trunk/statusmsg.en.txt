@@ -116,10 +116,10 @@ you can 'stay'.
 .
 
 DS_MustClearFlash: Futtless Rule
-The Futtless Rule states that you must clear all Flashes must
+The Futtless Rule states that all Flashes must
 be cleared.
 
-In a previous turn you, rolled a Flash or three of a kind.
+In a previous turn you, rolled a Flash (a three of a kind).
 
 In order to clear this Flash and continue with your turn,
 none of the dice may be the same as your Flash.
