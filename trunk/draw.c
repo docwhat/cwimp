@@ -232,6 +232,9 @@ void DrawCurrScore()
   StrIToA( msg, stor.scorethisturn );
   SetFieldTextFromStr(scoreTurn,  msg);
 
+  StrIToA( msg, stor.currscore );
+  SetFieldTextFromStr(scoreTot,  msg);
+
 }
 
 /* DrawCube -- Draws the cube at the correct place
@@ -318,10 +321,7 @@ void DrawStayButton() {
 
   /* If we aren't winning in last licks */
   if( stor.leader >= 0 &&
-      ( stor.player[stor.leader].score >
-	( stor.player[stor.currplayer].score + stor.scorethisturn )
-	)
-      )
+      ( stor.player[stor.leader].score > stor.currscore ) )
     {
       ShowControl( btn_Stay, 0 );
       return;
@@ -411,10 +411,80 @@ void DialogNewGame() {
   DrawState();
 }
 
+static void ToggleCheck( Word objID, Int flag )
+{
+  CtlSetValue( GetObjectPtr( objID ),
+	       ! (stor.flags & flag) );
+  SetFlag( flag, !(stor.flags & flag) );
+}
+  
+
+static Boolean DialogVariantsHandleEvent (EventPtr e)
+{
+  Boolean handled = false;
+  FormPtr frm;
+  
+  CALLBACK_PROLOGUE
+
+    switch (e->eType) {
+    case frmOpenEvent:
+	  frm = FrmGetActiveForm();
+	  FrmDrawForm(frm);
+	  handled = true;
+	  break;
+
+    case ctlSelectEvent:
+	  switch(e->data.ctlSelect.controlID) {
+		
+	  case check_Bump:
+	    ToggleCheck( check_Bump, flag_Bump );
+	    if( (stor.flags & flag_Eclipse) &&
+		(stor.flags & flag_Bump ) ) {
+	      ToggleCheck( check_Eclipse, flag_Eclipse );
+	    }
+	    break;
+	  case check_Eclipse:
+	    ToggleCheck( check_Eclipse, flag_Eclipse );
+	    if( (stor.flags & flag_Eclipse) &&
+		(stor.flags & flag_Bump ) ) {
+	      ToggleCheck( check_Bump, flag_Bump );
+	    }
+	    break;
+	  case check_Sampler:
+	    ToggleCheck( check_Sampler, flag_Sampler );
+	    break;
+	  case check_nTW:
+	    ToggleCheck( check_nTW, flag_nTW );
+	    break;
+	  case check_FullHouse:
+	    ToggleCheck(check_FullHouse, flag_FullHouse );
+	    break;
+	  case check_Suspend:
+	    ToggleCheck(check_Suspend, flag_Suspend   );
+	    break;
+	  case check_Insurance:
+	    ToggleCheck(check_Insurance, flag_Insurance );
+	    break;
+
+	  }
+	  break;
+
+    default:
+	  break;
+    }
+  
+  CALLBACK_EPILOGUE
+    
+    return handled;
+}
+
 
 void DialogVarients() {
   FormPtr prevForm, frm;
   Word hitButton;
+  Word fldIndex;
+  Char tmpString[3];
+  CharPtr text;
   
   // Save previous form
   prevForm = FrmGetActiveForm();
@@ -434,27 +504,27 @@ void DialogVarients() {
   CtlSetValue( GetObjectPtr(check_Suspend  ), stor.flags & flag_Suspend   );
   CtlSetValue( GetObjectPtr(check_Insurance), stor.flags & flag_Insurance );
 
+  // Fill in WinScore with previous value.
+  StrIToA( tmpString, stor.nTrainWrecks );
+  SetFieldTextFromStr( fldnTrainWrecks, tmpString );
+
+  // Set the focus to this field so the user can just start typing.
+  fldIndex =  FrmGetObjectIndex(frm, fldnTrainWrecks);
+  FrmSetFocus( frm, fldIndex );
+
   // Set the handler
-  // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
+  FrmSetEventHandler(frm, DialogVariantsHandleEvent);
 
   hitButton = FrmDoDialog(frm);
 
   // Get Controls
-  SetFlag( flag_Bump,
-		   CtlGetValue( GetObjectPtr(check_Bump) ) );
-  SetFlag( flag_Eclipse,
-		   CtlGetValue( GetObjectPtr(check_Eclipse) ) );
-  SetFlag( flag_Sampler,
-		   CtlGetValue( GetObjectPtr(check_Sampler) ) );
-  SetFlag( flag_nTW,
-		   CtlGetValue( GetObjectPtr(check_nTW) ) );
-  SetFlag( flag_FullHouse,
-		   CtlGetValue( GetObjectPtr(check_FullHouse) ) );
-  SetFlag( flag_Suspend,
-		   CtlGetValue( GetObjectPtr(check_Suspend) ) );
-  SetFlag( flag_Insurance,
-		   CtlGetValue( GetObjectPtr(check_Insurance) ) );
-
+  text = FldGetTextPtr( FrmGetObjectPtr( frm, fldIndex ) );
+  if( text != NULL ) {
+    stor.nTrainWrecks = StrAToI( text );
+  } else {
+    stor.nTrainWrecks = 3;
+  }    
+    
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
 
@@ -469,7 +539,7 @@ void DialogVarients() {
 void DialogOK ( Word frmname, Short p1, Short p2 ) {
   FormPtr prevForm, frm;
   Word hitButton;
-  Char msg[(MaxName * 2) + 64];
+  Char msg[(MaxName * 2) + 128];
   Word fieldname = 0;
   
   // Save previous form
@@ -508,6 +578,30 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
   case frmWinner:
     fieldname = fldWinner;
     StrPrintF( msg, WinnerString, stor.player[p1].name, NULL );
+    break;
+
+  case frmNobodyWon:
+    fieldname = fldNobodyWon;
+    StrPrintF( msg, NobodyWonString, NULL );
+    break;
+
+  case frmBump:
+    fieldname = fldBump;
+    StrPrintF( msg, BumpString,
+	       stor.player[p2].name,
+	       stor.player[p1].name,
+	       stor.player[p2].score,
+	       stor.player[p1].score,
+	       NULL );
+    break;
+
+  case frmTrainWreck:
+    fieldname = fldTrainWreck;
+    StrPrintF( msg, TrainWreckString,
+	       stor.player[p1].name, 
+	       stor.player[p1].TWcount,
+	       stor.nTrainWrecks,
+	       NULL );
     break;
 
   default:
@@ -667,21 +761,22 @@ Boolean DialogGetNames() {
 
   // Set it
   FrmSetActiveForm(frm);
-  FrmDrawForm(frm);
 
   // Set Controls
+  for( i = stor.tmpplayers ; i<MaxPlayers ; i++ ) {
+    fp = GetObjectPtr( fieldGetNamesPlayer[i] );
+    FldSetUsable ( fp, false );
+    FldEraseField( fp );
+    ShowControl( fieldGetNamesLabel[i], 0 );
+  }
+
+  FrmDrawForm(frm);
+	  
   for( i=0; i < stor.tmpplayers ; i++ ) {
 	SetFieldTextFromStr( fieldGetNamesPlayer[i], stor.player[i].name );
   }
-
-  for( ; i<MaxPlayers ; i++ ) {
-	fp = GetObjectPtr( fieldGetNamesPlayer[i] );
-	FldSetUsable ( fp, false );
-	FldEraseField( fp );
-	ShowControl( fieldGetNamesLabel[i], 0 );
-  }
   FrmSetFocus( frm, FrmGetObjectIndex(frm, fieldGetNamesPlayer[0]) );
-	  
+
 
   // Set the handler
   // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
@@ -691,7 +786,7 @@ Boolean DialogGetNames() {
   // Get Controls
   if ( hitButton == btn_OK_frmGetNames ) {
 	
-	for( i=0 ; i<stor.numplayers ; i++ ) {
+	for( i=0 ; i<stor.tmpplayers ; i++ ) {
 	  oIdx = FrmGetObjectIndex( frm, fieldGetNamesPlayer[i]);
 	  vPtr = FrmGetObjectPtr( frm, oIdx );
 	  text = FldGetTextPtr( vPtr );

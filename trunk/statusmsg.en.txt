@@ -83,6 +83,39 @@ You have lost and are no longer in this game.  Sorry!
 .
 
 
+CSTRING: BumpString
+%s was bumped by %s from %d to %d.
+.
+
+DS_Bump: Bump!
+Playing with the Variation Bump, one player has landed on another player's
+score, swapping scores.
+.
+
+
+CSTRING: TrainWreckString
+%s has had %d Train Wreck(s) (of %d max).
+.
+
+DS_TrainWreck: Train Wreck!
+If the rule (n)TrainWreck is enabled, then a player may only roll
+n Train Wrecks during a game or the player looses.
+
+A Train Wreck is when all 5 dice are rolled, but no points are scored
+(a wimpout).
+.
+
+
+CSTRING: NobodyWonString
+Everyone has lost.  Game over.
+.
+
+DS_NobodyWon: Nobody Won!
+Apparently, everyone lost.  There is nobody left to play. So, nobody won
+and I'm now lonely.
+.
+
+
 CSTRING: LeaderString
 %s is the current Leader!
 Everyone still in the game gets one
@@ -96,6 +129,10 @@ Everyone gets one chance each to get in their
 Last Licks or a last roll to win.  If a player doesn't beat your score, then
 they lose and are permanently out of the game.  If they beat your score
 then they become the leader and everyone gets one chance to beat their score.
+.
+
+DS_TurnOver: *Turn Over*
+It's just a dramatic pause, but you must be fast with a stylus!
 .
 
 
@@ -211,6 +248,33 @@ Clear Flash First
 
 STRING: HelpVariants
 ToDo: list and describe varients
+
+Below are the list of the variations of CWimp you can play.
+
+Bump:\n
+In this variant, if you score the same as another player, then you will
+switch scores with that player (you getting the new, higher score and that
+person getting your old score).
+
+Eclipse:\n
+You cannot 'stay' if your score equals another's score.
+
+Cosmic Sampler:\n
+ToDo
+
+FullHouse:\n
+ToDo
+
+Suspend:\n
+ToDo
+
+Insurance Points:\n
+ToDo
+
+(n)TrainWrecks:\n
+If a player gets (n) Train Wrecks, then that play is out of the game.  If
+everyone looses, then the game is over.  A Train Wreck is when all 5 dice are
+rolled, but with no score (a wimpout on 5 dice).
 .
 
 STRING: HelpGetNames

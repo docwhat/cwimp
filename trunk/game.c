@@ -62,19 +62,18 @@ void ToggleKeep(Byte die)
 #warning The game is unplayable with DEBUG on
 int RollCube (void)
 {
-  //  static int n = 2;
-  //  n++;
   static int n = 1;
 
   switch( n++ ) {
-  case 1: return 3;
-  case 2: return 1;
-  case 3: return 1;
-  case 4: return 6;
-  default: n=1;  return 6;
+  case 1: return 1;
+  case 2: return 4;
+  case 3: return 5;
+  case 4: return 5;
+  case 5: return 2;
+  default: n=1; break;
   }
 
-  return 1;
+  return n;
 }
 #else
 int RollCube (void)
@@ -86,21 +85,7 @@ int RollCube (void)
     init++;
   }
 
-  
-#if 0
-  int n = 0;
-  //  char tmp[255]; // Debug
-
-  n = ((SysRandom(0) %6) + 1);
-
-  // Can we prove this helps at all?
-  while (n == 0)
-    {
-      n = ((SysRandom(0) % 6) + 1);
-    }
-#endif
-  
-  return ((genrand() %6) + 1);
+  return ((genrand() %6) + 1);;
 }
 #endif
 
@@ -145,12 +130,14 @@ void Stay() {
 void AddScore(Short points) {
   stor.scorethisroll += points;
   stor.scorethisturn += points;
+  stor.currscore += points;
 }
 
 void ScoreRoll() {
   Short aCounting[7], P1, P2;
   Short BlackDieValue;
   Short x;
+  Boolean bool;
   Boolean FS;
 
   // Init vars
@@ -363,6 +350,23 @@ void ScoreRoll() {
     }
   }
 
+  /* nTrainWreck rule */
+  if( stor.flags & flag_nTW  ) {
+    bool = true;
+    for( x = 0 ; x < NumCubes ; x++ ) {
+      if ( stor.cube[x].keep ) {
+	bool = false; // Whups, not a trainwreck
+      }
+    }
+    if( bool && stor.scorethisroll == 0 ) {
+      stor.player[stor.currplayer].TWcount++;
+      DialogOK( frmTrainWreck, stor.currplayer, -1 );
+      if( stor.player[stor.currplayer].TWcount >= stor.nTrainWrecks ) {
+	PlayerLost( stor.currplayer, "Too many Train Wrecks" );
+      }
+    }
+  }
+
 }
 
 
@@ -380,7 +384,27 @@ void TurnLogic() {
        StayBit ) {
 	
     if ( StayBit ) {
-      stor.player[stor.currplayer].score += stor.scorethisturn;
+      /* Bump Variation */
+      if( stor.flags & flag_Bump ) {
+	for ( x = 0 ; x < stor.numplayers ; x++ ) {
+	  if ( stor.player[x].score == stor.currscore ) {
+	    DialogOK( frmBump, stor.currplayer, x );
+
+	    /* Retribution time */
+	    stor.player[x].score = stor.player[stor.currplayer].score;
+	    if( stor.leader == x ) {
+	      // Don't that suck?
+	      stor.leader = -1;
+	    }
+	    DrawPlayerScore( x );
+
+	    /* There can be only one ... */
+	    x = stor.numplayers;
+	  }
+	}
+      }
+
+      stor.player[stor.currplayer].score = stor.currscore;
     }
     
     if( stor.leader == stor.currplayer ) {
@@ -391,7 +415,7 @@ void TurnLogic() {
 
     /* Last Licks Stuff */
     if( ! stor.player[stor.currplayer].lost &&
-	( stor.player[stor.currplayer].score > stor.winscore ||
+	( stor.currscore > stor.winscore ||
 	  stor.leader >= 0 ) ) {
       if( stor.leader < 0 ) {
 	/* Hasn't been set, this guy is it */
@@ -400,8 +424,7 @@ void TurnLogic() {
       } else {
 	/* We're in LastLicks already */
 	/* There is a leader, did we beat 'em */
-	if( stor.player[stor.currplayer].score >
-	    stor.player[stor.leader].score ) {
+	if( stor.currscore > stor.player[stor.leader].score ) {
 	  Byte lastleader = stor.leader;
 
 	  stor.leader = stor.currplayer;
@@ -458,9 +481,14 @@ void NextPlayer() {
     if ( prevplayer == stor.currplayer ) {
       /* We've looped around or there is only one player */
       if ( stor.numplayers > 1 ) {
-	/* If there is more than one player, then this guy won */
-	PlayerWon();
-	return;
+	/* If there is more than one player */
+	if( !stor.player[stor.currplayer].lost ) {
+	  PlayerWon();
+	  return;
+	} else {
+	  NobodyWon();
+	  return;
+	}
       }
       break;
     }
@@ -468,23 +496,8 @@ void NextPlayer() {
       // This player hasn't lost, he's next
       break;
     }
-#ifdef DEBUG
-    {
-      Int dd = 0;
-      ErrNonFatalDisplayIf( ++dd > (MaxPlayers + 4),
-			    "NextPlayer: Had to rely on dd loop check!" );
-    }
-#endif
   }
 
-  DrawPlayerScore( prevplayer );
-  DrawPlayerScore( stor.currplayer );
-  
-  // Clear scores
-  stor.scorethisroll = stor.scorethisturn = 0;
-  StayBit = false;
-  DrawStayButton();
-  
   // Clear cubes
   for( x = 0 ; x < NumCubes ; x++ ) {
     stor.cube[x].keep = false;
@@ -501,15 +514,31 @@ void NextPlayer() {
     DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
     DrawState();
   } else {
+    if( !StayBit ) {
+      SetStatus( DS_TurnOver );
+      SysTaskDelay(1*sysTicksPerSecond);
+    }
     SetStatus( DS_NextPlayer );
-    /* Don't draw the state so you can see how the dice were left */
   }
-  DrawTopStatusButton();
-  
+
+  // Clear scores
+  stor.scorethisroll =
+    stor.scorethisturn = 0;
+  stor.currscore = stor.player[stor.currplayer].score;
+  StayBit = false;
+  DrawState();
+
 }
 
 void PlayerWon() {
   DialogOK( frmWinner, stor.currplayer, -1 );
+  ResetCubes();
+  DrawState();
+  return;
+}
+
+void NobodyWon() {
+  DialogOK( frmNobodyWon, -1, -1 );
   ResetCubes();
   DrawState();
   return;
@@ -592,6 +621,8 @@ void ResetCubes(void)
 
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
+  stor.currscore = 0;
+  stor.nTrainWrecks = 3;
 
   stor.currplayer = -1; // No Game Running
 
@@ -642,7 +673,7 @@ void NewGame()
   stor.YMNWTBYM = false;
   stor.leader = -1;
   stor.status = 0;
-  stor.nTrainWrecks = 0;
+  stor.currscore = 0;
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
   stor.currplayer = 0;
@@ -657,6 +688,7 @@ void NewGame()
     /* We don't need to set name */
     stor.player[x].score     = 0;
     stor.player[x].insurance = 0;
+    stor.player[x].TWcount   = 0;
   }
 
   StayBit = false;
