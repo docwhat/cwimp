@@ -70,9 +70,9 @@ static Boolean MainFormHandleEvent (EventPtr e)
 
       case MenuItem_Variants:
 	if ( stor.currplayer < 0 ) {
-	  DialogVarients();
+	  DialogVariants();
 	} else {
-	  FrmHelp( HelpVariants );
+	  FrmAlert(NoVariants);
 	}
 	break;
 
