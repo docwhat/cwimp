@@ -74,6 +74,11 @@ Boolean EQRunNext(void) {
   return true;
 }
 
+void EQDrain(void)
+{
+  while( EQRunNext() );
+}
+
 void EQReset(void)
 {
   EQPtr ptr;

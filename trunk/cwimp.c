@@ -186,6 +186,7 @@ static Word StartApplication(void)
 static void StopApplication(void)
 {
   SaveCubes();
+  EQDrain();
   FrmSaveAllForms();
   FrmCloseAllForms();
 }

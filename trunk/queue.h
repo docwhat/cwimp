@@ -35,10 +35,11 @@ typedef EQ* EQPtr;
 extern EQPtr EQueue;
 
 void EQInit(void);
-void EQReset(void);
 void EQAdd(void (*func)(Int), Int data);
 Boolean EQRunNext(void);
 Boolean EQIsEmpty(void);
+void EQDrain(void);
+void EQReset(void);
 void EQNOP(Int x);
 
 #endif
