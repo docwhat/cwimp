@@ -177,16 +177,20 @@ STRING ID HelpNewGame "Select the number of human and computer players.\n" \
 STRING ID HelpAbout
 # \231 is the TM character
 # \263 is the ^3 character
-	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n" \
-	"The default player names are based upon "\
-	"Jim Henson company's Muppets\231\n\n"\
 	"This is free software, and you are welcome to redistribute it "\
 	"under certain conditions; See the COPYING file that should "\
 	"have come with this program.\n\n"\
 	"More info and new versions can be gotten at\n"\
 	"http://docwhat.gerf.org/cwimp/\n\n"\
 	"Bugs may be submitted at\n"\
-	"http://gerf.org/cgi-bin/cwimp-bugs\n"
+	"http://gerf.org/cgi-bin/cwimp-bugs\n\n"\
+	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n" \
+	"The default player names are based upon "\
+	"Jim Henson company's Muppets\231\n\n"\
+	"Mersenne Twister by Makoto Matsumoto and Takuji Nishimura,"\
+	"Accelerated by Shawn Cokus,"\
+	"16 bit version by Troy D. Gillette,\n"
+
 
 ##
 ##

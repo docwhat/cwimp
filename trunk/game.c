@@ -27,6 +27,7 @@
 #include "draw.h"
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
+#include "srand.h"
 
 
 #include "game.h"
@@ -78,12 +79,20 @@ int RollCube (void)
 #else
 int RollCube (void)
 {
+  static Boolean init = 0;
+
+  if( init == 0 ) {
+    sgenrand( SysRandom(0) );
+    init++;
+  }
+
+  
+#if 0
   int n = 0;
   //  char tmp[255]; // Debug
 
   n = ((SysRandom(0) %6) + 1);
 
-#if 0
   // Can we prove this helps at all?
   while (n == 0)
     {
@@ -91,7 +100,7 @@ int RollCube (void)
     }
 #endif
   
-  return n;
+  return ((genrand() %6) + 1);
 }
 #endif
 

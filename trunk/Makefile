@@ -6,8 +6,8 @@ APPID = "CWmp"
 LANGUAGE = en
 URL = "http://docwhat.gerf.org/cwimp/"
 
-SOURCES = cwimp.c  draw.c  game.c  lowlevel.c  statusmsg.c
-OBJECTS = $(TARGET).o lowlevel.o game.o draw.o statusmsg.o
+SOURCES = $(TARGET).c  draw.c  game.c  lowlevel.c  statusmsg.c srand.c
+OBJECTS = $(patsubst %.c,%.o, $(SOURCES))
 LIBS =
 GRESOURCES = code0001.$(TARGET).grc code0000.$(TARGET).grc \
 	data0000.$(TARGET).grc pref0000.$(TARGET).grc \
