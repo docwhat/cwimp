@@ -118,35 +118,35 @@ const UInt bmpBCube[6] = {
   bmp6b
 };   
 const UInt pbtnVal[10] = {
-  pbtn_01,
-  pbtn_02,
-  pbtn_03,
-  pbtn_04,
-  pbtn_05,
-  pbtn_06,
-  pbtn_07,
-  pbtn_08,
-  pbtn_09,
+  pbtn_1,
+  pbtn_2,
+  pbtn_3,
+  pbtn_4,
+  pbtn_5,
+  pbtn_6,
+  pbtn_7,
+  pbtn_8,
+  pbtn_9,
   pbtn_10
 };
 const UInt cbtnVal[10] = {
-  cbtn_00,
-  cbtn_01,
-  cbtn_02,
-  cbtn_03,
-  cbtn_04,
-  cbtn_05,
-  cbtn_06,
-  cbtn_07,
-  cbtn_08,
-  cbtn_09
+  cbtn_0,
+  cbtn_1,
+  cbtn_2,
+  cbtn_3,
+  cbtn_4,
+  cbtn_5,
+  cbtn_6,
+  cbtn_7,
+  cbtn_8,
+  cbtn_9
 };
 
 
 
 void DrawState()
 {
-  Byte x;
+  Short x;
   Char msg[MaxName+4];
 
   DrawCurrScore();
@@ -193,7 +193,7 @@ void DrawKeepBit(Byte die)
 }
 
 
-void DrawPlayerScore(Byte player) {
+void DrawPlayerScore(Short player) {
   Char msg[MaxName];
 
   StrIToA( msg, stor.player[player].score );
@@ -215,8 +215,6 @@ void DrawPlayerScore(Byte player) {
   }
 
   ClearFieldText( fieldMarkPlayer[player] );
-  // SetFieldTextFromStr( fieldMarkPlayer[player], BlankSymbol );
-
 }
 
 
@@ -320,8 +318,10 @@ void DrawStayButton() {
 
   /* If we aren't winning in last licks */
   if( stor.leader >= 0 &&
-      stor.player[stor.leader].score >
-      ( stor.player[stor.currplayer].score + stor.scorethisturn ) )
+      ( stor.player[stor.leader].score >
+	( stor.player[stor.currplayer].score + stor.scorethisturn )
+	)
+      )
     {
       ShowControl( btn_Stay, 0 );
       return;
@@ -347,9 +347,12 @@ void DialogNewGame() {
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Set Controls
   // cbtnVal & pbtnVal
+  stor.tmpplayers = stor.numplayers;
+  stor.tmpcomputers = stor.numcomputers;
   if ( stor.numplayers > 0 ) {
 	x = stor.numplayers;
   } else {
@@ -386,40 +389,22 @@ void DialogNewGame() {
 	} else {
 	  stor.winscore = 300;
 	}
-	
-	for ( x = 0 ; x < 10 ; x++ ) {
-	  if ( CtlGetValue( GetObjectPtr( pbtnVal[x] ) ) ) {
-		stor.numplayers = x+1;
-	  } else if ( CtlGetValue( GetObjectPtr( cbtnVal[x] ) ) ) {
-		stor.numcomputers = x;
-	  }
-	}
-  } // if hitButton == ...
 
-  // ToDo: I think I'm supposed to unlock the Ptr from fldIndex
-
-  /* Manually erase the field.  It doesn't do it automatically
-   * for some reason.
-   */
-  FldEraseField( GetObjectPtr( fld_winscore) );
-
-  // Restore previous form.
-  if (prevForm) {
-	FrmSetActiveForm(prevForm);
-
-	// FrmDrawForm(prevForm);
-	/* We don't need this since DialogGetNames will do it
-	 * for us. */
+	stor.numplayers = stor.tmpplayers;
+	stor.numcomputers = stor.tmpcomputers;
   }
 
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
 
+  // Restore previous form.
+  if (prevForm) {
+    FrmSetActiveForm(prevForm);
+  }
+
 
   if ( hitButton == btn_OK_frmNewGame ) {
-	if( DialogGetNames() ) {
-	  NewGame();
-	}
+    NewGame();
   }
 
 
@@ -438,6 +423,7 @@ void DialogVarients() {
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Set Controls
   CtlSetValue( GetObjectPtr(check_Bump     ), stor.flags & flag_Bump      );
@@ -469,59 +455,81 @@ void DialogVarients() {
   SetFlag( flag_Insurance,
 		   CtlGetValue( GetObjectPtr(check_Insurance) ) );
 
-  // Restore previous form.
-  if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
-  }
-
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
 
-  // We don't care, as long as the dialog quits.
+  // Restore previous form.
+  if (prevForm) {
+    FrmSetActiveForm(prevForm);
+  }
+
 }
 
 
-void DialogNextPlayer( Int prev, Int next ) {
+void DialogOK ( Word frmname, Short p1, Short p2 ) {
   FormPtr prevForm, frm;
   Word hitButton;
   Char msg[(MaxName * 2) + 64];
+  Word fieldname = 0;
   
   // Save previous form
   prevForm = FrmGetActiveForm();
   // Init new form
-  frm = FrmInitForm( frmNextPlayer );
+  frm = FrmInitForm( frmname );
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Fill it...
-  if( stor.numplayers > 1 ) {
-    StrPrintF( msg, NextPlayerString,
-	       stor.player[prev].name,
-	       stor.player[next].name,
-	       NULL);
-    SetFieldTextFromStr( fldNextPlayer, msg );
-  } else {
-    SetFieldTextFromStr( fldNextPlayer, NextSoloPlayerString );
+  switch ( frmname ) {
+  case frmNextPlayer: 
+    fieldname = fldNextPlayer;
+    if( stor.numplayers > 1 ) {
+      StrPrintF( msg, NextPlayerString,
+		 stor.player[p1].name,
+		 stor.player[p2].name,
+		 NULL);
+    } else {
+      StrPrintF( msg, "%s", NextSoloPlayerString, NULL );
+    }
+    break;
+
+  case frmLost:
+    fieldname = fldLost;
+    StrPrintF( msg, LostString, stor.player[p1].name, NULL );
+    break;
+
+  case frmLeader:
+    fieldname = fldLeader;
+    StrPrintF( msg, LeaderString, stor.player[p1].name, NULL );
+    break;
+
+  case frmWinner:
+    fieldname = fldWinner;
+    StrPrintF( msg, WinnerString, stor.player[p1].name, NULL );
+    break;
+
+  default:
+    ErrNonFatalDisplayIf( 1, "DialogOK: fall through: Programmer sucks." );
   }
+
+  ErrNonFatalDisplayIf( fieldname == 0,
+			"DialogOK: ZeroField: Programmer sucks." );
+  SetFieldTextFromStr( fieldname, msg );
 
   // Set the handler
   // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
 
   hitButton = FrmDoDialog(frm);
 
-  // Erase old field
-  ClearFieldText( fldNextPlayer );
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
 
   // Restore previous form.
   if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
+    FrmSetActiveForm(prevForm);
   }
-
-  // Delete the form, we're not using it
-  FrmDeleteForm(frm);
 
   // We don't care about which button, there is only one.
 }
@@ -538,6 +546,7 @@ Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Fill it...
   CtlSetLabel( GetObjectPtr(btnChooseTwo1), bOne );
@@ -549,17 +558,13 @@ Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
 
   hitButton = FrmDoDialog(frm);
 
-  // Erase old field
-  ClearFieldText( fldChooseTwo );
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
 
   // Restore previous form.
   if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
+    FrmSetActiveForm(prevForm);
   }
-
-  // Delete the form, we're not using it
-  FrmDeleteForm(frm);
 
   if( hitButton == btnChooseTwo1 ) return 1;
   if( hitButton == btnChooseTwo2 ) return 2;
@@ -579,6 +584,7 @@ Int DialogChooseThree( CharPtr fText,
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Fill it...
   CtlSetLabel( GetObjectPtr(btnChooseThree1), bOne );
@@ -591,17 +597,13 @@ Int DialogChooseThree( CharPtr fText,
 
   hitButton = FrmDoDialog(frm);
 
-  // Erase old field
-  ClearFieldText( fldChooseThree );
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
 
   // Restore previous form.
   if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
+    FrmSetActiveForm(prevForm);
   }
-
-  // Delete the form, we're not using it
-  FrmDeleteForm(frm);
 
   if( hitButton == btnChooseThree1 ) return 1;
   if( hitButton == btnChooseThree2 ) return 2;
@@ -621,6 +623,7 @@ void DialogPreferences() {
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Set Controls
   CtlSetValue( GetObjectPtr(check_NextPlayerPopUp ),
@@ -635,14 +638,13 @@ void DialogPreferences() {
   SetFlag( flag_NextPlayerPopUp,
 		   CtlGetValue( GetObjectPtr(check_NextPlayerPopUp) ) );
 
-  // Restore previous form.
-  if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
-  }
-
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
+
+  // Restore previous form.
+  if (prevForm) {
+    FrmSetActiveForm(prevForm);
+  }
 
   // We don't care, as long as the dialog quits.
 }
@@ -651,10 +653,12 @@ void DialogPreferences() {
 Boolean DialogGetNames() {
   FormPtr prevForm, frm;
   Word hitButton;
-  Boolean retVal;
+  Boolean retVal = false;
   CharPtr text;
   Int i;
   FieldPtr fp;
+  VoidPtr vPtr;
+  Word oIdx;
 
   // Save previous form
   prevForm = FrmGetActiveForm();
@@ -663,10 +667,10 @@ Boolean DialogGetNames() {
 
   // Set it
   FrmSetActiveForm(frm);
+  FrmDrawForm(frm);
 
   // Set Controls
-  for( i=0; i<stor.numplayers ; i++ ) {
-	//	SetFieldTextFromStr( fieldGetNamesPlayer[i], stor.player[i].name );
+  for( i=0; i < stor.tmpplayers ; i++ ) {
 	SetFieldTextFromStr( fieldGetNamesPlayer[i], stor.player[i].name );
   }
 
@@ -684,92 +688,140 @@ Boolean DialogGetNames() {
 
   hitButton = FrmDoDialog(frm);
 
-  retVal = false;
   // Get Controls
   if ( hitButton == btn_OK_frmGetNames ) {
 	
 	for( i=0 ; i<stor.numplayers ; i++ ) {
-	  text =  FldGetTextPtr( FrmGetObjectPtr( frm,
-											  FrmGetObjectIndex(frm,
-																fieldGetNamesPlayer[i]) ) );
+	  oIdx = FrmGetObjectIndex( frm, fieldGetNamesPlayer[i]);
+	  vPtr = FrmGetObjectPtr( frm, oIdx );
+	  text = FldGetTextPtr( vPtr );
 	  StrCopy( stor.player[i].name, text );
-					 
-	  // For some reason, the palm doesn't erase these for us.
-	  FldEraseField( GetObjectPtr( fieldGetNamesPlayer[i] ) );
+
 	}
 
 	retVal = true;
   }
 
-  // Restore previous form.
-  if (prevForm) {
-	FrmSetActiveForm(prevForm);
-	FrmDrawForm(prevForm);
-  }
 
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
+
+  // Restore previous form.
+  if (prevForm) {
+    FrmSetActiveForm(prevForm);
+  }
 
   return retVal;
 }
 
 
 /* Local Only Functions */
-static void SetPeople   ( Short computersetting );
-static void SetComputer ( Short peoplesetting );
+static void SetPlayers  ( Short num );
+static void SetComputers( Short num );
 
-static void SetPeople   ( Short computersetting ) {
+#if 0 
+static void SetPeople( Short num ) {
   Int x;
-  Boolean found;
+  Boolean found = false;
   FormPtr frm;
   ControlPtr cPtr;
+  Word oIdx;
 
-  found = false;
   frm = FrmGetActiveForm();
-  
-  for ( x = MaxPlayers - 1 ;
-		x > MaxPlayers - (computersetting + 1)  ;
-		x-- ) {
-	cPtr = FrmGetObjectPtr (frm, FrmGetObjectIndex (frm, pbtnVal[x] ));
-	if ( CtlGetValue( cPtr ) ) {
-	  CtlSetValue( cPtr, false );
-	  found = true;
-	}
+
+  x = MaxPlayers - 1;
+
+  while( ( x > ( MaxPlayers - (num + 1) ) ) &&
+	 !found ) {
+    oIdx = FrmGetObjectIndex( frm, pbtnVal[x--] );
+    cPtr = FrmGetObjectPtr( frm, oIdx );
+
+    if( CtlGetValue( cPtr ) ) {
+      CtlSetValue( cPtr, false );
+      found = true;
+    }
   }
+
   if ( found ) {
-	CtlSetValue( FrmGetObjectPtr (frm, 
-								  FrmGetObjectIndex (frm,
-													 pbtnVal[ MaxPlayers -
-															(computersetting+1) ] )),
-				 true );
+    stor.tmpcomputers = MaxPlayers - (num + 1);
+    oIdx = FrmGetObjectIndex( frm, cbtnVal[stor.tmpcomputers] );
+    cPtr = FrmGetObjectPtr( frm, oIdx );
+    CtlSetValue( cPtr, true);
   }
 }
+#endif
+
   
-static void SetComputer ( Short peoplesetting ) {
-  Int x;
-  Boolean found;
+static void SetPlayers( Short num ) {
   FormPtr frm;
   ControlPtr cPtr;
+  Word oIdx;
 
-  found = false;
+  if( num > MaxPlayers || num < 1 ) {
+    ErrNonFatalDisplayIf( true, "SetPlayers: Out of Bounds");
+    return;
+  }
+
+  if( stor.tmpplayers == num ) {
+    return;
+  }
+
   frm = FrmGetActiveForm();
+
+
+  /* Unset the old one */
+  oIdx = FrmGetObjectIndex( frm, pbtnVal[stor.tmpplayers - 1] );
+  cPtr = FrmGetObjectPtr( frm, oIdx );
+  CtlSetValue( cPtr, false );
+
+  /* Set new one */
+  oIdx = FrmGetObjectIndex( frm, pbtnVal[num - 1] );
+  cPtr = FrmGetObjectPtr( frm, oIdx );
+  CtlSetValue( cPtr, true );
+
+  stor.tmpplayers = num;
+
+  if( stor.tmpcomputers + stor.tmpplayers > MaxPlayers ) {
+    SetComputers( MaxPlayers - stor.tmpplayers );
+  }
   
-  for ( x = MaxPlayers - 1 ;
-		x > MaxPlayers - peoplesetting;
-		x-- ) {
-	cPtr = FrmGetObjectPtr (frm, FrmGetObjectIndex (frm, cbtnVal[x] ));
-	if ( CtlGetValue( cPtr ) ) {
-	  CtlSetValue( cPtr, false );
-	  found = true;
-	}
+  return;
+}
+
+static void SetComputers( Short num ) {
+  FormPtr frm;
+  ControlPtr cPtr;
+  Word oIdx;
+
+  if( num > (MaxPlayers - 1) || num < 0 ) {
+    ErrNonFatalDisplayIf( true, "SetComputers: Out of Bounds");
+    return;
   }
-  if ( found ) {
-	CtlSetValue( FrmGetObjectPtr (frm, 
-								  FrmGetObjectIndex (frm,
-													 cbtnVal[ MaxPlayers -
-															peoplesetting ] )),
-				 true );
+
+  if( stor.tmpcomputers == num ) {
+    return;
   }
+
+  frm = FrmGetActiveForm();
+
+
+  /* Unset the old one */
+  oIdx = FrmGetObjectIndex( frm, cbtnVal[stor.tmpcomputers] );
+  cPtr = FrmGetObjectPtr( frm, oIdx );
+  CtlSetValue( cPtr, false );
+
+  /* Set new one */
+  oIdx = FrmGetObjectIndex( frm, cbtnVal[num] );
+  cPtr = FrmGetObjectPtr( frm, oIdx );
+  CtlSetValue( cPtr, true );
+
+  stor.tmpcomputers = num;
+
+  if( stor.tmpcomputers + stor.tmpplayers > MaxPlayers ) {
+    SetPlayers( MaxPlayers - stor.tmpcomputers );
+  }
+  
+  return;
 }
 
 static Boolean DialogNewGameHandleEvent (EventPtr e)
@@ -790,29 +842,38 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	  switch(e->data.ctlSelect.controlID) {
 		
 	  case btn_Variants_frmNewGame:
-		DialogVarients();
-		handled = true;
-		break;
+	    DialogVarients();
+	    handled = true;
+	    break;
 
-	  case pbtn_02: SetComputer( 2 ); break;
-	  case pbtn_03: SetComputer( 3 ); break;
-	  case pbtn_04: SetComputer( 4 ); break;
-	  case pbtn_05: SetComputer( 5 ); break;
-	  case pbtn_06: SetComputer( 6 ); break;
-	  case pbtn_07: SetComputer( 7 ); break;
-	  case pbtn_08: SetComputer( 8 ); break;
-	  case pbtn_09: SetComputer( 9 ); break;
-	  case pbtn_10: SetComputer( 10 ); break;
+	  case btn_OK_frmNewGame:
+	    if( DialogGetNames() == false ) {
+	      handled = true;
+	      /* So, DGN was canceled, so we eat the result */
+	    }
+	    break;
 
-	  case cbtn_01: SetPeople( 1 ); break;
-	  case cbtn_02: SetPeople( 2 ); break;
-	  case cbtn_03: SetPeople( 3 ); break;
-	  case cbtn_04: SetPeople( 4 ); break;
-	  case cbtn_05: SetPeople( 5 ); break;
-	  case cbtn_06: SetPeople( 6 ); break;
-	  case cbtn_07: SetPeople( 7 ); break;
-	  case cbtn_08: SetPeople( 8 ); break;
-	  case cbtn_09: SetPeople( 9 ); break;
+	  case cbtn_0: SetComputers( 0 ); break;
+	  case cbtn_1: SetComputers( 1 ); break;
+	  case cbtn_2: SetComputers( 2 ); break;
+	  case cbtn_3: SetComputers( 3 ); break;
+	  case cbtn_4: SetComputers( 4 ); break;
+	  case cbtn_5: SetComputers( 5 ); break;
+	  case cbtn_6: SetComputers( 6 ); break;
+	  case cbtn_7: SetComputers( 7 ); break;
+	  case cbtn_8: SetComputers( 8 ); break;
+	  case cbtn_9: SetComputers( 9 ); break;
+
+	  case pbtn_1: SetPlayers( 1 ); break;
+	  case pbtn_2: SetPlayers( 2 ); break;
+	  case pbtn_3: SetPlayers( 3 ); break;
+	  case pbtn_4: SetPlayers( 4 ); break;
+	  case pbtn_5: SetPlayers( 5 ); break;
+	  case pbtn_6: SetPlayers( 6 ); break;
+	  case pbtn_7: SetPlayers( 7 ); break;
+	  case pbtn_8: SetPlayers( 8 ); break;
+	  case pbtn_9: SetPlayers( 9 ); break;
+	  case pbtn_10: SetPlayers( 10 ); break;
 
 	  }
 	  break;

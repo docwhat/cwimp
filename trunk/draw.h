@@ -58,7 +58,7 @@ extern const UInt bmpBCube[6];
 void DrawCurrScore();
 void DrawState();
 void DrawCube(Byte die);
-void DrawPlayerScore(Byte player);
+void DrawPlayerScore(Short player);
 void DrawKeepBit(Byte die);
 void DrawTopStatusButton();
 void DrawRollButton();
@@ -66,7 +66,7 @@ void DrawStayButton();
 
 void DialogNewGame();
 void DialogVarients();
-void DialogNextPlayer( Int prev, Int next );
+void DialogOK( Word frm, Short player1, Short player2 );
 Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo );
 Int DialogChooseThree( CharPtr fText, CharPtr bOne, CharPtr bTwo,
 		      CharPtr bThree );
