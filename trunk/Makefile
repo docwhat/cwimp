@@ -80,7 +80,7 @@ veryclean: clean
 	rm -f $(STATUSMSGS) rm -f $(TARGET).rcp
 
 spotless: veryclean
-	rm -rf deps objs $(TARGET).*.zip $(TARGET.)*.zip.dsc
+	rm -rf deps objs $(TARGET).*.zip .info.$(TARGET)*
 
 ChangeLog:
 	cvs2cl
@@ -91,17 +91,18 @@ ChangeLog:
 
 zip: srczip binzip
 
-srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip $(TARGET).$(VERSION).$(LANGUAGE).src.zip.dsc: veryclean ChangeLog
+srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).src: veryclean ChangeLog
 	-rm -f $(TARGET).*.src.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).$(LANGUAGE).src.zip \
 		cwimp \
 		-x cwimp/CVS/\* -x \*.d
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).src.zip .
-	echo "(<a href=\"$(URL)\">$(TARGET)</A> source, version $(VERSION))" > \
-	$(TARGET).$(VERSION).$(LANGUAGE).src.zip.dsc
+	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).src
+	echo -e "\nCWimp Source\nVersion $(VERSION)" > \
+	.info.$(TARGET).$(VERSION).$(LANGUAGE).src
 
-binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip.dsc:
+binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).bin:
 	$(MAKE) $(TARGET).prc ChangeLog
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
@@ -110,15 +111,16 @@ binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip $(TARGET).$(VERSION).$(LANGUAGE)
 		cwimp/ChangeLog \
 		cwimp/README
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
-	echo "(<a href=\"$(URL)\">$(TARGET)</A> binary, version $(VERSION))" > \
-	$(TARGET).$(VERSION).$(LANGUAGE).bin.zip.dsc
+	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).bin
+	echo -e "\nCWimp\nVersion $(VERSION)" > \
+	.info.$(TARGET).$(VERSION).$(LANGUAGE).bin
+
 
 TAGS: $(SOURCES) $(wildcard *.h)
 	etags $^
 
 archive: zip
-	mv -iv $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
-#-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
+	scp $(TARGET).*.zip .info.$(TARGET)* gerf.org:web/files/palm/cwimp/
 
 
 install: $(TARGET).prc
