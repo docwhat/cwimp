@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+$| = 1;
+use strict;
+use 5.004;
+use Fcntl;
+
+
+# Find current version
+# Set version on all the files handed in
+
+my $version;
+open ( VER, "<version" ) or
+	die "Unable to read version file: $!";
+$version = <VER>; # Throw away line
+chomp ( $version = <VER> );
+
+close VER;
+
+# If only version is requested, return that
+if ( $ARGV[0] eq "version" )
+{
+    $version =~ s/\s+//g;
+    print "$version\n";
+    exit 0;
+}
+
+if ( $ARGV[0] eq "rcponly" )
+{
+    &EditRCP();
+    exit 0;
+}
+
+
+# Functions
+
+sub EditRCP()
+{
+    print "Set version to '$version' in all .rcp files\n";
+    my(@ARGV) = (glob("*.rcp"));
+
+    local $^I = "*";
+	
+    while (<>)
+    {
+        s/(version:\s)[^\\]+\\n/$1$version\\n/i;
+        print;
+		
+        close ARGV if eof;              # Reset $.
+    }
+
+    $^I = undef;
+}

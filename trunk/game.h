@@ -1,31 +1,6 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 /* $Id$
- * 
- * $Log$
- * Revision 1.1  1999/08/06 05:43:52  palmcvs
- * Initial Revision
- *
- * Revision 0.8  1999/04/11 09:48:25  docwhat
- * Added DialogPreferences
- * Added StatusLine and status help functions
- * flags are now honored in DialogVariants and DialogPreferences
- * preference NextPlayerPopUp works, including popups.
- * Added DialogGetNames to the DialogNewGames.  Names are no
- * longer computer assigned.
- * Cleaned up menus. Added shortcuts for variants and preferences, changed resets.
- *
- * Revision 0.7  1999/03/14 23:51:36  docwhat
- * Added DialogNewGame.
- * Added hiding Stay button.
- * Added 35 point minimum start.
- *
- * Revision 0.6  1999/03/14 00:55:51  docwhat
- * Seperated out the draw functions
- *
- * Revision 0.5  1999/03/13 23:53:28  docwhat
- * Added ident strings.
- *
  */
 #include "cwrollerRsc.h"
 

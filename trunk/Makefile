@@ -16,6 +16,9 @@ OBJRES = m68k-palmos-coff-obj-res
 NM = m68k-palmos-coff-nm
 BUILDPRC = build-prc
 PILOTXFER = pilot-xfer
+FIXVERSION = ./fixversion
+
+VERSION=$(shell $(FIXVERSION) version)
 
 all: $(TARGET).prc
 
@@ -41,7 +44,8 @@ pref0000.$(TARGET).grc: code0000.$(TARGET).grc
 
 rloc0000.$(TARGET).grc: code0000.$(TARGET).grc
 
-bin.res: $(TARGET).rcp $(TARGET).bmp
+bin.res: $(TARGET).rcp $(TARGET).bmp version
+	$(FIXVERSION) rcponly
 	$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
 	touch bin.res
 
@@ -60,12 +64,12 @@ depend:
 clean:
 	-rm -f *.[oa] $(TARGET) *.bin bin.res *.grc Makefile.bak $(TARGET)Rsc.h *~ core
 
-veryclean: clean
+spotless: clean
 	-rm -f $(TARGET).prc pilot.ram pilot.scratch cwroller.*.zip
 
 zip: $(TARGET).prc clean
-	-rm -f cwroller.??????.zip
-	-zip cwroller.`date +"%y%m%d"`.zip [a-zMNTC]*
+	-rm -f cwroller.*.zip
+	zip cwroller.$(VERSION).`date +"%y%m%d"`.zip [a-zMNTC]*
 
 archive: zip
 	-scp -P7070 cwroller.*.zip gerf.org:src/archive/
