@@ -59,17 +59,8 @@ const UInt fieldScorePlayer[MaxPlayers] = {
   scorePlayer7,
   scorePlayer8
 };
-const UInt fieldMarkPlayer[MaxPlayers] = {
-  markPlayer0,
-  markPlayer1,
-  markPlayer2,
-  markPlayer3,
-  markPlayer4,
-  markPlayer5,
-  markPlayer6,
-  markPlayer7,
-  markPlayer8
-};
+#define markPlayerX 145
+
 const UInt bmpWCube[7] = {
   bmpWhite,
   bmp10w,  
@@ -160,6 +151,7 @@ void DrawState()
 {
   Short x;
   Char msg[MaxName+4];
+  RectangleType r = { {markPlayerX, 52}, {10, 90} };;
 
 #ifdef DEBUG
   EQStatus(0);
@@ -170,13 +162,15 @@ void DrawState()
   EQStatus(0);
   EQStatus(1);
   EQStatus(2);
-  EQStatus(3);
 #endif
 
   DrawCurrScore();
 
+  WinEraseRectangle( &r, 0 );
+
   // Fill the fields
   x = 0;
+
   if ( stor.currplayer > -1 ) {
 	// If there is a game on, fill in the names and scores
 	for ( ; x < stor.total ; x++ ) {
@@ -189,7 +183,6 @@ void DrawState()
   for ( ; x < MaxPlayers ; x++ ) {
 	ClearFieldText( fieldNamePlayer[x] );
 	ClearFieldText( fieldScorePlayer[x] );
-	ClearFieldText( fieldMarkPlayer[x] );
   }
 
   for ( x = 0 ; x < NumCubes ; x++ ) {
@@ -238,11 +231,37 @@ static void CrossPlayer(Int player) {
   Int y;
   y = 52 + 6 + player * 10;
   WinDrawLine( 40   , y,
-               40+64, y );
+               40+62, y );
+}
+
+static void LeadPlayer(Int player) {
+  VoidHand bmpHandle;
+  BitmapPtr bmpP;
+  Int y;
+  RectangleType r = { {markPlayerX, 0}, {10, 10} };
+
+  y = 52 + player * 10;
+
+
+  if( stor.leader == player ) {
+    bmpHandle = DmGet1Resource('Tbmp', bmpLeaderIcon);
+    
+    bmpP = MemHandleLock( bmpHandle );
+    
+    WinDrawBitmap( bmpP, markPlayerX, y );
+    
+    MemHandleUnlock( bmpHandle );
+  } else {
+    r.topLeft.y = y;
+    WinEraseRectangle( &r, 0 );
+  }
+
 }
 
 void DrawPlayerScore(Short player) {
   Char msg[MaxName];
+  static evenodd = 0;
+  evenodd = !evenodd;
 
   StrIToA( msg, stor.player[player].score );
   SetFieldTextFromStr( fieldScorePlayer[player], msg );
@@ -257,12 +276,7 @@ void DrawPlayerScore(Short player) {
     return;
   }
 
-  if ( player == stor.leader ) {
-    SetFieldTextFromStr( fieldMarkPlayer[player], LeadSymbol );
-    return;
-  }
-
-  ClearFieldText( fieldMarkPlayer[player] );
+  LeadPlayer(player);
 }
 
 

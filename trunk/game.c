@@ -687,9 +687,6 @@ void GameEvents(void)
     EQStatus(2);
 #endif
     AITurn();
-#ifdef DEBUG
-    EQStatus(3);
-#endif
     return;
   }
   

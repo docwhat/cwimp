@@ -109,16 +109,16 @@ ChangeLog:
 
 zip: srczip binzip
 
-srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).src: veryclean ChangeLog
+srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip .info.$(TARGET).$(VERSION).src: veryclean ChangeLog
 	-rm -f $(TARGET).*.src.zip
 	cd .. && \
-	zip -r $(TARGET).$(VERSION).$(LANGUAGE).src.zip \
+	zip -r $(TARGET).$(VERSION).src.zip \
 		cwimp \
 		-x cwimp/CVS/\* -x \*.d
-	mv ../$(TARGET).$(VERSION).$(LANGUAGE).src.zip .
-	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).src
-	echo -e "\nCWimp Source\nVersion $(VERSION)" > \
-	.info.$(TARGET).$(VERSION).$(LANGUAGE).src
+	mv ../$(TARGET).$(VERSION).src.zip .
+#	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).src
+#	echo -e "\nCWimp Source\nVersion $(VERSION)" > \
+#	.info.$(TARGET).$(VERSION).$(LANGUAGE).src
 
 binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).bin:
 	$(MAKE) $(TARGET).$(LANGUAGE).prc ChangeLog
@@ -131,7 +131,7 @@ binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LAN
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
 	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).bin
 	echo -e "\nCWimp\nVersion $(VERSION)" > \
-	.info.$(TARGET).$(VERSION).$(LANGUAGE).bin
+#	.info.$(TARGET).$(VERSION).$(LANGUAGE).bin
 
 
 TAGS: $(SOURCES) $(wildcard *.h)

@@ -44,7 +44,7 @@ void DrawBitmap (Word BitmapID, int formX, int formY)
 	
 /* SetFieldTextFromStr -- Fills a field with a string
  * Args:    
- *     Word     fieldID  -- ID of field to fill, see cwimp.rpc file
+ *     Word     fieldID  -- ID of field to fill, see cwimp.rcp file
  *     CharPtr  strP     -- String to fill ID with
  * Returns:
  *     FieldPtr          -- Ptr to the field set.
@@ -68,7 +68,7 @@ FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP)
 
 /* SetFieldTextFromHandle -- Fills a field with contents of a handle
  * Args:    
- *     Word     fieldID  -- ID of field to fill, see cwimp.rpc file
+ *     Word     fieldID  -- ID of field to fill, see cwimp.rcp file
  *     VoidHand txtH     -- Handle of String to fill ID with
  * Returns:
  *     FieldPtr          -- Ptr to the field set.
@@ -80,7 +80,7 @@ FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH)
   FieldPtr fldP;
 
   fldP = FrmGetObjectPtr(frm, FrmGetObjectIndex(frm, fieldID));
-  ErrNonFatalDisplayIf(!fldP, "missing field");
+  ErrNonFatalDisplayIf(fldP == NULL, "missing field");
   oldTxtH = FldGetTextHandle(fldP);
 
   FldSetTextHandle(fldP, (Handle) txtH);

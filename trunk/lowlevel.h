@@ -28,6 +28,7 @@
 void     DrawBitmap (Word BitmapID, int formX, int formY);
 FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP);
 FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH);
+
 VoidPtr GetObjectPtr (Word objID);
 void     ClearFieldText(Word fieldID);
 
