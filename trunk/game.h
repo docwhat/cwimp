@@ -29,7 +29,7 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 12
+#define storVersion  2
 #define NumCubes     5  // Number of cubes
 #define MaxPlayers   9  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
@@ -50,7 +50,6 @@
 struct Storage {
 
   /* These can stay the same if version doesn't change */
-  Short   version;
   Short   openingroll; /* This value must be beat to get in the game.      */
   Short   winscore;    /* The score that you must beat to start last licks */
   Short   numplayers;  /* The number of players [1-10]                     */

@@ -734,7 +734,8 @@ void LoadCubes() {
 
   x = PrefGetAppPreferences( CREATOR, 0, &stor, &size, true);
   if( (x == noPreferenceFound) || 
-      (stor.version != storVersion) ) {
+      (sizeof(stor) != size ) ||
+      (x != storVersion) ) {
     /* This totally resets the whole game. */
     Defaults();
     ResetCubes();
@@ -746,7 +747,7 @@ void LoadCubes() {
 }
 
 void SaveCubes() {
-  PrefSetAppPreferences( CREATOR, 0, 1, &stor, sizeof(stor), true );
+  PrefSetAppPreferences( CREATOR, 0, storVersion, &stor, sizeof(stor), true );
 }
 
 /* Defaults() -- Resets the game to default status
@@ -755,7 +756,6 @@ void Defaults(void) {
   Word i;
   
   /* These only get set if the storage structures have changed */
-  stor.version = storVersion;
   stor.openingroll = DEFAULT_OPENINGROLL;
   stor.numplayers = 1;
   stor.numcomputers = 0;
