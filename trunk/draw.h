@@ -21,9 +21,6 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
-#include "game.h"
-
-
 // Symbol Font3
 #define BlankSymbol "\22" 
 #define CheckSymbol "\20"
@@ -38,12 +35,6 @@
 //  4 - right double arrow
 //  7 - down arrow
 
-#define CubesLeft   2  // Start Drawing Cubes from here
-#define CubesTop   19  // From the top, remember that the tab is about 15
-#define CubeShift   2  // Space between Cubes
-#define CubeSize   20  // This size Cube should do
-
-
 void DrawIntro();
 void DrawCurrScore();
 void DrawState();
@@ -54,7 +45,11 @@ void DrawBlackCube(Int die);
 void DrawWhiteCube(Int die);
 void CrossCube(Int die);
 
+void DrawPlayers(void);
+void DrawPlayer(Int player);
+#if 0
 void DrawPlayerScore(Short player);
+#endif
 void ClearKeepBits(void);
 void DrawKeepBit(Int die);
 void DrawTopStatusButton();

@@ -31,7 +31,7 @@
  */
 #define storVersion  2
 #define NumCubes     5  // Number of cubes
-#define MaxPlayers   9  // Maximum Number of Players
+#define MaxPlayers   8  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
 #define MaxName     32  // Maximum player name size
 

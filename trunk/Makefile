@@ -14,29 +14,31 @@ APPID	:= "CWmp"
 URL 	:= "http://docwhat.gerf.org/cwimp/"
 
 # mystart.c MUST go first
-SOURCES = mystart.c \
+SOURCES = \
 	$(TARGET).c  srand.c lowlevel.c game.c dialog.c draw.c statusmsg.c \
 	ai.c queue.c
-OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
+#OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
+OBJECTS = $(patsubst %.c,objs/%.o, $(SOURCES))
 PREDEPENDS = $(TARGET)Rsc.h
 LIBS =
 
-CC = m68k-palmos-coff-gcc
+CC = m68k-palmos-gcc
 
-DFLAGS = -DDEBUG \
+DFLAGS = -g -DDEBUG \
 	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL
 
+#-nostartfiles 
 CFLAGS = -Wall -O2 $(DFLAGS)\
-	-DLANG=$(LANGUAGE) -nostartfiles \
-	-DVERSION='"$(VERSION)"'
+	-DLANG=$(LANGUAGE) \
+	-DVERSION='"$(VERSION)"' -palmos2
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
 #
 # Debug Rolling turns of 'rigged' rolling
 #-DDEBUGROLL
 
 PILRC		 = pilrc
-OBJRES		 = m68k-palmos-coff-obj-res
-NM		 = m68k-palmos-coff-nm
+OBJRES		 = m68k-palmos-obj-res
+NM		 = m68k-palmos-nm
 SED		 = sed
 BUILDPRC	 = build-prc
 PILOTXFER	 = coldsync -mr
@@ -46,7 +48,6 @@ DEPEND		:= ./depend.sh
 ### This is System Dependent ###
 # Works for Debian, though.
 # See mystart.c for info
-CRT0		:= /usr/m68k-palmos-coff/lib/crt0.o
 
 VERSION=$(shell $(FIXVERSION) version)
 

@@ -506,7 +506,7 @@ void TurnLogic(Int x) {
 	      // Don't that suck?
 	      stor.leader = -1;
 	    }
-	    DrawPlayerScore( x );
+	    DrawPlayer( x );
 	
     /* There can be only one ... */
 	    x = stor.total;
@@ -534,7 +534,7 @@ void TurnLogic(Int x) {
 	  
 	  stor.leader = stor.currplayer;
 	  /* Clean up old bits */
-	  DrawPlayerScore( lastleader ); 
+	  DrawPlayer( lastleader ); 
 	  DialogOK( frmLeader, stor.currplayer, -1 );
 	} else {
 	  /* Well, we didn't beat the leader... */
