@@ -148,7 +148,7 @@ HELPID HelpAbout
 INFORMATION
 BEGIN
 	TITLE "About"
-	MESSAGE "CWRoller\n" \
+	MESSAGE "CWimp\n" \
 	"Version: $VERSION\n" \
 	"\n" \
 # \366 is umlaut 'o'
@@ -201,44 +201,45 @@ BEGIN
 	BUTTONS "Done" 
 END
 
-##
-##
-##
-ALERT ID calertWhichFlash
-CONFIRMATION
-DEFAULTBUTTON 0
+FORM ID frmNextPlayer AT (30 50 110 85)
+MODAL
+SAVEBEHIND
+HELPID DS_NextPlayer
 BEGIN
-	TITLE "Which Flash?"
-	MESSAGE "Which pair do you wish to become a flash?\n" \
-	        "A: ^1\n" \
-		"B: ^2\n"
-	BUTTONS "A" "B"
+    TITLE "Next Player"
+    FIELD ID fldNextPlayer AT (4 12 102 60) NONEDITABLE FONT 0
+	  MULTIPLELINES
+
+    BUTTON "Okay" ID AUTOID4 AT (3  70 AUTO AUTO)
 END
 
-##
-##
-##
-ALERT ID calertPickFS
-CONFIRMATION
-DEFAULTBUTTON 1
+
+FORM ID frmChooseTwo AT (40 50 100 85)
+MODAL
+SAVEBEHIND
+DEFAULTBTNID btnChooseTwo1
 BEGIN
-	TITLE "Flaming Sun"
-	MESSAGE "You have a Flaming Sun. You may pick any of these values.\n" \
-		"You probably want 10.\n"
-	BUTTONS "5" "10" "Junk"
+    TITLE "Choose"
+    FIELD ID fldChooseTwo AT (2 12 98 60) NONEDITABLE FONT 0
+	  MULTIPLELINES
+
+    BUTTON "Err" ID btnChooseTwo1 AT (6  70 40 AUTO)
+    BUTTON "Err" ID btnChooseTwo2 AT (54 70 40 AUTO)
 END
 
-##
-##
-##
-ALERT ID calertPickScoreFS
-CONFIRMATION
-DEFAULTBUTTON 1
+
+FORM ID frmChooseThree AT (38 40 102 98)
+MODAL
+SAVEBEHIND
+DEFAULTBTNID btnChooseThree1
 BEGIN
-	TITLE "Flaming Sun"
-	MESSAGE "You have a Flaming Sun. You may pick any of these values.\n" \
-		"You probably want 10.\n"
-	BUTTONS "5" "10"
+    TITLE "Choose"
+    FIELD ID fldChooseThree AT (3 12 96 73) NONEDITABLE FONT 0
+	  MULTIPLELINES
+
+    BUTTON "Err" ID btnChooseThree1 AT (3  83 30 AUTO)
+    BUTTON "Err" ID btnChooseThree2 AT (37 83 30 AUTO)
+    BUTTON "Err" ID btnChooseThree3 AT (70 83 30 AUTO)
 END
 
 
@@ -253,17 +254,6 @@ BEGIN
 	BUTTONS "Done"
 END
 
-
-##
-##
-##
-ALERT ID calertNEXTPLAYER
-INFORMATION
-BEGIN
-	TITLE "Next Player's Turn"
-	MESSAGE "It's ^1's turn."
-	BUTTONS "Okay"
-END
 
 ##
 ##

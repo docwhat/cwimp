@@ -1,6 +1,23 @@
 # $Id$
 #
 
+STRING: PickScoreString
+Pick a scoring value for your Flaming Sun.
+.
+
+STRING: PickFlashString
+Pick which Flash you want to complete with your Flaming Sun.
+.
+
+STRING: PickNonScoreString
+Pick a value for your Flaming Sun.
+You can pick junk if you want to be able to roll it again.
+.
+
+STRING: NoneString
+None
+.
+
 DS_MustClearFlash: Must Clear Flash
 In a previous turn you rolled a Flash
 (a three of a kind).
@@ -19,8 +36,19 @@ rolling at least one more time.
 .
 
 
+STRING: NextPlayerString
+%s's turn is over.
+
+It is now %s's turn.
+.
+
+STRING: NextSoloPlayerString
+It's time for your next turn.
+.
+
 DS_NextPlayer: %s's Turn
 It is the next player's turn.
+The previous player lost their turn or decided to 'stay'.
 
 The new player has used no dice for scoring. No points have been scored for
 this turn yet.

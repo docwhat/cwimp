@@ -56,7 +56,8 @@ $(TARGET).prc: $(GRESOURCES) tver0001.bin Makefile
 %.grc: $(TARGET)
 	$(OBJRES) $^
 
-statusmsg.c statusmsg.rcp: statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
+STATUSMSGS:= statusmsgstrings.h statusmsg.c statusmsg.rcp
+$(STATUSMSGS): statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
 	$(MKSTATUSMSG) $<
 
 tver0001.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp

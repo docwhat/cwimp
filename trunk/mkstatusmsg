@@ -34,9 +34,13 @@ if( ! defined $text or ! -f $text ) {
 my $base = "statusmsg";
 
 my $cfile	= "$base.c";
+my $sfile	= "$base" . "strings.h";
 my $rcpfile	= "$base.rcp";
     
 open( IN, "$text" ) or die "Unable to read $text: $!";
+my $Defines = "#ifndef _VARIOUS_STRINGS_H_\n" .
+    "#define _VARIOUS_STRINGS_H_\n\n";
+
 my $DrawStatus = "#include <Pilot.h>\n" . 
     "#include <System/SysAll.h>\n" . 
     "#include <UI/UIAll.h>\n" .
@@ -66,29 +70,38 @@ while (my $line = <IN>)
 	my $tag 	= $1;
 	my $status	= $2;
 	$status =~ s/\"/\\\"/g;
-	if( $tag =~ /DS_NextPlayer/ ) {
+	my $result;
+
+	if( $tag =~ /STRING/ ) {
+	    $result = \$Defines;
+	    $$result .= "#define $status \"";
+	} elsif( $tag =~ /DS_NextPlayer/ ) {
 	    $DrawStatus .= "  case $tag:\n" . 
 		"\tStrPrintF( msg, \"$status\", " .
 		"stor.player[stor.currplayer].name );\n" .
 		"\tSetFieldTextFromStr( statusLine, msg ); " . 
 		"break;\n";
+	    $result = \$Strings;
+	    $$result .= "STRING $tag \"";
 	} else {
 	    $DrawStatus .= "  case $tag: SetFieldTextFromStr( " .
 		"statusLine, \"$status\" ); break;\n";
+	    $result = \$Strings;
+	    $$result .= "STRING $tag \"";
 	}
-	$Strings .= "STRING $tag \"";
 	while ( my $newline = <IN> ) {
 	    chomp $newline;
 	    last if ( $newline =~ /^\./ );
 	    if( $newline =~ /^\s*$/ ) {
-		$Strings =~ s/\s$//;
-		$Strings .= "\\n\\n";
+		$$result =~ s/\s$//;
+		$$result .= "\\n\\n";
 		next;
 	    }
-	    $Strings .= $newline . " ";
+	    $$result .= $newline . " ";
 	}
-	$Strings =~ s/\s$//;
-	$Strings .= "\"\n\n";
+	$$result =~ s/\s$//;
+	$$result .= "\"\n\n";
+
     }
     
 }
@@ -96,10 +109,19 @@ close( IN );
 
 $DrawStatus .= "  default: ClearFieldText( statusLine ); break;\n}\n}\n\n";
 
+my $notice = "/* This is an automagically generate file. Don't Edit */\n";
+
 open( OUT, ">$cfile" ) or die "Unable to write to `$cfile`: $!";
+print OUT $notice;
 print OUT $DrawStatus;
 print OUT $DialogStatus;
 close OUT or die "Unable to close $cfile: $!";
+
+open( OUT, ">$sfile" ) or die "Unable to write to '$sfile': $!";
+print OUT $notice;
+print OUT $Defines;
+print OUT "#endif";
+close OUT or die "Unable to close $sfile: $!";
 
 open( OUT, ">$rcpfile" ) or die "Unable to write to `$rcpfile`: $!";
 print OUT $Strings;

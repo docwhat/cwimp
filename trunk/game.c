@@ -26,6 +26,7 @@
 #include "cwimp.h"
 #include "draw.h"
 #include "statusmsg.h"
+#include "statusmsgstrings.h"
 
 
 #include "game.h"
@@ -62,9 +63,16 @@ int RollCube (void)
   //  static int n = 2;
   //  n++;
   static int n = 1;
-  if( n == 1 ) n = 3 ; else n = 1;
 
-  return n;
+  switch( n++ ) {
+  case 1: return 3;
+  case 2: return 4;
+  case 3: return 4;
+  case 4: return 2;
+  default:  return 2;
+  }
+
+  return 1;
 }
 #else
 int RollCube (void)
@@ -96,8 +104,14 @@ void Roll(void)
 
   if( stor.currplayer < 0 ) {
     // We don't have a game on
+    // We should never get here
     return;
   }
+
+  /* Clear out the score */
+  stor.scorethisroll = 0;
+  stor.scorethisturn = 0;
+  DrawCurrScore();
 
   for (x = 0; x < NumCubes; x++) {
     if (!stor.cube[x].keep) {
@@ -212,14 +226,14 @@ void ScoreRoll() {
 
     // Do we have any pairs to go with our FS?
     if ( P2 ) {
-      Int ret, die;
-      /* ToDo: Use a form that does *not* cover the dice and
-       *       the this roll/turn scores */
-      ret = FrmCustomAlert( calertWhichFlash,
-			    val2name[P1 - 1],
-			    val2name[P2 - 1],
-			    " ");
-      if( ret == 0 ) die = P1;
+      Int  die;
+      Int ret;
+
+      DrawCurrScore(); /* So the player knows the score */
+      ret = DialogChooseTwo( PickFlashString, 
+			     val2name[P1],
+			     val2name[P2] );
+      if( ret == 1 ) die = P1;
       else           die = P2;
       aCounting[die]++;
       BlackDieValue = die;
@@ -294,26 +308,27 @@ void ScoreRoll() {
   if ( FS && !stor.cube[0].keep ) {
     if ( stor.scorethisroll == 0 ) {
       Int ret;
-      Int die = 1;
-      ret = FrmCustomAlert( calertPickScoreFS, " ", " ", " " );
-      /* ToDo: Use a form that does *not* cover the dice and
-       *       the this roll/turn scores */
+      Int die;
 
-      if( ret == 0 ) die = 5;
-      // else defaults to 1 (aka '10')
+      DrawCurrScore(); /* Player has to know the score */
+      ret = DialogChooseTwo( PickScoreString, "10", "5" );
+
+      if( ret == 1 ) die = 1;
+      else die = 5;
 
       aCounting[die]++;
       BlackDieValue = die;
       stor.cube[0].value = die;
     } else {
       Int ret;
-      Int die = 2;
-      ret = FrmCustomAlert( calertPickFS, " ", " ", " " );
-      /* ToDo: Use a form that does *not* cover the dice and
-       *       the this roll/turn scores */
+      Int die;
 
-      if( ret == 0 ) die = 5;
-      else if( ret == 1 ) die = 1;
+      DrawCurrScore(); /* Player has to know the score */
+      ret = DialogChooseThree( PickNonScoreString, "10", "5", NoneString );
+
+      if( ret == 1 ) die = 1;
+      else if( ret == 2 ) die = 5;
+      else die = 2;
       
       if( die != 2 ) {
 	aCounting[die]++;
@@ -427,12 +442,13 @@ void TurnLogic() {
 
 void NextPlayer() {
   Int x;
+  Int prevplayer;
 
-  x = stor.currplayer;
+  prevplayer = stor.currplayer;
 
   while(1) {
     stor.currplayer = (stor.currplayer + 1) % stor.numplayers;
-    if ( x == stor.currplayer ) {
+    if ( prevplayer == stor.currplayer ) {
       /* We've looped around or there is only one player */
       if ( stor.numplayers > 1 ) {
 	/* If there is more than one player, then this guy won */
@@ -454,7 +470,7 @@ void NextPlayer() {
 #endif
   }
 
-  DrawPlayerScore( x );
+  DrawPlayerScore( prevplayer );
   DrawPlayerScore( stor.currplayer );
   
   // Clear scores
@@ -474,13 +490,7 @@ void NextPlayer() {
   }
   
   if ( stor.flags & flag_NextPlayerPopUp ) {
-    /* ToDo: Use a form that does *not* cover the dice and
-     *       the this roll/turn scores */
-    /* ToDo: The form needs an 'i' pointing to the DS_NextPlayer
-     * FrmHelp string, too */
-    FrmCustomAlert( calertNEXTPLAYER,
-		    stor.player[stor.currplayer].name,
-		    " ", " ");
+    DialogNextPlayer( prevplayer, stor.currplayer );
     DrawState();
   } else {
     SetStatus( DS_NextPlayer );
@@ -545,7 +555,7 @@ void Defaults(void) {
   stor.numplayers = 1;
   stor.numcomputers = 0;
   stor.winscore = 300;
-  stor.flags = 0;
+  stor.flags = 0 | flag_NextPlayerPopUp;
   
   // Clear player names and scores.
   StrCopy( stor.player[0].name, "Scooter" );

@@ -19,8 +19,8 @@
 
  */
 
-#ifndef _CWROLLER_H_
-#define _CWROLLER_H_
+#ifndef _CWIMP_H_
+#define _CWIMP_H_
 
 #include "resource.h"
 

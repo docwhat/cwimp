@@ -87,6 +87,7 @@ FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH)
   oldTxtH = FldGetTextHandle(fldP);
 
   FldSetTextHandle(fldP, (Handle) txtH);
+  // FldEraseField( fldP );
   FldDrawField(fldP);
 
   if (oldTxtH)

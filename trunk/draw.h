@@ -64,6 +64,10 @@ void DrawStayButton();
 
 void DialogNewGame();
 void DialogVarients();
+void DialogNextPlayer( Int prev, Int next );
+Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo );
+Int DialogChooseThree( CharPtr fText, CharPtr bOne, CharPtr bTwo,
+		      CharPtr bThree );
 void DialogPreferences();
 Boolean DialogGetNames();
 

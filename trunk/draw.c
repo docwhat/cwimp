@@ -28,6 +28,7 @@
 #include "lowlevel.h"
 #include "game.h"
 #include "statusmsg.h"
+#include "statusmsgstrings.h"
 
 #include "draw.h"
 
@@ -155,7 +156,7 @@ void DrawState()
   if ( stor.currplayer > -1 ) {
 	// If there is a game on, fill in the names and scores
 	for ( ; x < stor.numplayers ; x++ ) {
-	  StrPrintF( msg, "%d. %s", x+1, stor.player[x].name ); 
+	  StrPrintF( msg, "%d. %s", x+1, stor.player[x].name, NULL ); 
 	  SetFieldTextFromStr( fieldNamePlayer[x], msg );
 	  DrawPlayerScore( x );
 	}
@@ -445,6 +446,133 @@ void DialogVarients() {
   // We don't care, as long as the dialog quits.
 }
 
+
+void DialogNextPlayer( Int prev, Int next ) {
+  FormPtr prevForm, frm;
+  Word hitButton;
+  Char msg[(MaxName * 2) + 64];
+  
+  // Save previous form
+  prevForm = FrmGetActiveForm();
+  // Init new form
+  frm = FrmInitForm( frmNextPlayer );
+
+  // Set it
+  FrmSetActiveForm(frm);
+
+  // Fill it...
+  if( stor.numplayers > 1 ) {
+    StrPrintF( msg, NextPlayerString,
+	       stor.player[prev].name,
+	       stor.player[next].name,
+	       NULL);
+    SetFieldTextFromStr( fldNextPlayer, msg );
+  } else {
+    SetFieldTextFromStr( fldNextPlayer, NextSoloPlayerString );
+  }
+
+  // Set the handler
+  // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
+
+  hitButton = FrmDoDialog(frm);
+
+  // Erase old field
+  ClearFieldText( fldNextPlayer );
+
+  // Restore previous form.
+  if (prevForm) {
+	FrmSetActiveForm(prevForm);
+	FrmDrawForm(prevForm);
+  }
+
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
+
+  // We don't care about which button, there is only one.
+}
+
+
+Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
+  FormPtr prevForm, frm;
+  Word hitButton;
+  
+  // Save previous form
+  prevForm = FrmGetActiveForm();
+  // Init new form
+  frm = FrmInitForm( frmChooseTwo );
+
+  // Set it
+  FrmSetActiveForm(frm);
+
+  // Fill it...
+  CtlSetLabel( GetObjectPtr(btnChooseTwo1), bOne );
+  CtlSetLabel( GetObjectPtr(btnChooseTwo2), bTwo );
+  SetFieldTextFromStr( fldChooseTwo, fText );
+
+  // Set the handler
+  // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
+
+  hitButton = FrmDoDialog(frm);
+
+  // Erase old field
+  ClearFieldText( fldChooseTwo );
+
+  // Restore previous form.
+  if (prevForm) {
+	FrmSetActiveForm(prevForm);
+	FrmDrawForm(prevForm);
+  }
+
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
+
+  if( hitButton == btnChooseTwo1 ) return 1;
+  if( hitButton == btnChooseTwo2 ) return 2;
+  return ( -1 );
+}
+
+
+Int DialogChooseThree( CharPtr fText,
+			CharPtr bOne, CharPtr bTwo, CharPtr bThree ) {
+  FormPtr prevForm, frm;
+  Word hitButton;
+  
+  // Save previous form
+  prevForm = FrmGetActiveForm();
+  // Init new form
+  frm = FrmInitForm( frmChooseThree );
+
+  // Set it
+  FrmSetActiveForm(frm);
+
+  // Fill it...
+  CtlSetLabel( GetObjectPtr(btnChooseThree1), bOne );
+  CtlSetLabel( GetObjectPtr(btnChooseThree2), bTwo );
+  CtlSetLabel( GetObjectPtr(btnChooseThree3), bThree );
+  SetFieldTextFromStr( fldChooseThree, fText );
+
+  // Set the handler
+  // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
+
+  hitButton = FrmDoDialog(frm);
+
+  // Erase old field
+  ClearFieldText( fldChooseThree );
+
+  // Restore previous form.
+  if (prevForm) {
+	FrmSetActiveForm(prevForm);
+	FrmDrawForm(prevForm);
+  }
+
+  // Delete the form, we're not using it
+  FrmDeleteForm(frm);
+
+  if( hitButton == btnChooseThree1 ) return 1;
+  if( hitButton == btnChooseThree2 ) return 2;
+  if( hitButton == btnChooseThree3 ) return 3;
+  return ( -1 );
+}
 
 
 void DialogPreferences() {
