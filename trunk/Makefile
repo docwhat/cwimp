@@ -91,27 +91,27 @@ ChangeLog:
 
 zip: srczip binzip
 
-$(TARGET).$(VERSION).src.zip srczip $(TARGET).$(VERSION).src.zip.dsc: veryclean ChangeLog
+srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip $(TARGET).$(VERSION).$(LANGUAGE).src.zip.dsc: veryclean ChangeLog
 	-rm -f $(TARGET).*.src.zip
 	cd .. && \
-	zip -r $(TARGET).$(VERSION).src.zip \
+	zip -r $(TARGET).$(VERSION).$(LANGUAGE).src.zip \
 		cwimp \
 		-x cwimp/CVS/\* -x \*.d
-	mv ../$(TARGET).$(VERSION).src.zip .
+	mv ../$(TARGET).$(VERSION).$(LANGUAGE).src.zip .
 	echo "(<a href=\"$(URL)\">$(TARGET)</A> source, version $(VERSION))" > \
-	$(TARGET).$(VERSION).src.zip.dsc
+	$(TARGET).$(VERSION).$(LANGUAGE).src.zip.dsc
 
-$(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc:
+binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip.dsc:
 	$(MAKE) $(TARGET).prc ChangeLog
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
-	zip -r $(TARGET).$(VERSION).bin.zip \
+	zip -r $(TARGET).$(VERSION).$(LANGUAGE).bin.zip \
 		cwimp/$(TARGET).prc \
 		cwimp/ChangeLog \
 		cwimp/README
-	mv ../$(TARGET).$(VERSION).bin.zip .
+	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
 	echo "(<a href=\"$(URL)\">$(TARGET)</A> binary, version $(VERSION))" > \
-	$(TARGET).$(VERSION).bin.zip.dsc
+	$(TARGET).$(VERSION).$(LANGUAGE).bin.zip.dsc
 
 TAGS: $(SOURCES) $(wildcard *.h)
 	etags $^
