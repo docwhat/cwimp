@@ -91,7 +91,8 @@ static Boolean MainFormHandleEvent (EventPtr e)
       switch(e->data.ctlSelect.controlID) {
 
       case btn_Stay:
-        if( EQIsEmpty() ) Stay();
+        ShowButtons(false);
+        Stay();
 	break;
 
       case btn_Info:
@@ -103,7 +104,8 @@ static Boolean MainFormHandleEvent (EventPtr e)
 	if ( stor.currplayer < 0 ) {
 	  DialogNewGame();
 	} else {
-	  if( EQIsEmpty() ) Roll();
+          ShowButtons(false);
+          Roll();
 	}
 	break;
 
@@ -195,7 +197,7 @@ static void EventLoop(void)
 
   do {
     if( EQIsEmpty() ) {
-      EvtGetEvent(&e, 1 * SysTicksPerSecond());
+      EvtGetEvent(&e, .66 * SysTicksPerSecond());
     } else {
       EvtGetEvent(&e, .05 * SysTicksPerSecond());
     }

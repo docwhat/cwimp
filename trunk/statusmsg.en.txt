@@ -46,6 +46,10 @@ DEFINE: SixString
 six
 .
 
+# This should be small
+DEFINE: NotApplicableString
+-N/A-
+.
 
 CSTRING: LastLicksString
 Last Licks!
@@ -111,15 +115,26 @@ By default you must score in one turn 35 points or more before
 you can 'stay'.
 .
 
-DS_MustClearFlash: Must Clear Flash
-In a previous turn you rolled a Flash
-(a three of a kind).
+DS_MustClearFlash: Futtless Rule
+The Futtless Rule states that you must clear all Flashes must
+be cleared.
 
-In order to clear this Flash and continue with your turn, all the dice
-of your next roll must be different from the Flash.  If any dice match
-the Flash, then that roll doesn't count and you will have to roll again.
+In a previous turn you, rolled a Flash or three of a kind.
+
+In order to clear this Flash and continue with your turn,
+none of the dice may be the same as your Flash.
+If any dice match the Flash, then that
+roll doesn't count and you will have to roll again.
 .
 
+DS_FreightTrain: Freight Train
+If all five dice are the same, then you have scored a Freight Train
+and your score is 100 times the type of die you rolled!  You
+must roll again as according to You May Not Want To But You Must.
+
+If you rolled all sixes, then you'd instantly win.  If you roll all 10s,
+then you'd go SuperNova and loose!
+.
 
 DS_YMNWTBYM: Y.M.N.W.T.B.Y.M.
 You May Not Want To But You Must:

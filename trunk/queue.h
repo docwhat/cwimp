@@ -38,5 +38,6 @@ void EQInit(void);
 void EQAdd(void (*func)(Int), Int data);
 Boolean EQRunNext(void);
 Boolean EQIsEmpty(void);
+void EQNOP(Int x);
 
 #endif

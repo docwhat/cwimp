@@ -61,6 +61,7 @@ void DrawState();
 void DrawCube(Int die);
 void DrawBlackCube(Int die);
 void DrawWhiteCube(Int die);
+void CrossCube(Int die);
 
 void DrawPlayerScore(Short player);
 void ClearKeepBits(void);
@@ -78,5 +79,8 @@ void DialogPreferences();
 Boolean DialogGetNames();
 
 void ShowButtons(Int show);
+#ifdef DEBUG
+void EQStatus(Int x);
+#endif
 
 #endif

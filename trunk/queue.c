@@ -79,3 +79,10 @@ Boolean EQIsEmpty(void)
   if( EQueue->next == NULL ) return true;
   return false;
 }
+
+
+void EQNOP(Int x)
+{
+  /* Does Nothing! */
+  return;
+}

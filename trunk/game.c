@@ -73,17 +73,19 @@ Boolean FreezeBit; // Freeze animations, etc. till this is done.
  *     int   -- Number from 1 to 6 inclusive
  */
 #ifdef DEBUGROLL
-#warning The game is unplayable with DEBUG on
+#warning The game is unplayable with DEBUGROLL on
 int RollCube (void)
 {
   static int n = 1;
+  static q = 2;
 
   switch( n++ ) {
-  case 1: return 2;
-  case 2: return 2;
-  case 3: return 2;
-  case 4: return 2;
-  default: n=1; return 2; break;
+  case 1: return q;
+  case 2: return q;
+  case 3: return q;
+  case 4: return q;
+  default: n=1; q+=2; if( q > 6 ) q = 2;
+    return q; break;
   }
 
   return n;
@@ -127,8 +129,6 @@ static void unsuspend( Short p ) {
 }
 
 
-
-
 /* Roll -- Rolls all 5 and draws them.
  * Args:    None
  * Returns: None
@@ -145,11 +145,10 @@ void Roll(void)
 
   /* Clear out the score */
   stor.scorethisroll = 0;
+  stor.YMNWTBYM = false;
   DrawCurrScore();
 
   ClearKeepBits();
-
-  EQAdd( ShowButtons, false );
 
   for (x = 0; x < NumCubes; x++) {
     if (!stor.cube[x].keep) {
@@ -213,20 +212,25 @@ void ScoreRoll(Int x) {
     } // If it's not kept
   }
 
-  // Futless
-  // We are FUTLESS, must clear flash
+  // Futtless
+  // We are FUTTLESS, must clear flash
   if ( stor.flash ) {
     if ( aCounting[stor.flash] == 0 ) {
       // Clear the flash
       stor.flash = 0;
     } else {
-      // No score
+      // No score - Turn on buttons again
+      for( x = 0; x < NumCubes; x++ ) {
+        if( stor.cube[x].value == stor.flash ) {
+          EQAdd( CrossCube, x );
+        }
+      }
       EQAdd( ShowButtons, (Int)true );
       return;
     }
   }
 
-  /**  Freight Train  **/
+  /**  Freigth Train  **/
   // If a value in our counting array is equal to NumCubes,
   // then we have a freight train. Which cube we use doesn't
   // matter, if all are the same.
@@ -244,55 +248,54 @@ void ScoreRoll(Int x) {
     
     AddScore( x * 100 );
     stor.YMNWTBYM = true;
+    stor.status = DS_FreightTrain;
     for ( x = 0 ; x < NumCubes ; x++ ) 
       stor.cube[x].keep = true;
-   }
-
-
-  // Look for Flashes (round one, no FlamingSuns)
-  for ( x = 1 ; x <= 6 ; x++ ) {
-    if ( aCounting[x] >= 3 ) {
-      stor.flash = x;
-    }
-  }
-	  
-  // Fill P1 & P2
-  if ( FS && !stor.flash ) {
-    // Look for pairs
+  } else {
+    // Look for Flashes (round one, no FlamingSuns)
     for ( x = 1 ; x <= 6 ; x++ ) {
-      if ( aCounting[x] == 2 ) {
-	if ( !P1 )
-	  P1 = x;
+      if ( aCounting[x] >= 3 ) {
+        stor.flash = x;
+      }
+    }
+	  
+    // Fill P1 & P2
+    if ( FS && !stor.flash ) {
+      // Look for pairs
+      for ( x = 1 ; x <= 6 ; x++ ) {
+        if ( aCounting[x] == 2 ) {
+          if ( !P1 )
+            P1 = x;
 	else
 	  P2 = x;
+        }
+      } 
+
+      // Do we have any pairs to go with our FS?
+      if ( P2 ) {
+        Int  die;
+        
+        DrawCurrScore(); /* So the player knows the score */
+        die = DialogChooseTwo( PickFlashString, P1, P2 );
+        
+        aCounting[die]++;
+        BlackDieValue = die;
+        stor.cube[0].value = die;
+      } else if ( P1 ) {
+        // No choice. Flaming Sun *must* finish the Flash.
+        aCounting[P1]++;
+        BlackDieValue = P1;
+        stor.cube[0].value = P1;
       }
-    } 
-
-    // Do we have any pairs to go with our FS?
-    if ( P2 ) {
-      Int  die;
-
-      DrawCurrScore(); /* So the player knows the score */
-      die = DialogChooseTwo( PickFlashString, P1, P2 );
       
-      aCounting[die]++;
-      BlackDieValue = die;
-      stor.cube[0].value = die;
-    } else if ( P1 ) {
-      // No choice. Flaming Sun *must* finish the Flash.
-      aCounting[P1]++;
-      BlackDieValue = P1;
-      stor.cube[0].value = P1;
-    }
-
-    // Look for Flashes (round two, with FlamingSuns)
-    for ( x = 1 ; x <= 6 ; x++ ) {
-      if ( aCounting[x] == 3 ) {
-	stor.flash = x;
+      // Look for Flashes (round two, with FlamingSuns)
+      for ( x = 1 ; x <= 6 ; x++ ) {
+        if ( aCounting[x] == 3 ) {
+          stor.flash = x;
+        }
       }
-    }
-
-  } // If FlamingSun
+    } /* If !FreightTrain */
+  } /* If FlamingSun */
   
 
 
@@ -449,7 +452,7 @@ void ScoreRoll(Int x) {
     EQAdd( DrawKeepBit, x );
   }
   EQAdd( TurnLogic, 0);
-}
+} /* End: ScoreRoll() */
 
 
 void TurnLogic(Int x) {
@@ -551,9 +554,8 @@ void TurnLogic(Int x) {
   }
 
   DrawStayButton();
-  CheckAI();
   return;
-}
+} /* End: TurnLogic() */
 
 void NextPlayer(Int x) {
   /* I don't use X, but it's needed for the queue,
@@ -603,10 +605,16 @@ void NextPlayer(Int x) {
       DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
     } else {
       if( !StayBit ) {
-	SetStatus( DS_TurnOver );
-	SysTaskDelay( 1 * SysTicksPerSecond() );
+	EQAdd( SetStatus, DS_TurnOver );
+	EQAdd( EQNOP, 0 );
+	EQAdd( EQNOP, 0 );
+	EQAdd( EQNOP, 0 );
+	EQAdd( EQNOP, 0 );
+	EQAdd( EQNOP, 0 );
+        EQAdd( SetStatus, DS_NextPlayer );
+	//SysTaskDelay( 1 * SysTicksPerSecond() );
       }
-      SetStatus( DS_NextPlayer );
+      EQAdd( SetStatus, DS_NextPlayer );
     }
   }
 
@@ -625,30 +633,49 @@ void NextPlayer(Int x) {
 
   DrawState();
   ShowButtons(true);
-
-  /* so we can process AI stuff */
-  CheckAI();
 }
 
 void GameEvents(void)
 {
-  static counter = 0;
-
-  // We do *nothing* when we're frozen.
+  /* We do *nothing* when we're frozen. */
   if( FreezeBit ) return;
 
-  if( EQRunNext() ) return;
+  /* If there is something to do, do it and return */
+  if( EQRunNext() ) {
+#ifdef DEBUG
+    EQStatus(0);
+#endif
+    return;
+  }
 
-  if( (stor.flags & flag_PendingAI) &&
-      (counter++ >= 8) ){
+  /* Flash Futtless Flashes */
+  if( stor.flash && stor.scorethisroll == 0 ) {
+    Byte x;
+    for( x = 0; x < NumCubes ; x++ ) {
+      if( !stor.cube[x].keep &&
+          stor.cube[x].value == stor.flash ) {
+        CrossCube(x);
+      }
+    }
+  }
+
+  if( stor.flags & flag_PendingAI ) {
     /* Turn This Off! */
     SetFlag( flag_PendingAI, false );
+#ifdef DEBUG
+    EQStatus(2);
+#endif
     AITurn();
-    counter = 0;
+#ifdef DEBUG
+    EQStatus(3);
+#endif
     return;
   }
   
-  if( counter > 8 ) counter = 0;
+#ifdef DEBUG
+  EQStatus(1);
+#endif
+  CheckAI();
   return;
 }
 
@@ -691,8 +718,6 @@ void LoadCubes() {
     Defaults();
     ResetCubes();
   }
-
-  SetFlag( flag_PendingAI, IsAI( stor.currplayer ) );
 
   /* Initialize EventQueue */
   EQInit();
@@ -756,7 +781,7 @@ void ResetCubes(void)
   FreezeBit = false;
 }			
 
-void SetStatus( UInt status )
+void SetStatus( Int status )
 {
   stor.status = status;
   DrawStatus();

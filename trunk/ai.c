@@ -28,6 +28,7 @@ void CheckAI(void)
   isai = IsAI( stor.currplayer );
 
   SetFlag( flag_PendingAI, isai );
+  if( isai ) SetStatus( DS_Thinking );
 }
 
 

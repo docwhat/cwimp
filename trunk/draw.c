@@ -156,7 +156,7 @@ static Char **val2name = (CharPtr[]) { NoneString,
                                        SixString };
 
 /*
- * This function is based heavily on the DrawIntro and DrawBlinds
+ * This function is based on the DrawIntro and DrawBlinds
  * functions in Vexed, a Cool GPL Palm Game by
  * "james mccombe" <cybertube@earthling.net>
  * http://spacetube.tsx.org
@@ -176,18 +176,17 @@ DrawIntro () {
   Title = MemHandleLock (Title_Handle);
 
   // draw the bitmap ( 160x160 )
-  // WinDrawBitmap (Title, 22, 52);
   WinDrawBitmap (Title, 0, 0);
 
   /* Text Strings */
   StrPrintF (text, IntroVersionString, VERSION);
-  WinDrawChars (text, StrLen (text), 5, 8);
+  WinDrawChars (text, StrLen (text), 5, 6);
 
   StrPrintF (text, IntroForPalmString, 153);
   WinDrawChars (text, StrLen (text), 52, 50);
 
   StrPrintF (text, IntroTapHereString, VERSION);
-  WinDrawChars (text, StrLen (text), 45, 90);
+  WinDrawChars (text, StrLen (text), 45, 85);
 
   // unload the bitmap from memory (unlock)
   MemHandleUnlock (Title_Handle);
@@ -204,34 +203,38 @@ DrawIntro () {
   if( peny < 160 ) {
     // DrawBlinds
     int i, x;
-    RectangleType r;
     float delay;
 
     EvtFlushPenQueue();
-    
+
     delay = .01 * SysTicksPerSecond();
 
-    /* Bottom */
-    r.extent.y = 159;
-    r.topLeft.y = 0; // BLOCKSIZE
-    
-    for (i = 0; i <= 16; i++) {
-      r.extent.x = i;
-      for (x = 0; x < 160; x += 16) {
-        r.topLeft.x = x;
-        WinEraseRectangle (&r, 0);
+    for (i = 0; i < 16; i++) {
+      for (x = i; x < 160; x += 16) {
+        WinEraseLine( 0,x, 159,x );
       }
       SysTaskDelay(delay);
     }
-  }
+  } /* if( peny < 160 ) */
 
 }
-
 
 void DrawState()
 {
   Short x;
   Char msg[MaxName+4];
+
+#ifdef DEBUG
+  EQStatus(0);
+  EQStatus(1);
+  EQStatus(2);
+  EQStatus(3);
+
+  EQStatus(0);
+  EQStatus(1);
+  EQStatus(2);
+  EQStatus(3);
+#endif
 
   DrawCurrScore();
 
@@ -253,8 +256,8 @@ void DrawState()
   }
 
   for ( x = 0 ; x < NumCubes ; x++ ) {
-    EQAdd( DrawCube, x );
-    EQAdd( DrawKeepBit, x );
+    DrawCube(x);
+    DrawKeepBit(x);
   }
 
   DrawStayButton();
@@ -276,7 +279,8 @@ void ClearKeepBits(void)
 void DrawKeepBit(Int die)
 {
   
-  if (stor.cube[die].keep && stor.cube[die].value > 0) {
+  if ( stor.YMNWTBYM ||
+       (stor.cube[die].keep && stor.cube[die].value > 0) ){
 	SetFieldTextFromStr(fieldKeepBit[die],
 						CheckSymbol);
   } else {
@@ -315,7 +319,7 @@ void DrawCurrScore()
   Char msg[6];
 
   if ( stor.flash && stor.scorethisroll == 0 ) {
-	StrCopy( msg, "-N/A-" );
+	StrCopy( msg, NotApplicableString );
   } else {
 	StrIToA( msg, stor.scorethisroll );
   }
@@ -344,6 +348,19 @@ static void GreyCube(Int die)
                  i+xoff-1, 18+yoff);
   }
 
+}
+
+void CrossCube(Int die)
+{
+  Int yoff, xoff;
+  yoff = CubesTop + (CubeSize + CubeShift) * die;
+  xoff = CubesLeft;
+
+  WinInvertLine(  2 +xoff,  2 +yoff,
+                 17 +xoff, 17 +yoff);
+
+  WinInvertLine(  2 +xoff, 17 +yoff,
+                 17 +xoff,  2 +yoff);
 }
 
 void DrawCube(Int die)
@@ -430,6 +447,12 @@ void DrawStayButton() {
     goto end;
   }
 
+  if( stor.status == DS_FreightTrain && stor.scorethisroll != 0 ) {
+    status = stor.status;
+    stay = false;
+    goto end;
+  }
+
   if( stor.flash ) {
     stay = false;
     status = DS_MustClearFlash;
@@ -479,8 +502,8 @@ void DrawStayButton() {
 
   /* Actually do what we need to do */
  end:
-  ShowControl( btn_Stay, stay );
   ShowControl( btn_Roll, 1 );
+  ShowControl( btn_Stay, stay );
   SetFlag( flag_CanStay, stay );
   SetStatus( status );
 }
@@ -585,7 +608,6 @@ void DialogNewGame() {
   if ( hitButton == btn_OK_frmNewGame ) {
     NewGame();
   }
-
 
   DrawState();
 }
@@ -1247,7 +1269,23 @@ static void ShowControl(Word objID, Boolean enable) {
 
 void ShowButtons(Int show) {
   ShowControl(btn_Roll, (Boolean)show);
+  if( show && (stor.flags & flag_CanStay) ) {
+    ShowControl(btn_Stay, true);
+  } else {
+    ShowControl(btn_Stay, false);
+  }
 }
+
+#ifdef DEBUG
+void EQStatus(Int x)
+{
+  WinInvertLine( 0 + x*3, 159,
+                 1 + x*3, 159);
+  WinDrawLine(   0 + x*3, 158,
+                 1 + x*3, 158);
+}
+
+#endif
 
 // Local Variables:
 // mode:c

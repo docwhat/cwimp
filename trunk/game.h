@@ -118,7 +118,7 @@ void AddScore(Short points);
 void ScoreRoll(Int nop); /* nop is junk */
 void TurnLogic(Int nop); /* nop is junk */
 
-void SetStatus( UInt status );
+void SetStatus( Int status );
 
 void NextPlayer(Int nop); /* nop is junk */
 
