@@ -144,6 +144,7 @@ install: $(TARGET).$(LANGUAGE).prc
 
 setver:
 	vim version
+	cvs commit -m "Upgrade to new version" version
 	cvs tag `tail -n 1 version | sed 's/[ \.]/\-/g'`
 
 .PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res \
