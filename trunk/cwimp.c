@@ -24,6 +24,7 @@
 #include "statusmsg.h"
 #include "game.h"
 #include "draw.h"
+#include "dialog.h"
 #include "cwimp.h"
 #include "queue.h"
 

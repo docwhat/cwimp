@@ -35,7 +35,7 @@ void CheckAI(void)
 void AITurn(void)
 {
   /* If we have no choice... */
-  if( ! ( stor.flags & flag_CanStay ) ) {
+  if( ! GetFlag(flag_CanStay) ) {
     Roll();
     return;
   }

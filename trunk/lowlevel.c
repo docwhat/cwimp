@@ -19,9 +19,6 @@
 
 */
 
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
-
 #include "lowlevel.h"
 
 
@@ -95,6 +92,16 @@ FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH)
 
   return fldP;
 }
+
+
+VoidPtr GetObjectPtr (Word objID) {
+  FormPtr frm;
+  
+  frm = FrmGetActiveForm();
+  
+  return (FrmGetObjectPtr (frm, FrmGetObjectIndex (frm, objID)));
+}
+
 
 
 void ClearFieldText(Word fieldID)

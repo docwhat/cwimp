@@ -17,18 +17,32 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
- */
+*/
+#ifndef _DIALOG_H_
+#define _DIALOG_H_
 
-#ifndef _LOWLEVEL_H_
-#define _LOWLEVEL_H_
+#include "game.h"
 
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
+// Symbol Font3
+#define BlankSymbol "\22" 
+#define CheckSymbol "\20"
+#define CurrSymbol  "<"
+#define OutSymbol   "x"
+#define LeadSymbol  "L"
+// 20 - dot
+// 22 - Empty
+// 23 - diamond
+// 26 - check
+//  3 - left double arrow
+//  4 - right double arrow
+//  7 - down arrow
 
-void     DrawBitmap (Word BitmapID, int formX, int formY);
-FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP);
-FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH);
-VoidPtr GetObjectPtr (Word objID);
-void     ClearFieldText(Word fieldID);
+void DialogNewGame();
+void DialogVariants();
+void DialogOK( Word frm, Short player1, Short player2 );
+Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
+Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
+void DialogPreferences();
+Boolean DialogGetNames();
 
 #endif

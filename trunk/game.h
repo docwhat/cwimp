@@ -29,11 +29,11 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 11
-#define NumCubes    5  // Number of cubes
-#define MaxPlayers 10  // Maximum Number of Players
+#define storVersion 12
+#define NumCubes     5  // Number of cubes
+#define MaxPlayers   9  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
-#define MaxName    32  // Maximum player name size
+#define MaxName     32  // Maximum player name size
 
 /* 
  * Defaults
@@ -103,16 +103,21 @@ struct Storage {
 #define flag_nTW             (1<<  3)
 #define flag_Suspend         (1<<  4)
 /* Preferences: */
+#define flag_NoSound         (1<<  6)
 #define flag_NextPlayerPopUp (1<<  7)
 /* Specials */
 #define flag_PendingAI       (1<<  8)
 #define flag_CanStay         (1<<  9)
 #define flag_FreightTrain    (1<< 10)
 
+#define SND_ERASE_CUBE	1
+#define SND_DRAW_CUBE	2
+
 extern struct Storage stor;
 
 extern Boolean StayBit;
 extern Boolean FreezeBit;
+extern UInt SoundAmp;
 
 void LoadCubes(void);
 void SaveCubes(void);
@@ -138,5 +143,6 @@ void PlayerLost( Short player, CharPtr ptrString );
 
 Boolean IsAI(Int player);
 void SetFlag(Int f, Boolean b);
+inline Int GetFlag( Int flag );
 
 #endif

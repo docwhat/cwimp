@@ -23,35 +23,10 @@
 
 #include "game.h"
 
-// Symbol Font3
-#define BlankSymbol "\22" 
-#define CheckSymbol "\20"
-#define CurrSymbol  "<"
-#define OutSymbol   "x"
-#define LeadSymbol  "L"
-// 20 - dot
-// 22 - Empty
-// 23 - diamond
-// 26 - check
-//  3 - left double arrow
-//  4 - right double arrow
-//  7 - down arrow
-
 #define CubesLeft   2  // Start Drawing Cubes from here
 #define CubesTop   19  // From the top, remember that the tab is about 15
 #define CubeShift   2  // Space between Cubes
 #define CubeSize   20  // This size Cube should do
-
-
-// These const's are initialized in draw.c
-extern const UInt fieldKeepBit[5];
-extern const UInt fieldNamePlayer[MaxPlayers];
-extern const UInt fieldScorePlayer[MaxPlayers];
-extern const UInt fieldMarkPlayer[MaxPlayers];
-extern const UInt fieldGetNamesPlayer[MaxPlayers];
-extern const UInt fieldGetNamesLabel[MaxPlayers];
-extern const UInt bmpWCube[7];
-extern const UInt bmpBCube[7];   
 
 
 void DrawIntro();
@@ -59,9 +34,7 @@ void DrawCurrScore();
 void DrawState();
 
 void DrawCube(Int die);
-#if 0
-void InvertCube(Int die);
-#endif
+void EraseCube(Int die);
 void DrawBlackCube(Int die);
 void DrawWhiteCube(Int die);
 void CrossCube(Int die);
@@ -73,14 +46,10 @@ void DrawTopStatusButton();
 void DrawRollButton();
 void DrawStayButton();
 
-void DialogNewGame();
-void DialogVariants();
-void DialogOK( Word frm, Short player1, Short player2 );
-Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
-Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
-void DialogPreferences();
-Boolean DialogGetNames();
 
+void PlaySound(Int type);
+
+void ShowControl(Word objID, Boolean enable);
 void ShowButtons(Int show);
 #ifdef DEBUG
 void EQStatus(Int x);

@@ -24,6 +24,7 @@
 
 #include "cwimp.h"
 #include "draw.h"
+#include "dialog.h"
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
 #include "srand.h"
@@ -46,7 +47,6 @@ Char **PlayerDefNames = (CharPtr[]){
                            "Ms. Piggy",
                            "Animal",
                            "Rowlf",
-                           "Robin",
                            "Statler",
                            "Waldorf" };
 
@@ -58,14 +58,14 @@ Char **ComputerDefNames = (CharPtr[]){
                              "Holly",
                              "Queeg",
                              "Robbie",
-                             "DeepThought",
                              "Guardian",
                              "Vger" };
 
 
 struct Storage stor;
-Boolean StayBit; // Normally false, unless player wants to stay
+Boolean StayBit; // Normally false, unless player wants to stay.
 Boolean FreezeBit; // Freeze animations, etc. till this is done.
+UInt SoundAmp; // Set according to sound preferences.
 
 /* RollCube -- Returns a random number from 1 to 6 inclusive.
  * Args: None
@@ -150,16 +150,31 @@ void Roll(void)
 
   ClearKeepBits();
 
-  for (x = 0; x < NumCubes; x++) {
+  /* Clear the dice, mark old ones */
+  for(x = 0; x < NumCubes; x++ ) {
     if (!stor.cube[x].keep) {
-      stor.cube[x].value = RollCube();
-      EQAdd( DrawWhiteCube, x );
-      EQAdd( DrawBlackCube, x );
-      EQAdd( DrawCube, x );
+      EQAdd( EraseCube, x );
     } else {
       stor.cube[x].value = 0 - abs(stor.cube[x].value);
       EQAdd( DrawCube, x );
     }
+  }
+
+  /* Roll the new dice */
+  for (x = 0; x < NumCubes; x++) {
+
+    if (stor.cube[x].keep) continue;
+
+    stor.cube[x].value = RollCube();
+
+    if( x == 0 ) {
+      EQAdd( DrawBlackCube, x );
+      EQAdd( DrawWhiteCube, x );
+    } else {
+      EQAdd( DrawWhiteCube, x );
+      EQAdd( DrawBlackCube, x );
+    }
+    EQAdd( DrawCube, x );
   }
 
   // EQAdd( DrawAllCubes );
@@ -390,7 +405,7 @@ void ScoreRoll(Int x) {
   }
 
   /* nTrainWreck rule */
-  if( stor.flags & flag_nTW  ) {
+  if( GetFlag( flag_nTW ) ) {
     Boolean bool = true;
     for( x = 0 ; x < NumCubes ; x++ ) {
       if ( stor.cube[x].keep ) {
@@ -409,7 +424,7 @@ void ScoreRoll(Int x) {
 
   /* Cosmic Sampler Variant */
   /* This can't happen if we have a Flaming Sun or no score */
-  if( (stor.flags & flag_Sampler) &&
+  if( GetFlag( flag_Sampler ) &&
       (stor.scorethisroll > 0) &&
       (BlackDieValue == 0) ) {
     Short list[5] = { 0, 0, 0, 0, 0 };
@@ -435,7 +450,7 @@ void ScoreRoll(Int x) {
   }
 
   /* Suspend Rule */
-  if( stor.flags & flag_Suspend ) {
+  if( GetFlag( flag_Suspend ) ) {
     if( stor.flash > 0 ) {
       stor.suspendcount++;
     } else {
@@ -480,7 +495,7 @@ void TurnLogic(Int x) {
 	
     if ( StayBit ) {
       /* Bump Variation */
-      if( stor.flags & flag_Bump ) {
+      if( GetFlag(flag_Bump) ) {
 	for ( x = 0 ; x < stor.total ; x++ ) {
 	  if ( stor.player[x].score == stor.currscore ) {
 	    DialogOK( frmBump, stor.currplayer, x );
@@ -601,7 +616,7 @@ void NextPlayer(Int x) {
   if( stor.player[prevplayer].suspend.flash > 0 ) {
     DialogOK( frmSuspend, prevplayer, stor.currplayer );
   } else {
-    if( stor.flags & flag_NextPlayerPopUp ) {
+    if( GetFlag(flag_NextPlayerPopUp) ) {
       DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
     } else {
       if( !StayBit ) {
@@ -624,7 +639,7 @@ void NextPlayer(Int x) {
   stor.currscore = stor.player[stor.currplayer].score;
   StayBit = false;
 
-  if( stor.flags & flag_Suspend ) {
+  if( GetFlag(flag_Suspend) ) {
     stor.suspendcount = 0;
     if( stor.player[stor.currplayer].suspend.flash > 0 ) {
       unsuspend( stor.currplayer );
@@ -665,7 +680,7 @@ void GameEvents(void)
     }
   }
 
-  if( stor.flags & flag_PendingAI ) {
+  if( GetFlag(flag_PendingAI) ) {
     /* Turn This Off! */
     SetFlag( flag_PendingAI, false );
 #ifdef DEBUG
@@ -727,6 +742,9 @@ void LoadCubes() {
     Defaults();
     ResetCubes();
   }
+
+  /* Set the volume levels */
+  SndGetDefaultVolume(NULL, NULL, &SoundAmp);
 
 }
 
@@ -837,6 +855,11 @@ void NewGame()
   FreezeBit = false;
 }
 
+
+inline
+Int GetFlag( Int flag ) {
+  return (stor.flags & flag);
+}  
 
 void SetFlag( Int f, Boolean b ) {
   if( b ) {
