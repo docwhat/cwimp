@@ -110,7 +110,6 @@ void Roll(void)
 
   /* Clear out the score */
   stor.scorethisroll = 0;
-  stor.scorethisturn = 0;
   DrawCurrScore();
 
   for (x = 0; x < NumCubes; x++) {
