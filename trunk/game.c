@@ -35,7 +35,8 @@
 struct Storage stor;
 Boolean StayBit; // Normally false, unless player wants to stay
 
-static Char val2name[6][8] = { "10", "one", "two", "three", "four", "5" };
+static Char val2name[7][8] = { "Err", /* So I don't have to subtract 1 */
+			       "10", "two", "three", "four", "5", "six" };
 
 /* ToggleKeep -- Toggles the fieldKeepBit
  * Args: 
@@ -66,10 +67,10 @@ int RollCube (void)
 
   switch( n++ ) {
   case 1: return 3;
-  case 2: return 4;
-  case 3: return 4;
-  case 4: return 2;
-  default:  return 2;
+  case 2: return 1;
+  case 3: return 1;
+  case 4: return 6;
+  default: n=1;  return 6;
   }
 
   return 1;
@@ -499,13 +500,13 @@ void NextPlayer() {
 }
 
 // ToDo: Say why player won
-// ToDo: Don't hide dice/score with dialog box.
 void PlayerWon() {
   FrmCustomAlert( calertDEBUG,
 		  "Winner!",
 		  stor.player[stor.currplayer].name,
 		  "ToDo: Winner()" );
   ResetCubes();
+  DrawState();
   return;
 }
 
@@ -534,7 +535,6 @@ void LoadCubes() {
     /* This totally resets the whole game. */
     Defaults();
     ResetCubes();
-    
   }
 
 }
