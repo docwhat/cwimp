@@ -72,7 +72,7 @@ $(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
 $(TARGET).$(LANGUAGE).prc: $(TARGET)Rsc.h objs/code0000.cwimp.grc
 	@echo -- Building $@
 	cd objs && \
-	$(BUILDPRC) ../$(TARGET).prc $(APPNAME) $(APPID) *.grc *.bin
+	$(BUILDPRC) ../$(TARGET).$(LANGUAGE).prc $(APPNAME) $(APPID) *.grc *.bin
 
 objs/%.grc: objs/$(TARGET)
 	@echo -- Converting objects $*
@@ -92,7 +92,7 @@ clean:
 	rm -f objs/* *~ *.bak core $(TARGET)Rsc.h
 
 veryclean: clean
-	rm -f ChangeLog $(TARGET).prc TAGS
+	rm -f ChangeLog $(TARGET).*prc TAGS
 	rm -f $(STATUSMSGS) rm -f $(TARGET).rcp
 
 spotless: veryclean
@@ -119,11 +119,11 @@ srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip .info.$(TARGET).$(VERSION).$(LAN
 	.info.$(TARGET).$(VERSION).$(LANGUAGE).src
 
 binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).bin:
-	$(MAKE) $(TARGET).prc ChangeLog
+	$(MAKE) $(TARGET).$(LANGUAGE).prc ChangeLog
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).$(LANGUAGE).bin.zip \
-		cwimp/$(TARGET).prc \
+		cwimp/$(TARGET).$(LANGUAGE).prc \
 		cwimp/ChangeLog \
 		cwimp/README
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
@@ -139,8 +139,8 @@ archive: zip
 	scp $(TARGET).*.zip .info.$(TARGET)* gerf.org:web/files/palm/cwimp/
 
 
-install: $(TARGET).prc
-	$(PILOTXFER) -i $(TARGET).prc
+install: $(TARGET).$(LANGUAGE).prc
+	$(PILOTXFER) -i $(TARGET).$(LANGUAGE).prc
 
 setver:
 	vim version
