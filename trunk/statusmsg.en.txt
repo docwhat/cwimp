@@ -13,6 +13,40 @@ DEFINE: IntroTapHereString
 Tap Here
 .
 
+###
+### Number Strings.
+###   For use as dice values.
+###   The scoring values are written as numerals,
+###   and are here only for completeness.
+###   The rest should be words.
+###
+# Should be a numeral
+DEFINE: TenString
+10
+.
+
+DEFINE: TwoString
+two
+.
+
+DEFINE: ThreeString
+three
+.
+
+DEFINE: FourString
+four
+.
+
+# Should be a numeral
+DEFINE: FiveString
+5
+.
+
+DEFINE: SixString
+six
+.
+
+
 CSTRING: LastLicksString
 Last Licks!
 .
@@ -40,6 +74,18 @@ You can pick none if you want to be able to roll it again.
 
 CSTRING: NoneString
 None
+.
+
+CSTRING: SuperNovaString
+SuperNova: You loose
+.
+
+CSTRING: TooManyTWString
+Too many Train Wrecks
+.
+
+CSTRING: LostToLeaderString
+Didn't beat the leader
 .
 
 DS_Thinking: Thinking...
