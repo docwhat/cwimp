@@ -15,7 +15,9 @@ GRESOURCES = code0001.$(TARGET).grc code0000.$(TARGET).grc \
 
 CC = m68k-palmos-coff-gcc
 
-CFLAGS = -Wall -g -O2 -DDEBUG
+CFLAGS = -Wall -g -O2 -DDEBUG 
+# Debug Rolling turns of 'rigged' rolling
+#-DDEBUGROLL
 
 PILRC = pilrc
 OBJRES = m68k-palmos-coff-obj-res
@@ -42,6 +44,7 @@ all: $(TARGET).prc
 #	perl -pi -e 's/resource.h/resource.h $(TARGET)Rsc.h/g' $@
 
 %.rcp: %.rcp.in version
+	rm -f $@ $(TARGET)Rsc.h
 	$(FIXVERSION) $<
 
 $(TARGET).prc: $(GRESOURCES)
@@ -68,7 +71,7 @@ clean:
 
 veryclean: clean
 	-rm -f $(TARGET).prc pilot.ram pilot.scratch \
-	*.bak
+	*.bak TAGS
 
 spotless: veryclean
 	-rm -f *.d $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
@@ -95,10 +98,12 @@ $(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc: $(TARGET).
 	echo "(<a href=\"$(URL)\">$(TARGET)</A> binary, version $(VERSION))" > \
 	$(TARGET).$(VERSION).bin.zip.dsc
 
+TAGS: $(SOURCES) $(wildcard *.h)
+	etags $^
 
 archive: zip
 	mv -v $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
-	#-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
+#-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
 
 floppy: clean
 	-mdeltree a:\*
