@@ -81,7 +81,7 @@ while (my $line = <IN>)
 	$status =~ s/\"/\\\"/g;
 	my $result;
 
-	if( $tag =~ /^CSTRING/ ) {
+	if( $tag =~ /^(CSTRING|DEFINE)/ ) {
 	    $result = \$Defines;
 	    $$result .= "#define $status \"";
 	} elsif( $tag =~ /^STRING/ ) {

@@ -33,9 +33,7 @@ void CheckAI(void)
 
 void AITurn(void)
 {
-#ifdef DEBUG_NO
-  FrmCustomAlert( calertDEBUG, "Pre-AITurn", " ", " " );
-#endif
+  SetStatus( DS_Thinking );
 
   /* If we have no choice... */
   if( ! ( stor.flags & flag_CanStay ) ) {

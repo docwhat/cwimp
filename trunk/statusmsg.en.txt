@@ -1,6 +1,18 @@
 # $Id$
 #
 
+DEFINE: IntroForPalmString
+for the Palm%c
+.
+
+DEFINE: IntroVersionString
+version: %s
+.
+
+DEFINE: IntroTapHereString
+Tap Here
+.
+
 CSTRING: LastLicksString
 Last Licks!
 .

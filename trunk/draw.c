@@ -173,12 +173,14 @@ DrawIntro () {
   WinDrawBitmap (Title, 0, 0);
 
   /* Text Strings */
-  StrPrintF (text, "for the Palm%c", 153);
+  StrPrintF (text, IntroVersionString, VERSION);
+  WinDrawChars (text, StrLen (text), 5, 8);
+
+  StrPrintF (text, IntroForPalmString, 153);
   WinDrawChars (text, StrLen (text), 52, 50);
 
-  StrPrintF (text, "Version %s", VERSION);
-  WinDrawChars (text, StrLen (text), 55, 90);
-
+  StrPrintF (text, IntroTapHereString, VERSION);
+  WinDrawChars (text, StrLen (text), 57, 90);
 
   // unload the bitmap from memory (unlock)
   MemHandleUnlock (Title_Handle);
@@ -189,28 +191,30 @@ DrawIntro () {
   while (!bstate)
     EvtGetPen (&penx, &peny, &bstate);
 
-  /* Clear out the Pen Queue if it's in the screen part */
-  if( peny < 160 )
-    EvtFlushPenQueue();
-
-  // DrawBlinds
-  {
+  /* If the user clicked in the drawing area, then
+   * do a Draw Blinds and clear the PenQueue.
+   */
+  if( peny < 160 ) {
+    // DrawBlinds
     int i, x;
     RectangleType r;
+    float delay;
+
+    EvtFlushPenQueue();
+    
+    delay = .01 * SysTicksPerSecond();
     
     r.extent.y = 128;
     r.topLeft.y = 16; // BLOCKSIZE
     
-    for (i = 0; i <= 16; i++)
-      {
-        r.extent.x = i;
-        for (x = 0; x <= 144; x += 16)
-          {
-            r.topLeft.x = x;
-            WinEraseRectangle (&r, 0);
-          }
-        SysTaskDelay (1);
+    for (i = 0; i <= 16; i++) {
+      r.extent.x = i;
+      for (x = 0; x <= 144; x += 16) {
+        r.topLeft.x = x;
+        WinEraseRectangle (&r, 0);
       }
+      SysTaskDelay(delay);
+    }
   }
 
 }
@@ -434,14 +438,9 @@ void DrawStayButton() {
 
   /* Actually do what we need to do */
  end:
-  if( IsAI( stor.currplayer ) ) {
-    status = DS_Thinking;
-  }
-
   ShowControl( btn_Stay, stay );
   SetFlag( flag_CanStay, stay );
   SetStatus( status );
-  
 }
 
 
