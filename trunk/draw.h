@@ -65,7 +65,7 @@ void DrawRollButton();
 void DrawStayButton();
 
 void DialogNewGame();
-void DialogVarients();
+void DialogVariants();
 void DialogOK( Word frm, Short player1, Short player2 );
 Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo );
 Int DialogChooseThree( CharPtr fText, CharPtr bOne, CharPtr bTwo,

@@ -190,6 +190,17 @@ BEGIN
 	BUTTONS "Done" 
 END
 
+##
+##
+##
+ALERT ID NoVariants
+WARNING
+BEGIN
+	TITLE "Not During a Game"
+	MESSAGE "You cannot change the variants during a game."
+	BUTTONS "OK" 
+END
+
 
 ##
 ##
@@ -365,19 +376,6 @@ BEGIN
 END
 
 
-
-##
-##
-##
-ALERT ID calertSTATUS
-INFORMATION
-BEGIN
-	TITLE "Game Status Info"
-	MESSAGE "^1"
-	BUTTONS "Done"
-END
-
-
 ##
 ##
 ##
@@ -408,6 +406,6 @@ BITMAP ID bmp6b		"images/cube6b.bmp"	COMPRESS
 
 APPLICATIONICONNAME 1000 "CWimp"
 ICON "images/cwimp.bmp"
-VERSION 1 "$VERSION"
+VERSION "$VERSION"
 
 #EOF

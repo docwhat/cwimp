@@ -245,7 +245,7 @@ players who haven't already gotten in their Last Licks (and have not
 passed the leader).
 
 In addition to the straight forward way to play the game, you can play
-Variants that add a different flavour to the game.  See the Varients
+Variants that add a different flavour to the game.  See the Variants
 menu under 'Options'.
 
 Ciao!\n
@@ -265,7 +265,7 @@ Clear Flash First
 .
 
 STRING: HelpVariants
-ToDo: list and describe varients
+ToDo: list and describe variants
 
 Below are the list of the variations of CWimp you can play.
 

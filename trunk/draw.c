@@ -452,12 +452,6 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
   
   CALLBACK_PROLOGUE
 
-    if( stor.currplayer > 0 ) {
-      /* The player *cannot* continue a
-         game once they alter variants */
-      ResetCubes(); 
-    }
-
     switch (e->eType) {
     case frmOpenEvent:
 	  frm = FrmGetActiveForm();
@@ -466,27 +460,32 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 	  break;
 
     case ctlSelectEvent:
-	  switch(e->data.ctlSelect.controlID) {
-		
-	  case check_Bump:
-	    ToggleCheck( check_Bump, flag_Bump );
-	    if( (stor.flags & flag_Eclipse) &&
-		(stor.flags & flag_Bump ) ) {
-	      ToggleCheck( check_Eclipse, flag_Eclipse );
-	    }
-	    break;
-	  case check_Eclipse:
-	    ToggleCheck( check_Eclipse, flag_Eclipse );
-	    if( (stor.flags & flag_Eclipse) &&
-		(stor.flags & flag_Bump ) ) {
-	      ToggleCheck( check_Bump, flag_Bump );
-	    }
-	    break;
-	  case check_Sampler:
-	    ToggleCheck( check_Sampler, flag_Sampler );
-	    break;
-	  case check_nTW:
-	    ToggleCheck( check_nTW, flag_nTW );
+      if( stor.currplayer >= 0 ) {
+        /* The player *cannot* continue a
+           game once they alter variants */
+        ResetCubes(); 
+      }
+        
+      switch(e->data.ctlSelect.controlID) {
+      case check_Bump:
+        ToggleCheck( check_Bump, flag_Bump );
+        if( (stor.flags & flag_Eclipse) &&
+            (stor.flags & flag_Bump ) ) {
+          ToggleCheck( check_Eclipse, flag_Eclipse );
+        }
+        break;
+      case check_Eclipse:
+        ToggleCheck( check_Eclipse, flag_Eclipse );
+        if( (stor.flags & flag_Eclipse) &&
+            (stor.flags & flag_Bump ) ) {
+          ToggleCheck( check_Bump, flag_Bump );
+        }
+        break;
+      case check_Sampler:
+        ToggleCheck( check_Sampler, flag_Sampler );
+        break;
+      case check_nTW:
+        ToggleCheck( check_nTW, flag_nTW );
 	    break;
 	  case check_FullHouse:
 	    ToggleCheck(check_FullHouse, flag_FullHouse );
@@ -494,10 +493,10 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 	  case check_Suspend:
 	    ToggleCheck(check_Suspend, flag_Suspend   );
 	    break;
-
+        
 	  }
 	  break;
-
+      
     default:
 	  break;
     }
