@@ -52,7 +52,6 @@ $(TARGET).prc: $(GRESOURCES)
 *.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
 	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
 	@$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp . > /dev/null
-	touch bin.res
 
 $(TARGET): $(TARGET)Rsc.h $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
