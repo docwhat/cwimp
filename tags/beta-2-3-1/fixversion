@@ -1,0 +1,152 @@
+#!/usr/bin/perl
+# $Id$
+#
+#   CWimp - Dice game for the palm handhelds.
+#   Copyright (C) 1999-2000 Christian Höltje
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
+$| = 1;
+use strict;
+use 5.004;
+use Fcntl;
+
+
+# Set the time, etc.
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
+$year += 1900;
+
+# Find current version
+# Set version on all the files handed in
+
+my $version;
+open ( VER, "<version" ) or
+	die "Unable to read version file: $!";
+$version = <VER>; # Throw away line
+chomp ( $version = <VER> );
+
+close VER;
+
+# If only version is requested, return that
+if ( $ARGV[0] eq "version" )
+{
+    $version =~ s/\s+//g;
+    print "$version\n";
+    exit 0;
+}
+
+if ( $ARGV[0] =~ /(^.*\.rcp).*\.in$/i )
+{
+    &EditRCP( $ARGV[0], $1 );
+    exit 0;
+}
+
+
+# Functions
+
+sub EditRCP( $$ )
+{
+    my $file = shift;
+    my $outfile = shift;
+    print "Set version to '$version' in $outfile\n";
+
+    open( IN, "$file" ) or die "Unable to read $file: $!";
+    open( OUT, ">$outfile" ) or die "Unable to write $file: $!";
+	
+    while (my $line = <IN>)
+    {
+	# Remove trailing newlines
+	chomp $line;
+
+	# Substitute version
+        $line =~ s/\$VERSION/$version/g;
+
+	# Substitute Year
+	$line =~ s/\$YEAR/$year/g;
+
+	if( $line =~ /^FIXVERS?I?O?N?:\s+(\S.+)$/ ) {
+	    my ( $tag, @args ) = split /\s+/, $1;
+	    my $endtag = 0;
+	    my $input;
+	    if( $tag =~ /INCLUDE/i ) {
+		print OUT DoInclude( @args );
+		next;
+	    }
+	    while ( my $newline = <IN> ) {
+		if( $newline =~ /^FIXVER:\s+($tag)\s+END/i ) {
+		    if ( $tag =~ /LOOP/i ) {
+			print OUT DoLoop( $input, @args );
+		    }
+		    $endtag = 1;
+		    last;
+		}
+		$input .= $newline;
+	    }
+	    if( ! $endtag ) {
+		print STDERR "Didn't see ending '$tag' tag!\n";
+		exit 1;
+	    }
+	    $line = "#";
+
+	}
+
+	# Remove comments
+	if ( $line !~ /^\#/ ) {  
+	    print OUT "$line\n";
+	}
+    }
+
+    close( OUT );
+    close( IN );
+
+}
+
+sub DoInclude( $ )
+{
+    my $file = shift;
+    my $return;
+    
+    open( DIIN, "$file" ) or die "Unable to open `$file': $!";
+    while( <DIIN> ) {
+	$return .= $_;
+    }
+    close( DIIN ) or die "Unable to close `$file': $!";
+
+    return $return;
+}
+
+
+sub DoLoop( $$ )
+{
+    my $input = shift;
+    my ( $count, $end ) = @_;
+    my $return;
+
+    for( ; $count <= $end ; $count++ ) {
+	my $add = $input;
+	my $countplusone = $count + 1;
+	$add =~ s/\$LOOPPLUSONE/$countplusone/g;
+	$add =~ s/\$LOOP/$count/g;
+	$return .= $add;
+    }
+
+    return $return;
+}
+
+
+
+
