@@ -1,0 +1,15 @@
+$Revision$
+List of things ToDo:
+
+* Add name players
+* Add auto name computer players
+* Variant unpack/pack and set check buttons
+* Impliment Variants
+* Add StatusLine texts
+* Create new, scrolling StatusLine help text dialog
+* Add Status Strings & Status Help
+* Start using Status Strings & Status Help
+* Add Win/Loose functions
+* Add Dialog to choose FS value
+* Add Dialog to choose FS in 2 pair situation
+
