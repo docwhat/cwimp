@@ -218,8 +218,8 @@ END
 ALERT ID alertVersion
 ERROR
 BEGIN
-	TITLE "OS Version"
-	MESSAGE "This program needs OS version 2.0 or greater to run\n"
+	TITLE "$$OSVERSION"
+	MESSAGE "$$NEEDSNEWERVER"
 	BUTTONS "$$OK" 
 END
 
@@ -227,10 +227,8 @@ END
 ALERT ID alertResetting
 WARNING
 BEGIN
-	TITLE "Resetting Defaults"
-	MESSAGE "Due to a new version of CWimp, I'm " \
-                "resetting your preferences. All settings and "\
-                "and games are lost."
+	TITLE "$$RESETTING"
+	MESSAGE "$$RESETTINGDUETONEWVER"
 	BUTTONS "$$OK" 
 END
 
@@ -247,7 +245,7 @@ BEGIN
     BUTTON "$$OK" AUTOID AT (CENTER  75 AUTO AUTO)
 END
 
-FORM ID frmWimpout AT (CENTER@80 CENTER@80 110 70)
+FORM ID frmWimpout AT (CENTER@80 CENTER@80 110 75)
 MODAL
 SAVEBEHIND
 HELPID DS_Wimpout
@@ -256,7 +254,7 @@ BEGIN
     FIELD ID fldWimpout AT (4 12 102 47) NONEDITABLE FONT 0
 	  MULTIPLELINES
 
-    BUTTON "$$OK" AUTOID AT (CENTER  55 AUTO AUTO)
+    BUTTON "$$OK" AUTOID AT (CENTER  60 AUTO AUTO)
 END
 
 

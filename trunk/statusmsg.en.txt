@@ -571,4 +571,15 @@ BEGIN
 "$$OH" = "oh."
 "Game Status Info" = "Game Status Info"
 
+#### Alert: alertVersion
+"$$OSVERSION" = "OS Version"
+"$$NEEDSNEWERVER" = "This program needs OS version 2.0 or greater to run\n"
+
+#### Alert: alertResetting
+"$$RESETTING" = "Resetting Defaults"
+"$$RESETTINGDUETONEWVER" = "Due to a new version of CWimp, I'm " \
+                           "resetting your preferences. All settings and "\
+                           "and games are lost."
+
+
 END
