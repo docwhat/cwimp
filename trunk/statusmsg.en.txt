@@ -23,7 +23,7 @@ Pick which Flash you want to complete with your Flaming Sun.
 
 CSTRING: PickNonScoreString
 Pick a value for your Flaming Sun.
-You can pick junk if you want to be able to roll it again.
+You can pick none if you want to be able to roll it again.
 .
 
 CSTRING: NoneString
