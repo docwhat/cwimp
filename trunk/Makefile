@@ -4,6 +4,7 @@ TARGET = cwimp
 APPNAME = "Cosmic Wimpout"
 APPID = "CWSS"
 LANGUAGE = en
+URL = "http://docwhat.gerf.org/cwimp/"
 
 SOURCES = cwimp.c  draw.c  game.c  lowlevel.c  statusmsg.c
 OBJECTS = $(TARGET).o lowlevel.o game.o draw.o statusmsg.o
@@ -59,34 +60,45 @@ $(TARGET): $(TARGET)Rsc.h *.bin $(OBJECTS)
 	@! $(NM) -u $(TARGET) | grep .
 	@echo "** End of Unresolved Symbols for $(TARGET)"
 
+ChangeLog:
+	cvs2cl
+
 clean:
-	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ core
+	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ core ChangeLog
 
 veryclean: clean
-	-rm -f $(TARGET).prc pilot.ram pilot.scratch $(TARGET).*.zip \
+	-rm -f $(TARGET).prc pilot.ram pilot.scratch \
 	*.bak
 
 spotless: veryclean
-	-rm -f *.d $(TARGET)Rsc.h
+	-rm -f *.d $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
 
-zip: binzip srczip
+zip: srczip binzip
 
-$(TARGET).$(VERSION).src.zip srczip: veryclean
+$(TARGET).$(VERSION).src.zip srczip $(TARGET).$(VERSION).src.zip.dsc: veryclean ChangeLog
 	-rm -f $(TARGET).*.src.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).src.zip \
 		cwimp \
 		-x cwimp/CVS/\* -x cwimp/\*.d
+	mv ../$(TARGET).$(VERSION).src.zip .
+	echo "(<a href=\"$(URL)\">$(TARGET)</A> source, version $(VERSION))" > \
+	$(TARGET).$(VERSION).src.zip.dsc
 
-$(TARGET).$(VERSION).bin.zip binzip: $(TARGET).prc
+$(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc: $(TARGET).prc ChangeLog
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).bin.zip \
 		cwimp/$(TARGET).prc \
 		cwimp/README
+	mv ../$(TARGET).$(VERSION).bin.zip .
+	echo "(<a href=\"$(URL)\">$(TARGET)</A> binary, version $(VERSION))" > \
+	$(TARGET).$(VERSION).bin.zip.dsc
 
-archive: srczip
-	-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
+
+archive: zip
+	mv -v $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
+	#-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
 
 floppy: clean
 	-mdeltree a:\*
