@@ -87,7 +87,7 @@ $(TARGET).$(LANGUAGE).prc: autogen.h objs/code0000.cwimp.grc
 	@echo -- Building $@
 	@cd objs && \
 	$(BUILDPRC) ../$(TARGET).$(LANGUAGE).prc $(APPNAME) $(APPID) *.grc *.bin
-	@echo -n 'built size:' `ls -s $@`
+	@echo '-- PRC size:' `ls -s $@`
 
 objs/%.grc: objs/$(TARGET)
 	@echo -- Converting objects $*
