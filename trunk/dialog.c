@@ -456,10 +456,22 @@ void DialogOK ( UInt16 frmname, UInt16 p1, UInt16 p2 ) {
                 if( pref.totalplayers > 1 ) {
                         StrPrintF( msg, NextPlayerString,
                                    GetName( p1 ),
-                                   GetName( p1 ),
+                                   GetName( p2 ),
                                    NULL);
                 } else {
                         StrPrintF( msg, "%s", NextSoloPlayerString, NULL );
+                }
+                break;
+
+        case frmWimpout: 
+                fieldname = fldWimpout;
+                if( pref.totalplayers > 1 ) {
+                        StrPrintF( msg, WimpoutString,
+                                   GetName( p1 ),
+                                   GetName( p2 ),
+                                   NULL);
+                } else {
+                        StrPrintF( msg, "%s", WimpoutSoloString, NULL );
                 }
                 break;
 

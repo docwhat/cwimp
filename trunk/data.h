@@ -119,6 +119,7 @@ extern UInt16 SoundAmp;
 
 
 void		ResetCubes(void);
+void		ClearCubes(void);
 void		EndGame(void);
 void		NewGame(void);
 

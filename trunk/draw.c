@@ -195,10 +195,10 @@ static void InvertPlayer(UInt8 player) {
 }
 
 void DrawPlayer(UInt8 player) {
-        Int16 y;
+        Int16 y = getPLAYERy(player);
         Char msg[PLAYERMaxName];
         Char *name;
-        RectangleType r = { {SYMBOLx, getPLAYERy(player)},
+        RectangleType r = { {SYMBOLx, y},
                             {159 - SYMBOLx, PLAYEREXy} };
 
         WinEraseRectangle( &r, 0 );
@@ -218,7 +218,6 @@ void DrawPlayer(UInt8 player) {
         name = GetName( player );
 
         /* Draw the Name */
-        y = PLAYERTLy + player * PLAYEREXy;
         WinDrawChars( name, StrLen( name ),
                       PLAYERTLx, y );
 
@@ -227,7 +226,7 @@ void DrawPlayer(UInt8 player) {
         WinDrawChars( msg, StrLen( msg ),
                       SCOREx, y );
 
-        if ( pref.player[player].lost )
+        if ( isLostPlayer(player) )
         {
                 CrossPlayer(player);
                 return;

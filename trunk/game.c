@@ -87,7 +87,6 @@ static void unsuspend(Int16 p) {
         pref.currscore	= pref.player[p].suspend.currscore;
         pref.scorethisturn	= pref.player[p].suspend.scorethisturn;
         pref.scorethisroll	= pref.player[p].suspend.scorethisroll;
-        DrawStatus();
         pref.flash =
                 pref.status =
                 pref.currscore =
@@ -563,10 +562,7 @@ void NextPlayer(DieType x) {
         }
 
         // Clear cubes
-        for( x = 0 ; x < NumCubes ; x++ ) {
-                pref.cube[x].keep = false;
-                pref.cube[x].value = 0;
-        }
+        ClearCubes();
 
         if( isCurrLeader() ) {
                 PlayerWon();
@@ -576,10 +572,23 @@ void NextPlayer(DieType x) {
         if( pref.player[prevplayer].suspend.flash > 0 ) {
                 DialogOK( frmSuspend, prevplayer, GetCurrPlayer() );
         } else {
-                if( GetFlag(flag_NextPlayerPopUp) ) {
-                        DialogOK( frmNextPlayer, prevplayer, GetCurrPlayer() );
-                } else {
-                        if( !StayBit ) {
+                if( GetFlag(flag_NextPlayerPopUp) )
+                {
+                        if( !StayBit )
+                        {
+                                DialogOK( frmWimpout,
+                                          prevplayer,
+                                          GetCurrPlayer() );
+                        } else {
+                                DialogOK( frmNextPlayer,
+                                          prevplayer,
+                                          GetCurrPlayer() );
+                        }
+                }
+                else
+                {
+                        if( !StayBit )
+                        {
                                 EQAdd( SetStatus, DS_Wimpout );
                                 EQAdd( EQNOP, 0 );
                                 EQAdd( EQNOP, 0 );
@@ -659,7 +668,6 @@ void NobodyWon() {
         DrawState();
         return;
 }
-
 
 void PlayerLost( Int16 player, Char *ptrString )
 {

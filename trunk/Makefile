@@ -51,10 +51,15 @@ DEPEND		:= ./depend.sh
 
 VERSION=$(shell $(FIXVERSION) version)
 
-all: $(TARGET).$(LANGUAGE).prc
+debug:
+	@echo Using options:
+	@echo "-- $(CFLAGS)"
+	$(MAKE) LANGUAGE=en prc
 
 release:
 	$(MAKE) LANGUAGE=en DFLAGS="" prc
+
+all: $(TARGET).$(LANGUAGE).prc
 
 # %.c
 deps/%.d: $(PREDEPENDS) $(DEPEND)

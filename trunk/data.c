@@ -36,14 +36,8 @@ UInt16 SoundAmp; // Set according to sound preferences.
  */
 void ResetCubes(void)
 {
-        Int16 x = 0;
-
         FreezeBit = true;
         EQReset();
-
-        for (x = 0; x < NumCubes; x++) {
-                pref.cube[x].value = pref.cube[x].keep = 0;
-        }
 
         pref.scorethisturn = 0;
         pref.scorethisroll = 0;
@@ -63,6 +57,16 @@ void ResetCubes(void)
 
         EndGame();
 }			
+
+void ClearCubes(void)
+{
+        UInt8 x;
+
+        for (x = 0; x < NumCubes; x++) {
+                pref.cube[x].keep = false;
+                pref.cube[x].value = 0;
+        }
+}
 
 void EndGame(void)
 {

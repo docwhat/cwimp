@@ -145,13 +145,23 @@ rolling at least one more time.
 
 
 CSTRING: NextPlayerString
-%s's turn is over.
+%s ended their turn.
 
 It is now %s's turn.
 .
 
+CSTRING: WimpoutString
+%s just WIMPED OUT!
+
+Now it's %s's turn.
+.
+
 CSTRING: NextSoloPlayerString
 It's time for your next turn.
+.
+
+CSTRING: WimpoutSoloString
+You justu WIMPED OUT!
 .
 
 
@@ -253,11 +263,6 @@ they lose and are permanently out of the game.  If they beat your score
 then they become the leader and everyone gets one chance to beat their score.
 .
 
-DS_Wimpout: * WIMPOUT *
-You have Wimped out, scoring no points in a roll.
-.
-
-
 CSTRING: WinnerString
 %s has won!
 .
@@ -272,12 +277,18 @@ get insurance, it's rather valuable.
 
 DS_NextPlayer: %s's Turn
 It is the next player's turn.
-The previous player lost their turn or decided to 'stay'.
+The previous player decided to 'stay'.
 
 The new player has used no dice for scoring. No points have been scored for
 this turn yet.
 
-You can't 'stay' without rolling once.
+You can't 'stay' without rolling once at least once.
+.
+
+DS_Wimpout: * WIMPOUT *
+The previous player has Wimped out, scoring no points in a roll.
+
+It is now the next player's turn.
 .
 
 
