@@ -22,7 +22,6 @@ Boolean StayBit; // Normally false, unless player wants to stay
  *     int   -- The die to change (0-4)
  * Returns:
  */
-// ToDo: Remove this. Its only for debugging.
 void ToggleKeep(Byte die)
 {
 
@@ -150,12 +149,9 @@ void ScoreRoll() {
 	x = stor.cube[1].value;
 	if ( x == 1 ) {
 	  // ToDo:
-	  // User Looses
-	  // Supernova
-	  FrmCustomAlert( calertDEBUG,
-					  "You loose!",
-					  "ToDo: add correct you loose stuff",
-					  "	" );
+	  // User Looses due to supernova
+      PlayerLost( stor.currplayer, "SuperNova: You loose" );
+      return;
 	} else if ( x == 6 ) {
 	  // ToDo:
 	  // Instant Winner
@@ -289,7 +285,7 @@ void ScoreRoll() {
 void TurnLogic() {
   Short kept;
   Short x;
-  // Update
+  // ToDo: Update()
 
 
   DrawCurrScore();
@@ -346,8 +342,8 @@ void NextPlayer() {
 
   while(1) {
 	stor.currplayer = (stor.currplayer + 1) % stor.numplayers;
-	if ( x == stor.currplayer ) {
-	  if ( stor.numplayers > 1 ) {
+	if ( x == stor.currplayer ) { // We've looped around
+	  if ( stor.numplayers > 1 ) { // In case someone's solo
 		// Only one guy hasn't lost
 		//HaveWinner();
 		FrmCustomAlert( calertDEBUG,
@@ -358,10 +354,12 @@ void NextPlayer() {
 	  break;
 	}
 	if ( ! stor.player[stor.currplayer].lost ) {
+      // This player hasn't lost, he's next
 	  break;
 	}
 #ifdef DEBUG
-	ErrNonFatalDisplayIf( ++dd > (MaxPlayers + 4), "NextPlayer: Had to rely on dd loop check!" );
+	ErrNonFatalDisplayIf( ++dd > (MaxPlayers + 4),
+                          "NextPlayer: Had to rely on dd loop check!" );
 #endif
   }
   
@@ -390,6 +388,19 @@ void NextPlayer() {
   }
 
 }
+
+void PlayerLost( Short player, CharPtr ptrString )
+{
+  // ToDo: Rewrite this thing
+  stor.player[player].lost = 1;
+  
+  FrmCustomAlert( calertDEBUG,
+                  ptrString,
+                  "ToDo: PlayerLost()",
+                  "	" );
+  
+}
+
 
 void LoadCubes() {
   Word x,size;

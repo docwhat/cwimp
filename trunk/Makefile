@@ -53,7 +53,7 @@ $(TARGET).prc: $(GRESOURCES)
 	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
 	@$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp . > /dev/null
 
-$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
+$(TARGET): $(TARGET)Rsc.h *.bin $(OBJECTS) 
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
 	@echo "** Unresolved Symbols for $(TARGET)"
 	@! $(NM) -u $(TARGET) | grep .

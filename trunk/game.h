@@ -74,6 +74,7 @@ void StatusLine( );
 void NextPlayer();
 void ToggleKeep(Byte die);
 void NewGame();
+void PlayerLost( Short player, CharPtr ptrString );
 
 void SetFlag(Int f, Boolean b);
 
