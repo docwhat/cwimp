@@ -28,16 +28,11 @@ DEPEND		:= ./depend.sh
 
 VERSION=$(shell $(FIXVERSION) version)
 
-all: dirs $(TARGET).prc
-
-.PHONY: dirs
-
-dirs:
-	@if [ ! -d deps ]; then mkdir deps ; fi
-	@if [ ! -d objs ]; then mkdir objs ; fi
+all: $(TARGET).prc
 
 deps/%.d: $(PREDEPENDS) $(DEPEND) %.c
 	@echo -- Making dependency info for $*.c
+	@if [ ! -d deps ]; then mkdir deps ; fi
 	$(DEPEND) $(CC) $(CFLAGS)  $*.c > $@
 
 objs/%.o: %.c
@@ -47,6 +42,7 @@ objs/%.o: %.c
 $(TARGET)Rsc.h: $(TARGET).rcp images
 	@echo -- Pilrc\'ing $*
 	$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
+	@if [ ! -d objs ]; then mkdir objs ; fi
 	mv *.bin objs/
 
 
@@ -81,7 +77,7 @@ veryclean: clean
 	rm -f ChangeLog $(TARGET).prc TAGS
 
 spotless: veryclean
-	rm -f deps/*
+	rm -rf deps objs
 	rm -f $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
 
 ChangeLog:
