@@ -16,7 +16,7 @@ URL 	:= "http://docwhat.gerf.org/cwimp/"
 # mystart.c MUST go first
 SOURCES = mystart.c \
 	$(TARGET).c  srand.c game.c draw.c lowlevel.c  statusmsg.c \
-	ai.c 
+	ai.c queue.c
 OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
 PREDEPENDS = $(TARGET)Rsc.h
 LIBS =

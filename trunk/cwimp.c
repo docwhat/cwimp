@@ -25,6 +25,7 @@
 #include "game.h"
 #include "draw.h"
 #include "cwimp.h"
+#include "queue.h"
 
 static Boolean MainFormHandleEvent (EventPtr e)
 {
@@ -90,7 +91,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
       switch(e->data.ctlSelect.controlID) {
 
       case btn_Stay:
-	Stay();
+        if( EQIsEmpty() ) Stay();
 	break;
 
       case btn_Info:
@@ -102,7 +103,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
 	if ( stor.currplayer < 0 ) {
 	  DialogNewGame();
 	} else {
-	  Roll();
+	  if( EQIsEmpty() ) Roll();
 	}
 	break;
 
@@ -193,7 +194,11 @@ static void EventLoop(void)
   EventType e;
 
   do {
-    EvtGetEvent(&e, .2 * SysTicksPerSecond());
+    if( EQIsEmpty() ) {
+      EvtGetEvent(&e, 1 * SysTicksPerSecond());
+    } else {
+      EvtGetEvent(&e, .05 * SysTicksPerSecond());
+    }
     if (! SysHandleEvent (&e))
       if (! MenuHandleEvent (NULL, &e, &err) )
 	if (! ApplicationHandleEvent (&e) )

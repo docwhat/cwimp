@@ -50,16 +50,21 @@ extern const UInt fieldScorePlayer[MaxPlayers];
 extern const UInt fieldMarkPlayer[MaxPlayers];
 extern const UInt fieldGetNamesPlayer[MaxPlayers];
 extern const UInt fieldGetNamesLabel[MaxPlayers];
-extern const UInt bmpWCube[6];
-extern const UInt bmpBCube[6];   
+extern const UInt bmpWCube[7];
+extern const UInt bmpBCube[7];   
 
 
 void DrawIntro();
 void DrawCurrScore();
 void DrawState();
-void DrawCube(Byte die);
+
+void DrawCube(Int die);
+void DrawBlackCube(Int die);
+void DrawWhiteCube(Int die);
+
 void DrawPlayerScore(Short player);
-void DrawKeepBit(Byte die);
+void ClearKeepBits(void);
+void DrawKeepBit(Int die);
 void DrawTopStatusButton();
 void DrawRollButton();
 void DrawStayButton();
@@ -71,5 +76,7 @@ Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
 Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
 void DialogPreferences();
 Boolean DialogGetNames();
+
+void ShowButtons(Int show);
 
 #endif

@@ -18,12 +18,15 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 */
-#ifndef _AI_H_
-#define _AI_H_
+#ifndef _QUEUE_H_
+#define _QUEUE_H_
+
+#include <Pilot.h>
 
 struct EQueueStruct {
-  VoidPtr Func;
-  VoidPtr Next;
+  void (*func)(Int);
+  Int data;
+  struct EQueueStruct *next;
 };
 
 typedef struct EQueueStruct EQ;
@@ -31,8 +34,9 @@ typedef EQ* EQPtr;
 
 extern EQPtr EQueue;
 
-void EQAdd(VoidPtr func);
-VoidPtr EQTop(void);
 void EQInit(void);
+void EQAdd(void (*func)(Int), Int data);
+Boolean EQRunNext(void);
+Boolean EQIsEmpty(void);
 
 #endif

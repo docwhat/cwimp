@@ -10,7 +10,7 @@ version: %s
 .
 
 DEFINE: IntroTapHereString
-Tap Here
+Tap to Continue
 .
 
 ###

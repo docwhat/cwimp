@@ -31,6 +31,7 @@
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
 #include "ai.h"
+#include "queue.h"
 
 #include "draw.h"
 
@@ -103,7 +104,8 @@ const UInt fieldGetNamesLabel[MaxPlayers] = {
   GnameL9
 };
 
-const UInt bmpWCube[6] = {
+const UInt bmpWCube[7] = {
+  bmpWhite,
   bmp10w,  
   bmp2w,     
   bmp3w,   
@@ -111,7 +113,8 @@ const UInt bmpWCube[6] = {
   bmp5w,  
   bmp6w
 };   
-const UInt bmpBCube[6] = {
+const UInt bmpBCube[7] = {
+  bmpBlack,
   bmp10b,
   bmp2b,     
   bmpfsb,   
@@ -184,7 +187,7 @@ DrawIntro () {
   WinDrawChars (text, StrLen (text), 52, 50);
 
   StrPrintF (text, IntroTapHereString, VERSION);
-  WinDrawChars (text, StrLen (text), 57, 90);
+  WinDrawChars (text, StrLen (text), 45, 90);
 
   // unload the bitmap from memory (unlock)
   MemHandleUnlock (Title_Handle);
@@ -250,8 +253,8 @@ void DrawState()
   }
 
   for ( x = 0 ; x < NumCubes ; x++ ) {
-	DrawCube(x);
-	DrawKeepBit(x);
+    EQAdd( DrawCube, x );
+    EQAdd( DrawKeepBit, x );
   }
 
   DrawStayButton();
@@ -261,10 +264,19 @@ void DrawState()
 }
 
 
-void DrawKeepBit(Byte die)
+void ClearKeepBits(void)
+{
+  Byte x;
+  for( x = 0; x < NumCubes ; x++ ) {
+    SetFieldTextFromStr( fieldKeepBit[x],
+                         BlankSymbol);
+  }
+}
+
+void DrawKeepBit(Int die)
 {
   
-  if (stor.cube[die].keep && stor.cube[die].value != 0) {
+  if (stor.cube[die].keep && stor.cube[die].value > 0) {
 	SetFieldTextFromStr(fieldKeepBit[die],
 						CheckSymbol);
   } else {
@@ -272,7 +284,6 @@ void DrawKeepBit(Byte die)
 						BlankSymbol);
   }
 }
-
 
 void DrawPlayerScore(Short player) {
   Char msg[MaxName];
@@ -318,36 +329,60 @@ void DrawCurrScore()
 
 }
 
-/* DrawCube -- Draws the cube at the correct place
- * Args:    
- *     Byte  die   -- Cube to be rolled and drawn.
- * Returns: None
- */
-void DrawCube(Byte die)
+static void GreyCube(Int die)
 {
-  int tmpID;
-  int y;
+  Int i;
+  Int yoff, xoff;
+  yoff = CubesTop + (CubeSize + CubeShift) * die;
+  xoff = CubesLeft;
 
-  y = CubesTop + (CubeSize + CubeShift) * die;
-
-  // Select correct Bitmap
-  if ( die == 0 ) { 
-	tmpID = bmpBCube[ stor.cube[die].value - 1 ];
-  } else {
-	tmpID = bmpWCube[ stor.cube[die].value - 1 ];
+  /* Do the X stuff first */
+  for( i = 3; i <= 17; i+=2 ) {
+    WinDrawLine( i+xoff,    1+yoff,
+                 1+xoff,    i+yoff);
+    WinDrawLine(18+xoff,    i+yoff-1,
+                 i+xoff-1, 18+yoff);
   }
 
-  if ( stor.cube[die].value == 0 ) { 
-	tmpID = bmpBlank;
+}
+
+void DrawCube(Int die)
+{
+  Int y;
+  Int tmpID;
+
+  y = CubesTop + (CubeSize + CubeShift) * die;
+  
+  if ( die == 0 ) { 
+    tmpID = bmpBCube[ abs(stor.cube[die].value) ];
   } else {
-	DrawBitmap( bmpBlank, CubesLeft, y );  // Put up the blank tile
-#if 0
-	SysTaskDelay( 0.15*SysTicksPerSecond()); // Delay for cinematic effect
-#endif
+    tmpID = bmpWCube[ abs(stor.cube[die].value) ];
   }
 
   DrawBitmap( tmpID, CubesLeft, y );
-      
+
+  if( stor.cube[die].value < 0 ) {
+    GreyCube(die);
+  }
+
+}
+
+void DrawBlackCube(Int die)
+{
+
+  DrawBitmap( bmpBlack,
+              CubesLeft,
+              CubesTop + (CubeSize + CubeShift) * die );
+
+}
+
+void DrawWhiteCube(Int die)
+{
+
+  DrawBitmap( bmpWhite,
+              CubesLeft,
+              CubesTop + (CubeSize + CubeShift) * die );
+
 }
 
 void DrawRollButton() {
@@ -445,6 +480,7 @@ void DrawStayButton() {
   /* Actually do what we need to do */
  end:
   ShowControl( btn_Stay, stay );
+  ShowControl( btn_Roll, 1 );
   SetFlag( flag_CanStay, stay );
   SetStatus( status );
 }
@@ -1207,6 +1243,10 @@ static void ShowControl(Word objID, Boolean enable) {
     CtlShowControl( GetObjectPtr(objID) );
   }
   
+}
+
+void ShowButtons(Int show) {
+  ShowControl(btn_Roll, (Boolean)show);
 }
 
 // Local Variables:

@@ -20,28 +20,30 @@
  */
 
 #include "queue.h"
+#include "draw.h"
 
 /* Pointer to the Head of the EventQueue */
 EQPtr EQueue;
 
 static 
 EQPtr
-newEvent(VoidPtr func) {
+newEvent(void (*func)(Int), Int data) {
   EQPtr new;
 
   new = MemPtrNew(sizeof(EQ));
   new->next = NULL;
   new->func = func;
+  new->data = data;
 
   return new;
 }
 
 inline
 void EQInit(void) {
-  EQueue = newEvent(NULL);
+  EQueue = newEvent(NULL,0);
 }
   
-void EQAdd(VoidPtr func) {
+void EQAdd(void (*func)(Int),Int data) {
   EQPtr ptr;
   
   ptr = EQueue;
@@ -49,17 +51,31 @@ void EQAdd(VoidPtr func) {
     ptr = ptr->next;
   }
   
-  ptr->next = newEvent( func );
+  ptr->next = newEvent( func, data );
 }
 
-VoidPtr EQTop(void) {
+Boolean EQRunNext(void) {
   EQPtr ptr;
-  VoidPtr func;
+  void (*func)(Int);
+  Int data;
 
   ptr = EQueue->next;
+
+  if( EQIsEmpty() ) return false;
+
   func = ptr->func;
+  data = ptr->data;
   EQueue->next = ptr->next;
 
   MemPtrFree( ptr );
-  return func;
+  
+  func(data);
+  return true;
+}
+
+
+Boolean EQIsEmpty(void)
+{
+  if( EQueue->next == NULL ) return true;
+  return false;
 }

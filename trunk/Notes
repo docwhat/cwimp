@@ -5,8 +5,7 @@ ToDo:
 * Remove lang tag from SRC...geez
 * Add Wimpout (aka turn over) dialog
 * Make the AI smarter
-* Add Event Queue
-* Add Animations
+* Rework roll/stay buttons
 
 
 This is how to get debugging to work under UNIX (courtasy of PalmGeek on

@@ -415,6 +415,8 @@ BITMAP ID bmpSampler	"images/sampler.bmp"	COMPRESS
 BITMAP ID bmpSuspend	"images/suspend.bmp"	COMPRESS
 
 BITMAP ID bmpBlank	"images/cubeblank.bmp"	COMPRESS
+BITMAP ID bmpWhite	"images/cubewhite.bmp"	COMPRESS
+BITMAP ID bmpBlack	"images/cubeblack.bmp"	COMPRESS
 
 BITMAP ID bmp10w	"images/cube10w.bmp"	COMPRESS
 BITMAP ID bmp2w		"images/cube2w.bmp"	COMPRESS

@@ -28,6 +28,7 @@
 #include "statusmsgstrings.h"
 #include "srand.h"
 #include "ai.h"
+#include "queue.h"
 
 #include "game.h"
 
@@ -146,36 +147,31 @@ void Roll(void)
   stor.scorethisroll = 0;
   DrawCurrScore();
 
+  ClearKeepBits();
+
+  EQAdd( ShowButtons, false );
+
   for (x = 0; x < NumCubes; x++) {
     if (!stor.cube[x].keep) {
       stor.cube[x].value = RollCube();
+      EQAdd( DrawWhiteCube, x );
+      EQAdd( DrawBlackCube, x );
+      EQAdd( DrawCube, x );
     } else {
-      stor.cube[x].value = 0;
+      stor.cube[x].value = 0 - abs(stor.cube[x].value);
+      EQAdd( DrawCube, x );
     }
-    DrawCube(x);
-    DrawKeepBit(x);
   }
 
-  ScoreRoll();
-  if( stor.flags & flag_Suspend ) {
-    if( stor.flash > 0 ) {
-      stor.suspendcount++;
-    } else {
-      stor.suspendcount = 0;
-    }
-    if( stor.suspendcount > stor.nSuspend ) {
-      suspend( stor.currplayer );
-      NextPlayer();
-      return;
-    }
-  }
-  TurnLogic();
+  // EQAdd( DrawAllCubes );
+
+  EQAdd( ScoreRoll, 0 );
 }
 
 /* User decided to stay */
 void Stay() {
   StayBit = true;
-  TurnLogic();
+  EQAdd( TurnLogic, 0);
 }
 
 /* Add <points> to the current players (temporary) score */
@@ -186,12 +182,11 @@ void AddScore(Short points) {
 }
 
 /* Score all the points for this roll */
-void ScoreRoll() {
+void ScoreRoll(Int x) {
   Short aCounting[7];
   Short P1 = 0;
   Short P2 = 0;
   Short BlackDieValue = 0;
-  Short x;
   Boolean FS;
 
   // Init vars
@@ -226,6 +221,7 @@ void ScoreRoll() {
       stor.flash = 0;
     } else {
       // No score
+      EQAdd( ShowButtons, (Int)true );
       return;
     }
   }
@@ -434,12 +430,30 @@ void ScoreRoll() {
       DialogOK( frmSampler, stor.currplayer, -1 );
     }
   }
+
+  /* Suspend Rule */
+  if( stor.flags & flag_Suspend ) {
+    if( stor.flash > 0 ) {
+      stor.suspendcount++;
+    } else {
+      stor.suspendcount = 0;
+    }
+    if( stor.suspendcount > stor.nSuspend ) {
+      suspend( stor.currplayer );
+      EQAdd( NextPlayer, 0 );
+      return;
+    }
+  }
+
+  for( x = 0; x < NumCubes; x++ ) {
+    EQAdd( DrawKeepBit, x );
+  }
+  EQAdd( TurnLogic, 0);
 }
 
 
-void TurnLogic() {
+void TurnLogic(Int x) {
   Short kept;
-  Short x;
 
   DrawCurrScore();
 
@@ -512,7 +526,7 @@ void TurnLogic() {
       } /* If(stor.leader < 0) ... */
     } /* End Last Licks Stuff */
     
-    NextPlayer();
+    EQAdd( NextPlayer, 0 );
     return;
   }
 
@@ -520,9 +534,6 @@ void TurnLogic() {
   stor.YMNWTBYM = false;
 
   DrawCurrScore();
-  for( x = 0 ; x < NumCubes ; x++ )
-    DrawKeepBit(x);
-
 
   kept = 0;
   for ( x = 0 ; x < NumCubes ; x++ ) {
@@ -544,8 +555,10 @@ void TurnLogic() {
   return;
 }
 
-void NextPlayer() {
-  Int x;
+void NextPlayer(Int x) {
+  /* I don't use X, but it's needed for the queue,
+     so I use it as throwaway variable. */
+  /* Int x; */
   Int prevplayer;
 
   prevplayer = stor.currplayer;
@@ -611,6 +624,8 @@ void NextPlayer() {
   }
 
   DrawState();
+  ShowButtons(true);
+
   /* so we can process AI stuff */
   CheckAI();
 }
@@ -621,6 +636,8 @@ void GameEvents(void)
 
   // We do *nothing* when we're frozen.
   if( FreezeBit ) return;
+
+  if( EQRunNext() ) return;
 
   if( (stor.flags & flag_PendingAI) &&
       (counter++ >= 8) ){
@@ -676,6 +693,9 @@ void LoadCubes() {
   }
 
   SetFlag( flag_PendingAI, IsAI( stor.currplayer ) );
+
+  /* Initialize EventQueue */
+  EQInit();
 }
 
 void SaveCubes() {
@@ -758,7 +778,8 @@ void NewGame()
   stor.suspendcount = 0;
 
   for (x = 0; x < NumCubes; x++) {
-    stor.cube[x].value = stor.cube[x].keep = false;
+    stor.cube[x].value = 0;
+    stor.cube[x].keep = false;
   }
 
   for (x = 0; x < stor.total ; x++ ) {

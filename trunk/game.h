@@ -115,12 +115,12 @@ void ResetCubes(void);
 void Roll(void);
 void Stay(void);
 void AddScore(Short points);
-void ScoreRoll(void);
-void TurnLogic(void);
+void ScoreRoll(Int nop); /* nop is junk */
+void TurnLogic(Int nop); /* nop is junk */
 
 void SetStatus( UInt status );
 
-void NextPlayer(void);
+void NextPlayer(Int nop); /* nop is junk */
 
 void GameEvents(void);
 void NewGame(void);
