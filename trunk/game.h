@@ -35,6 +35,14 @@
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
 #define MaxName    32  // Maximum player name size
 
+/* 
+ * Defaults
+ */
+#define DEFAULT_WINSCORE	500
+#define DEFAULT_OPENINGROLL	35
+#define DEFAULT_nTRAINWRECKS	3
+#define DEFAULT_nSUSPEND	10
+
 #ifndef VERSION
 #define VERSION "TestOnly"
 #endif

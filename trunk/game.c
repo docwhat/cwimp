@@ -504,7 +504,7 @@ void TurnLogic(Int x) {
     
     /* Last Licks Stuff */
     if( ! stor.player[stor.currplayer].lost &&
-	( stor.player[stor.currplayer].score > stor.winscore ||
+	( stor.player[stor.currplayer].score >= stor.winscore ||
 	  stor.leader >= 0 ) ) {
       if( stor.leader < 0 ) {
 	/* Hasn't been set, this guy is it */
@@ -657,8 +657,10 @@ void GameEvents(void)
     for( x = 0; x < NumCubes ; x++ ) {
       if( !stor.cube[x].keep &&
           stor.cube[x].value == stor.flash ) {
-        EQAdd( CrossCube, x );
-        EQAdd( DrawCube, x );
+        if( evenodd )
+          CrossCube(x);
+        else 
+          DrawCube(x);
       }
     }
   }
@@ -739,13 +741,13 @@ void Defaults(void) {
   
   /* These only get set if the storage structures have changed */
   stor.version = storVersion;
-  stor.openingroll = 35;
+  stor.openingroll = DEFAULT_OPENINGROLL;
   stor.numplayers = 1;
   stor.numcomputers = 0;
   stor.total = 1;
-  stor.nTrainWrecks = 3;
-  stor.nSuspend = 10;
-  stor.winscore = 300;
+  stor.nTrainWrecks = DEFAULT_nTRAINWRECKS;
+  stor.nSuspend = DEFAULT_nSUSPEND;
+  stor.winscore = DEFAULT_WINSCORE;
   stor.flags = 0 | flag_NextPlayerPopUp;
   
   // Clear player names and scores.

@@ -158,7 +158,7 @@ static Char **val2name = (CharPtr[]) { NoneString,
 /*
  * This function is based on the DrawIntro and DrawBlinds
  * functions in Vexed, a Cool GPL Palm Game by
- * "james mccombe" <cybertube@earthling.net>
+ * "James McCombe" <cybertube@earthling.net>
  * http://spacetube.tsx.org
  */
 void
@@ -169,6 +169,8 @@ DrawIntro () {
   SWord penx, peny;
   Boolean bstate;
 
+  /* If a game is on, don't do the splash */
+  if( stor.currplayer >= 0 ) return;
 
   // load bitmap resource and get handle
   Title_Handle = DmGet1Resource ('Tbmp', bmpTitle);
@@ -599,7 +601,7 @@ void DialogNewGame() {
 
   // Fill in WinScore with previous value.
   if ( stor.winscore > 9999 ) { // Sanity check...
-	stor.winscore = 300;
+	stor.winscore = DEFAULT_WINSCORE;
   }
   StrIToA( tmpString, stor.winscore );
   SetFieldTextFromStr( fld_winscore, tmpString );
@@ -607,7 +609,7 @@ void DialogNewGame() {
   // Fill in Opening Roll with previous value.
   if ( stor.openingroll > stor.winscore || stor.openingroll <= 0 ) {
     // Sanity check...
-    stor.openingroll = 35;
+    stor.openingroll = DEFAULT_OPENINGROLL;
   }
   StrIToA( tmpString, stor.openingroll );
   SetFieldTextFromStr( fld_openingroll, tmpString );
@@ -626,7 +628,7 @@ void DialogNewGame() {
   if ( hitButton == btn_OK_frmNewGame ) {
     Int num;
     
-    stor.winscore = 300;
+    stor.winscore = DEFAULT_WINSCORE;
     text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
     if ( text != NULL ) {
       num = StrAToI( text );
@@ -635,7 +637,7 @@ void DialogNewGame() {
       }
     }
     
-    stor.openingroll = 35;
+    stor.openingroll = DEFAULT_OPENINGROLL;
     fldIndex =  FrmGetObjectIndex(frm, fld_openingroll);
     text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
     if ( text != NULL ) {
@@ -1257,12 +1259,12 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
               Char tmpString[5];
 
               /* Reset Winning Score */
-              stor.winscore = 300;
+              stor.winscore = DEFAULT_WINSCORE;
               StrIToA( tmpString, stor.winscore );
               SetFieldTextFromStr( fld_winscore, tmpString );
 
               /* Reset Opening Roll */
-              stor.openingroll = 35;
+              stor.openingroll = DEFAULT_OPENINGROLL;
               StrIToA( tmpString, stor.openingroll );
               SetFieldTextFromStr( fld_openingroll, tmpString );
 
