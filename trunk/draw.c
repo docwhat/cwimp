@@ -580,19 +580,16 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
         break;
       case check_nTW:
         ToggleCheck( check_nTW, flag_nTW );
-	    break;
-	  case check_FullHouse:
-	    ToggleCheck(check_FullHouse, flag_FullHouse );
-	    break;
-	  case check_Suspend:
-	    ToggleCheck(check_Suspend, flag_Suspend   );
-	    break;
+        break;
+      case check_Suspend:
+        ToggleCheck(check_Suspend, flag_Suspend   );
+        break;
         
-	  }
-	  break;
+      }
+      break;
       
     default:
-	  break;
+      break;
     }
   
   CALLBACK_EPILOGUE
@@ -622,7 +619,6 @@ void DialogVariants() {
   CtlSetValue( GetObjectPtr(check_Eclipse  ), stor.flags & flag_Eclipse   );
   CtlSetValue( GetObjectPtr(check_Sampler  ), stor.flags & flag_Sampler   );
   CtlSetValue( GetObjectPtr(check_nTW      ), stor.flags & flag_nTW       );
-  CtlSetValue( GetObjectPtr(check_FullHouse), stor.flags & flag_FullHouse );
   CtlSetValue( GetObjectPtr(check_Suspend  ), stor.flags & flag_Suspend   );
 
   // Fill in WinScore with previous value.

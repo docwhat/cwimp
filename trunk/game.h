@@ -29,7 +29,7 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 10
+#define storVersion 11
 #define NumCubes    5  // Number of cubes
 #define MaxPlayers 10  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
@@ -93,8 +93,7 @@ struct Storage {
 #define flag_Eclipse         (1<< 1)
 #define flag_Sampler         (1<< 2)
 #define flag_nTW             (1<< 3)
-#define flag_FullHouse       (1<< 4) 
-#define flag_Suspend         (1<< 5)
+#define flag_Suspend         (1<< 4)
 /* Preferences: */
 #define flag_NextPlayerPopUp (1<< 7)
 /* Specials */

@@ -108,7 +108,7 @@ FIXVER: LOOP END
 END
 
 
-FORM ID frmVariants AT (CENTER@160/2 CENTER@160/2 100 130)
+FORM ID frmVariants AT (CENTER@160/2 CENTER@160/2 100 120)
 MODAL
 HELPID HelpVariants
 SAVEBEHIND
@@ -117,7 +117,6 @@ TITLE "Variations"
    CHECKBOX "Bump"             ID check_Bump      AT ( 5 15 AUTO AUTO )
    CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO )
    CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO )
-   CHECKBOX "Full House"       ID check_FullHouse AT ( 5 PREVBOTTOM AUTO AUTO )
 
    CHECKBOX "(n)Suspend"       ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
    LABEL "n = " ID AUTOID AT (25 PREVBOTTOM) 
@@ -128,7 +127,7 @@ TITLE "Variations"
    LABEL "n = " ID AUTOID AT (25 PREVBOTTOM) 
    FIELD ID fldnTrainWrecks AT (PREVRIGHT+2 PREVTOP 10 11)
 	 UNDERLINED MAXCHARS 2 NUMERIC
-   BUTTON "Done" ID btn_OK_frmVariants AT (5 130-15 AUTO AUTO)
+   BUTTON "Done" ID btn_OK_frmVariants AT (5 120-15 AUTO AUTO)
 END
 
 ##

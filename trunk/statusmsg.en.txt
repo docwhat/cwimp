@@ -328,9 +328,8 @@ Clear Flash First
 .
 
 STRING: HelpVariants
-ToDo: list and describe variants
-
-Below are the list of the variations of CWimp you can play.
+Variants are rules that let you play CWimp in new ways.  These
+are optional rules, and don't need to be used if you don't want.
 
 Bump:\n
 In this variant, if you score the same as another player, then you will
@@ -345,9 +344,6 @@ If you get one scoring die (a 5 or 10) and four dice with each of
 the non-scoring symbols (2, 3, 4, and 6) then you score a Cosmic
 Sampler, worth 50 points.
 
-FullHouse:\n
-ToDo
-
 Suspend:\n
 If you take more than (n) rolls to clear a Flash, your turn will be suspended
 and your turn will be ended.  Upon it being your turn again, then your
@@ -360,7 +356,8 @@ rolled, but with no score (a wimpout on 5 dice).
 .
 
 STRING: HelpGetNames
-ToDo: HelpGetNames
+On this screen, you can pick the names of all the human players.
+Edit the default names to your satisfaction, then press 'OK'.
 .
 
 STRING: HelpNewGame
@@ -445,7 +442,6 @@ BEGIN
 "Bump" = "Bump"
 "Eclipse" = "Eclipse"
 "Cosmic Sampler" = "Cosmic Sampler"
-"Full House" = "Full House"
 "(n)Suspend" = "(n)Suspend"
 "n = " = "n = "
 "(n)Train Wrecks" = "(n)Train Wrecks"
