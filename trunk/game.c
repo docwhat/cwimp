@@ -729,13 +729,9 @@ void LoadCubes() {
 
   size = sizeof(stor);
 
-  /* Purge old preferences if they exist */
-  PrefSetAppPreferences( OLDCREATOR, 0, 0, NULL, 0, true );
-
+  /* Load up preferences into stor */
   x = PrefGetAppPreferences( CREATOR, 0, &stor, &size, true);
-  if( (x == noPreferenceFound) || 
-      (sizeof(stor) != size ) ||
-      (x != storVersion) ) {
+  if( x != storVersion ) {
     /* This totally resets the whole game. */
     Defaults();
     ResetCubes();
