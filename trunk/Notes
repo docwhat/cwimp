@@ -1,17 +1,24 @@
-<palmGeek> $command = "/compiling/xcopilot-0.6.6/xcopilot -memversion 2 -bg
-           cyan -bbg cyan -serial -reset -ramsize 8192 -geometry 220x337-2+10"
-           ;
-<Worf:#palmchat> n9mtb: hehehehheheh.
-<palmGeek> I run the emu out of a perl script... hold on a sec. 
-<Worf:#palmchat> n9mtb: can that be called a worthwhile crash?
-<paperclip:#palmchat> network is a must...
-<Worf:#palmchat> oh yeah, don't forget to hook it to GPS, so every crook can
-                 find your car >G<
-<palmGeek> Now start xcopilot with option -gdebug (older versions) or -debug
-           gdb (newer versions), and in another window run
-<palmGeek> "m68k-palmos-coff-gdb progname", where progname is the program
-           created by gcc _without_ the .prc suffix. At gdb prompt, enter
-<palmGeek> "target pilot /dev/ttyqf" (xcopilot should have printed the message
-           "Debugging on /dev/ptyqf"; for gdb choose the "tty" that belongs to
-<palmGeek> this "pty").
+These are some notes to myself:
+
+ToDo:
+
+* Add Wimpout (aka turn over) dialog
+* Make the AI smarter
+* Add Event Queue
+* Add Animations
+
+
+This is how to get debugging to work under UNIX (courtasy of PalmGeek on
+IRC):
+
+$command = "/compiling/xcopilot-0.6.6/xcopilot -memversion 2 -bg cyan -bbg cyan -serial -reset -ramsize 8192 -geometry 220x337-2+10" ;
+
+I run the emu out of a perl script... hold on a sec. 
+
+Now start xcopilot with option -gdebug (older versions) or -debug gdb (newer
+versions), and in another window run "m68k-palmos-coff-gdb progname", where
+progname is the program created by gcc _without_ the .prc suffix. At gdb
+prompt, enter "target pilot /dev/ttyqf" (xcopilot should have printed the
+message "Debugging on /dev/ptyqf"; for gdb choose the "tty" that belongs to
+this "pty").
 
