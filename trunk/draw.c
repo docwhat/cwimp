@@ -444,7 +444,9 @@ void DrawStayButton() {
  end:
   ShowControl( btn_Stay, stay );
   SetFlag( flag_CanStay, stay );
-  SetStatus( status );
+  if( IsAI( stor.currplayer ) && status != 0 ) {
+    SetStatus( status );
+  }
 }
 
 

@@ -104,7 +104,8 @@ struct Storage {
 
 extern struct Storage stor;
 
-extern Boolean StayBit; // Normally false, unless player wants to stay
+extern Boolean StayBit;
+extern Boolean FreezeBit;
 
 void LoadCubes(void);
 void SaveCubes(void);

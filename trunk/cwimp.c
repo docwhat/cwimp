@@ -83,7 +83,6 @@ static Boolean MainFormHandleEvent (EventPtr e)
 
 
       }
-
       handled = true;
       break;
 
@@ -114,6 +113,20 @@ static Boolean MainFormHandleEvent (EventPtr e)
       }
       handled = true;
       break;
+
+    case winExitEvent:
+      if( e->data.winExit.exitWindow == (WinHandle)FrmGetFormPtr(MainForm)) {
+        /* Turn off animations and the AI */
+        FreezeBit = true;
+      }
+      break;
+
+    case winEnterEvent:
+      if (e->data.winEnter.enterWindow == (WinHandle)FrmGetFormPtr(MainForm) &&
+          e->data.winEnter.enterWindow == (WinHandle)FrmGetFirstForm ()) {
+        /* Turn back on animations and the AI */
+        FreezeBit = false;
+      }
 
     default:
       break;
@@ -180,7 +193,7 @@ static void EventLoop(void)
   EventType e;
 
   do {
-    EvtGetEvent(&e, 0.7 * SysTicksPerSecond());
+    EvtGetEvent(&e, .2 * SysTicksPerSecond());
     if (! SysHandleEvent (&e))
       if (! MenuHandleEvent (NULL, &e, &err) )
 	if (! ApplicationHandleEvent (&e) )

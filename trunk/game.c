@@ -64,6 +64,7 @@ Char **ComputerDefNames = (CharPtr[]){
 
 struct Storage stor;
 Boolean StayBit; // Normally false, unless player wants to stay
+Boolean FreezeBit; // Freeze animations, etc. till this is done.
 
 /* RollCube -- Returns a random number from 1 to 6 inclusive.
  * Args: None
@@ -616,13 +617,22 @@ void NextPlayer() {
 
 void GameEvents(void)
 {
+  static counter = 0;
 
-  if( stor.flags & flag_PendingAI ) {
+  // We do *nothing* when we're frozen.
+  if( FreezeBit ) return;
+
+  if( (stor.flags & flag_PendingAI) &&
+      (counter++ >= 8) ){
     /* Turn This Off! */
     SetFlag( flag_PendingAI, false );
     AITurn();
+    counter = 0;
+    return;
   }
   
+  if( counter > 8 ) counter = 0;
+  return;
 }
 
 void PlayerWon()
@@ -715,13 +725,15 @@ void ResetCubes(void)
   stor.currplayer = -1; // No Game Running
 
   stor.flash = 0;
-  StayBit = false;
   stor.YMNWTBYM = false;
 
   stor.leader = -1;
   /* DO NOT use SetStatus() here.  It calls draw    *
    * functions which don't work upon initialization */
   stor.status = 0;
+
+  StayBit = false;
+  FreezeBit = false;
 }			
 
 void SetStatus( UInt status )
@@ -767,6 +779,7 @@ void NewGame()
   }
 
   StayBit = false;
+  FreezeBit = false;
 }
 
 
