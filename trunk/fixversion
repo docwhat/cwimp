@@ -25,6 +25,11 @@ use 5.004;
 use Fcntl;
 
 
+# Set the time, etc.
+my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) =
+    localtime(time);
+$year += 1900;
+
 # Find current version
 # Set version on all the files handed in
 
@@ -62,13 +67,68 @@ sub EditRCP( $$ )
     open( IN, "$file" ) or die "Unable to read $file: $!";
     open( OUT, ">$outfile" ) or die "Unable to write $file: $!";
 	
-    while (<IN>)
+    while (my $line = <IN>)
     {
-        s/(version:\s)[^\\]+\\n/$1$version\\n/i;
-        print OUT;
+	# Remove trailing newlines
+	chomp $line;
+
+	# Substitute version
+        $line =~ s/\$VERSION/$version/g;
+
+	# Substitute Year
+	$line =~ s/\$YEAR/$year/g;
+
+	if( $line =~ /^FIXVER:\s+(\S+)\s+(\S.*)$/ ) {
+	    my $tag = $1;
+	    my $args = $2;
+	    my $endtag = 0;
+	    my $input;
+	    while ( my $newline = <IN> ) {
+		if( $newline =~ /^FIXVER:\s+($tag)\s+END/i ) {
+		    if ( $tag =~ /LOOP/i ) {
+			print OUT DoLoop( $input, $args );
+		    }
+		    $endtag = 1;
+		    last;
+		}
+		$input .= $newline;
+	    }
+	    if( ! $endtag ) {
+		print STDERR "Didn't see ending '$tag' tag!\n";
+		exit 1;
+	    }
+	    $line = "#";
+
+	}
+
+	# Remove comments
+	if ( $line !~ /^\#/ ) {  
+	    print OUT "$line\n";
+	}
     }
 
     close( OUT );
     close( IN );
 
 }
+
+sub DoLoop( $$ )
+{
+    my $input = shift;
+    my ( $count, $end ) = split / /, shift;
+    my $return;
+
+    for( ; $count <= $end ; $count++ ) {
+	my $add = $input;
+	my $countplusone = $count + 1;
+	$add =~ s/\$LOOPPLUSONE/$countplusone/g;
+	$add =~ s/\$LOOP/$count/g;
+	$return .= $add;
+    }
+
+    return $return;
+}
+
+
+
+
