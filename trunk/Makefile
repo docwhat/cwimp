@@ -101,6 +101,7 @@ $(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc: $(TARGET).
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).bin.zip \
 		cwimp/$(TARGET).prc \
+		cwimp/ChangeLog \
 		cwimp/README
 	mv ../$(TARGET).$(VERSION).bin.zip .
 	echo "(<a href=\"$(URL)\">$(TARGET)</A> binary, version $(VERSION))" > \
