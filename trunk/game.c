@@ -20,12 +20,9 @@
  */
 
 #include <Pilot.h>
-#if 0
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
-#endif
 
 #include "autogen.h"
+#include "data.h"
 #include "cwimp.h"
 #include "draw.h"
 #include "dialog.h"
@@ -36,40 +33,6 @@
 #include "queue.h"
 
 #include "game.h"
-
-
-/*
- * Default Names
- */
-
-static
-Char **PlayerDefNames = (CharPtr[]){
-                           "Scooter",
-                           "Fozzie",
-                           "Kermit",
-                           "Gonzo",
-                           "Ms. Piggy",
-                           "Animal",
-                           "Rowlf",
-                           "Statler",
-                           "Waldorf" };
-
-static
-Char **ComputerDefNames = (CharPtr[]){
-                             "Eliza",
-                             "HAL",
-                             "Kryten",
-                             "Holly",
-                             "Queeg",
-                             "Robbie",
-                             "Guardian",
-                             "Vger" };
-
-
-struct Storage stor;
-Boolean StayBit; // Normally false, unless player wants to stay.
-Boolean FreezeBit; // Freeze animations, etc. till this is done.
-UInt SoundAmp; // Set according to sound preferences.
 
 /* RollCube -- Returns a random number from 1 to 6 inclusive.
  * Args: None
@@ -110,26 +73,26 @@ int RollCube (void)
 
 /* Suspend is used by the suspend variation to store the turn */
 static void suspend( Short p ) {
-  stor.player[p].suspend.flash		= stor.flash;
-  stor.player[p].suspend.status		= stor.status;
-  stor.player[p].suspend.currscore	= stor.currscore;
-  stor.player[p].suspend.scorethisturn	= stor.scorethisturn;
-  stor.player[p].suspend.scorethisroll	= stor.scorethisroll;
+  pref.player[p].suspend.flash		= pref.flash;
+  pref.player[p].suspend.status		= pref.status;
+  pref.player[p].suspend.currscore	= pref.currscore;
+  pref.player[p].suspend.scorethisturn	= pref.scorethisturn;
+  pref.player[p].suspend.scorethisroll	= pref.scorethisroll;
 }
 
 /* Unsuspend does the opposite of Suspend for the same reason */
 static void unsuspend( Short p ) {
-  stor.flash		= stor.player[p].suspend.flash;
-  stor.status		= stor.player[p].suspend.status;
-  stor.currscore	= stor.player[p].suspend.currscore;
-  stor.scorethisturn	= stor.player[p].suspend.scorethisturn;
-  stor.scorethisroll	= stor.player[p].suspend.scorethisroll;
+  pref.flash		= pref.player[p].suspend.flash;
+  pref.status		= pref.player[p].suspend.status;
+  pref.currscore	= pref.player[p].suspend.currscore;
+  pref.scorethisturn	= pref.player[p].suspend.scorethisturn;
+  pref.scorethisroll	= pref.player[p].suspend.scorethisroll;
   DrawStatus();
-  stor.flash =
-    stor.status =
-    stor.currscore =
-    stor.scorethisturn =
-    stor.scorethisroll = 0;
+  pref.flash =
+    pref.status =
+    pref.currscore =
+    pref.scorethisturn =
+    pref.scorethisroll = 0;
 }
 
 
@@ -141,25 +104,25 @@ void Roll(void)
 {
   Short x = 0;
 
-  if( stor.currplayer < 0 ) {
+  if( !isGameOn() ) {
     // We don't have a game on
     // We should never get here
     return;
   }
 
   /* Clear out the score */
-  stor.scorethisroll = 0;
-  stor.YMNWTBYM = false;
+  pref.scorethisroll = 0;
+  pref.YMNWTBYM = false;
   DrawCurrScore();
 
   ClearKeepBits();
 
   /* Clear the dice, mark old ones */
   for(x = 0; x < NumCubes; x++ ) {
-    if (!stor.cube[x].keep) {
+    if (!pref.cube[x].keep) {
       EQAdd( EraseCube, x );
     } else {
-      stor.cube[x].value = 0 - abs(stor.cube[x].value);
+      pref.cube[x].value = 0 - abs(pref.cube[x].value);
       EQAdd( DrawCube, x );
     }
   }
@@ -167,9 +130,9 @@ void Roll(void)
   /* Roll the new dice */
   for (x = 0; x < NumCubes; x++) {
 
-    if (stor.cube[x].keep) continue;
+    if (pref.cube[x].keep) continue;
 
-    stor.cube[x].value = RollCube();
+    pref.cube[x].value = RollCube();
 
     if( x == 0 ) {
       EQAdd( DrawBlackCube, x );
@@ -194,9 +157,9 @@ void Stay() {
 
 /* Add <points> to the current players (temporary) score */
 void AddScore(Short points) {
-  stor.scorethisroll += points;
-  stor.scorethisturn += points;
-  stor.currscore += points;
+  pref.scorethisroll += points;
+  pref.scorethisturn += points;
+  pref.currscore += points;
 }
 
 /* Score all the points for this roll */
@@ -208,7 +171,7 @@ void ScoreRoll(Int x) {
   Boolean FS;
 
   // Init vars
-  stor.scorethisroll = 0;
+  pref.scorethisroll = 0;
   // FS will only be true if die 0 isn't kept
   // and it's value is FlamingSun
   FS = false;
@@ -220,27 +183,27 @@ void ScoreRoll(Int x) {
 
   // Fill the counting array
   for ( x = 0 ; x < NumCubes ; x++ ) {
-    if ( !stor.cube[x].keep ) {
+    if ( !pref.cube[x].keep ) {
       if ( x == 0 &&
-	   stor.cube[x].value == FlamingSun ) {
+	   pref.cube[x].value == FlamingSun ) {
 	FS = true;
       } else {
 	// We found a die of value
-	aCounting[ stor.cube[x].value ]++;
+	aCounting[ pref.cube[x].value ]++;
       } // If it's the FlamingSun
     } // If it's not kept
   }
 
   // Futtless
   // We are FUTTLESS, must clear flash
-  if ( stor.flash ) {
-    if ( aCounting[stor.flash] == 0 ) {
+  if ( pref.flash ) {
+    if ( aCounting[pref.flash] == 0 ) {
       // Clear the flash
-      stor.flash = 0;
+      pref.flash = 0;
     } else {
       // No score - Turn on buttons again
       for( x = 0; x < NumCubes; x++ ) {
-        if( stor.cube[x].value == stor.flash ) {
+        if( pref.cube[x].value == pref.flash ) {
           EQAdd( CrossCube, x );
         }
       }
@@ -253,10 +216,10 @@ void ScoreRoll(Int x) {
   // If a value in our counting array is equal to NumCubes,
   // then we have a freight train. Which cube we use doesn't
   // matter, if all are the same.
-  if ( aCounting[ stor.cube[1].value ] == NumCubes ) {
-    x = stor.cube[1].value;
+  if ( aCounting[ pref.cube[1].value ] == NumCubes ) {
+    x = pref.cube[1].value;
     if ( x == 1 ) {
-      PlayerLost( stor.currplayer, SuperNovaString );
+      PlayerLost( GetCurrPlayer(), SuperNovaString );
       return;
     }
     if ( x == 6 ) {
@@ -266,20 +229,20 @@ void ScoreRoll(Int x) {
     }
     
     AddScore( x * 100 );
-    stor.YMNWTBYM = true;
+    pref.YMNWTBYM = true;
     SetFlag( flag_FreightTrain, true );
     for ( x = 0 ; x < NumCubes ; x++ ) 
-      stor.cube[x].keep = true;
+      pref.cube[x].keep = true;
   } else {
     // Look for Flashes (round one, no FlamingSuns)
     for ( x = 1 ; x <= 6 ; x++ ) {
       if ( aCounting[x] >= 3 ) {
-        stor.flash = x;
+        pref.flash = x;
       }
     }
 	  
     // Fill P1 & P2
-    if ( FS && !stor.flash ) {
+    if ( FS && !pref.flash ) {
       // Look for pairs
       for ( x = 1 ; x <= 6 ; x++ ) {
         if ( aCounting[x] == 2 ) {
@@ -299,18 +262,18 @@ void ScoreRoll(Int x) {
         
         aCounting[die]++;
         BlackDieValue = die;
-        stor.cube[0].value = die;
+        pref.cube[0].value = die;
       } else if ( P1 ) {
         // No choice. Flaming Sun *must* finish the Flash.
         aCounting[P1]++;
         BlackDieValue = P1;
-        stor.cube[0].value = P1;
+        pref.cube[0].value = P1;
       }
       
       // Look for Flashes (round two, with FlamingSuns)
       for ( x = 1 ; x <= 6 ; x++ ) {
         if ( aCounting[x] == 3 ) {
-          stor.flash = x;
+          pref.flash = x;
         }
       }
     } /* If !FreightTrain */
@@ -319,9 +282,9 @@ void ScoreRoll(Int x) {
 
 
   // Flash Post; Score Calculation
-  if ( stor.flash ) {
+  if ( pref.flash ) {
     int count;
-    aCounting[stor.flash] -= 3;
+    aCounting[pref.flash] -= 3;
 
     /* We decrement thru the Cubes */
     count = 0;
@@ -329,22 +292,22 @@ void ScoreRoll(Int x) {
     if ( P1 || P2 ) {
       // We've used a FlamingSun to
       // complete a Flash
-      stor.cube[0].keep = true;
+      pref.cube[0].keep = true;
       count++;
 
     }
     for ( ; x >= 0 && count < 3 ; x-- ) {
-      if ( !stor.cube[x].keep &&
-	   stor.cube[x].value == stor.flash ) {
+      if ( !pref.cube[x].keep &&
+	   pref.cube[x].value == pref.flash ) {
 	// We found a cube matching the type of Flash
-	stor.cube[x].keep = true;
+	pref.cube[x].keep = true;
 	count++;
       }
     }
-    if ( stor.flash == 1 )
+    if ( pref.flash == 1 )
       AddScore(100);
     else
-      AddScore(stor.flash*10);
+      AddScore(pref.flash*10);
   }  
   
   // Clean Up Score
@@ -353,13 +316,13 @@ void ScoreRoll(Int x) {
   // Interate through the cubes...
   for( x = 0 ; x < NumCubes ; x++ ) {
     // If the cube isn't kept
-    if ( !stor.cube[x].keep ) {
-      if ( stor.cube[x].value == 1 ) {
-	stor.cube[x].keep = true;
+    if ( !pref.cube[x].keep ) {
+      if ( pref.cube[x].value == 1 ) {
+	pref.cube[x].keep = true;
 	AddScore(10);
       }
-      if ( stor.cube[x].value == 5 ) {
-	stor.cube[x].keep = true;
+      if ( pref.cube[x].value == 5 ) {
+	pref.cube[x].keep = true;
 	AddScore(5);
       }
     }
@@ -367,8 +330,8 @@ void ScoreRoll(Int x) {
 
   // Fill in the Black Die's Flaming Sun
   // if it wasn't used above (in P1 && P2)
-  if ( FS && !stor.cube[0].keep ) {
-    if ( stor.scorethisroll == 0 ) {
+  if ( FS && !pref.cube[0].keep ) {
+    if ( pref.scorethisroll == 0 ) {
       Int die;
 
       DrawCurrScore(); /* Player has to know the score */
@@ -376,7 +339,7 @@ void ScoreRoll(Int x) {
 
       aCounting[die]++;
       BlackDieValue = die;
-      stor.cube[0].value = die;
+      pref.cube[0].value = die;
     } else {
       Int die;
 
@@ -387,7 +350,7 @@ void ScoreRoll(Int x) {
       if( die != 2 ) {
 	aCounting[die]++;
 	BlackDieValue = die;
-	stor.cube[0].value = die;
+	pref.cube[0].value = die;
       }
     }
   }
@@ -396,13 +359,13 @@ void ScoreRoll(Int x) {
   // Interate through the cubes...
   for( x = 0 ; x < NumCubes ; x++ ) {
     // If the cube isn't kept
-    if ( !stor.cube[x].keep ) {
-      if ( stor.cube[x].value == 1 ) {
-	stor.cube[x].keep = true;
+    if ( !pref.cube[x].keep ) {
+      if ( pref.cube[x].value == 1 ) {
+	pref.cube[x].keep = true;
 	AddScore(10);
       }
-      if ( stor.cube[x].value == 5 ) {
-	stor.cube[x].keep = true;
+      if ( pref.cube[x].value == 5 ) {
+	pref.cube[x].keep = true;
 	AddScore(5);
       }
     }
@@ -412,16 +375,16 @@ void ScoreRoll(Int x) {
   if( GetFlag( flag_nTW ) ) {
     Boolean bool = true;
     for( x = 0 ; x < NumCubes ; x++ ) {
-      if ( stor.cube[x].keep ) {
+      if ( pref.cube[x].keep ) {
 	bool = false; // Whups, not a trainwreck
 	break;
       }
     }
-    if( bool && stor.scorethisroll == 0 ) {
-      stor.player[stor.currplayer].TWcount++;
-      DialogOK( frmTrainWreck, stor.currplayer, -1 );
-      if( stor.player[stor.currplayer].TWcount >= stor.nTrainWrecks ) {
-	PlayerLost( stor.currplayer, TooManyTWString );
+    if( bool && pref.scorethisroll == 0 ) {
+      pref.player[GetCurrPlayer()].TWcount++;
+      DialogOK( frmTrainWreck, GetCurrPlayer(), -1 );
+      if( pref.player[GetCurrPlayer()].TWcount >= pref.nTrainWrecks ) {
+	PlayerLost( GetCurrPlayer(), TooManyTWString );
       }
     }
   }
@@ -429,17 +392,17 @@ void ScoreRoll(Int x) {
   /* Cosmic Sampler Variant */
   /* This can't happen if we have a Flaming Sun or no score */
   if( GetFlag( flag_Sampler ) &&
-      (stor.scorethisroll > 0) &&
+      (pref.scorethisroll > 0) &&
       (BlackDieValue == 0) ) {
     Short list[5] = { 0, 0, 0, 0, 0 };
     Boolean bool = true;
 
     for( x = 0 ; x < NumCubes ; x++ ) {
-      if( (stor.cube[x].value == 5) ||
-	  (stor.cube[x].value == 1) ) {
+      if( (pref.cube[x].value == 5) ||
+	  (pref.cube[x].value == 1) ) {
 	list[5-2]++;
       } else {
-	list[stor.cube[x].value-2]++;
+	list[pref.cube[x].value-2]++;
       }
     }
 
@@ -449,19 +412,19 @@ void ScoreRoll(Int x) {
 
     if( bool ) {
       AddScore( 50 );
-      DialogOK( frmSampler, stor.currplayer, -1 );
+      DialogOK( frmSampler, GetCurrPlayer(), -1 );
     }
   }
 
   /* Suspend Rule */
   if( GetFlag( flag_Suspend ) ) {
-    if( stor.flash > 0 ) {
-      stor.suspendcount++;
+    if( pref.flash > 0 ) {
+      pref.suspendcount++;
     } else {
-      stor.suspendcount = 0;
+      pref.suspendcount = 0;
     }
-    if( stor.suspendcount > stor.nSuspend ) {
-      suspend( stor.currplayer );
+    if( pref.suspendcount > pref.nSuspend ) {
+      suspend( GetCurrPlayer() );
       EQAdd( NextPlayer, 0 );
       return;
     }
@@ -479,73 +442,73 @@ void TurnLogic(Int x) {
 
   DrawCurrScore();
 
-  if( stor.leader == stor.currplayer ) {
+  if( isCurrLeader() ) {
     /* Who else is in the game? */
-    for( x = 0 ; x < stor.total ; x++ ) {
-      if( x == stor.currplayer ) continue;
-      if( !stor.player[x].lost ) break;
+    for( x = 0 ; x < pref.totalplayers ; x++ ) {
+      if( x == GetCurrPlayer() ) continue;
+      if( !pref.player[x].lost ) break;
     }
     /* No one else in the game! */
-    if( x == stor.total ) {
+    if( x == pref.totalplayers ) {
       PlayerWon();
       return;
     }
   }
       
   /* The turn has ended */
-  if ( ( stor.scorethisroll == 0 &&
-	 !stor.flash ) || 
+  if ( ( pref.scorethisroll == 0 &&
+	 !pref.flash ) || 
        StayBit ) {
 	
     if ( StayBit ) {
       /* Bump Variation */
       if( GetFlag(flag_Bump) ) {
-	for ( x = 0 ; x < stor.total ; x++ ) {
-	  if ( stor.player[x].score == stor.currscore ) {
-	    DialogOK( frmBump, stor.currplayer, x );
+	for ( x = 0 ; x < pref.totalplayers ; x++ ) {
+	  if ( pref.player[x].score == pref.currscore ) {
+	    DialogOK( frmBump, GetCurrPlayer(), x );
 
 	    /* Retribution time */
-	    stor.player[x].score = stor.player[stor.currplayer].score;
-	    if( stor.leader == x ) {
+	    pref.player[x].score = pref.player[GetCurrPlayer()].score;
+	    if( pref.leader == x ) {
 	      // Don't that suck?
-	      stor.leader = -1;
+	      pref.leader = -1;
 	    }
 	    DrawPlayer( x );
 	
     /* There can be only one ... */
-	    x = stor.total;
+	    x = pref.totalplayers;
 	  }
 	}
       } /* end bump code */
 
-      stor.player[stor.currplayer].score = stor.currscore;
+      pref.player[GetCurrPlayer()].score = pref.currscore;
     }
     
     /* Last Licks Stuff */
-    if( ! stor.player[stor.currplayer].lost &&
-	( stor.player[stor.currplayer].score >= stor.winscore ||
-	  stor.leader >= 0 ) ) {
-      if( stor.leader < 0 ) {
+    if( ! pref.player[GetCurrPlayer()].lost &&
+	( pref.player[GetCurrPlayer()].score >= pref.winscore ||
+	  pref.leader >= 0 ) ) {
+      if( pref.leader < 0 ) {
 	/* Hasn't been set, this guy is it */
-	stor.leader = stor.currplayer;
-	DialogOK( frmLeader, stor.currplayer, -1 );
+	pref.leader = GetCurrPlayer();
+	DialogOK( frmLeader, GetCurrPlayer(), -1 );
       } else {
 	/* We're in LastLicks already */
 	/* There is a leader, did we beat 'em? */
-	if( stor.player[stor.currplayer].score >
-	    stor.player[stor.leader].score ) {
-	  Byte lastleader = stor.leader;
+	if( pref.player[GetCurrPlayer()].score >
+	    pref.player[pref.leader].score ) {
+	  Byte lastleader = pref.leader;
 	  
-	  stor.leader = stor.currplayer;
+	  pref.leader = GetCurrPlayer();
 	  /* Clean up old bits */
 	  DrawPlayer( lastleader ); 
-	  DialogOK( frmLeader, stor.currplayer, -1 );
+	  DialogOK( frmLeader, GetCurrPlayer(), -1 );
 	} else {
 	  /* Well, we didn't beat the leader... */
-	  PlayerLost( stor.currplayer, LostToLeaderString );
+	  PlayerLost( GetCurrPlayer(), LostToLeaderString );
 	}
 	
-      } /* If(stor.leader < 0) ... */
+      } /* If(pref.leader < 0) ... */
     } /* End Last Licks Stuff */
     
     EQAdd( NextPlayer, 0 );
@@ -553,22 +516,22 @@ void TurnLogic(Int x) {
   }
 
 
-  stor.YMNWTBYM = false;
+  pref.YMNWTBYM = false;
 
   DrawCurrScore();
 
   kept = 0;
   for ( x = 0 ; x < NumCubes ; x++ ) {
-    if ( stor.cube[x].keep ) {
+    if ( pref.cube[x].keep ) {
       kept++;
     }
   }
 
   if ( kept == 5 ) {
     // You May Not Want To But You Must
-    stor.YMNWTBYM = true;
+    pref.YMNWTBYM = true;
     for ( x = 0 ; x < NumCubes ; x++ ) {
-      stor.cube[x].keep = false;
+      pref.cube[x].keep = false;
     }
   }
 
@@ -582,15 +545,16 @@ void NextPlayer(Int x) {
   /* Int x; */
   Int prevplayer;
 
-  prevplayer = stor.currplayer;
+  prevplayer = GetCurrPlayer();
 
+#if 0
   while(1) {
-    stor.currplayer = (stor.currplayer + 1) % stor.total;
-    if ( prevplayer == stor.currplayer ) {
+    pref.currplayer = (pref.currplayer + 1) % pref.totalplayers;
+    if ( prevplayer == pref.currplayer ) {
       /* We've looped around or there is only one player */
-      if ( stor.total > 1 ) {
+      if ( pref.totalplayers > 1 ) {
 	/* If there is more than one player */
-	if( !stor.player[stor.currplayer].lost ) {
+	if( !pref.player[pref.currplayer].lost ) {
 	  PlayerWon();
 	  return;
 	} else {
@@ -600,28 +564,40 @@ void NextPlayer(Int x) {
       }
       break;
     }
-    if ( ! stor.player[stor.currplayer].lost ) {
+    if ( ! pref.player[pref.currplayer].lost ) {
       // This player hasn't lost, he's next
       break;
     }
   }
+#endif
+
+  pref.currplayer = GetNextPlayer();
+  if( GetCurrPlayer() == prevplayer && pref.totalplayers > 1 )
+  {
+          if( isLostPlayer(GetCurrPlayer()) )
+          {
+                  NobodyWon();
+          } else {
+                  PlayerWon();
+          }
+  }
 
   // Clear cubes
   for( x = 0 ; x < NumCubes ; x++ ) {
-    stor.cube[x].keep = false;
-    stor.cube[x].value = 0;
+    pref.cube[x].keep = false;
+    pref.cube[x].value = 0;
   }
 
-  if( stor.currplayer == stor.leader ) {
+  if( pref.currplayer == pref.leader ) {
 	PlayerWon();
 	return;
   }
   
-  if( stor.player[prevplayer].suspend.flash > 0 ) {
-    DialogOK( frmSuspend, prevplayer, stor.currplayer );
+  if( pref.player[prevplayer].suspend.flash > 0 ) {
+    DialogOK( frmSuspend, prevplayer, GetCurrPlayer() );
   } else {
     if( GetFlag(flag_NextPlayerPopUp) ) {
-      DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
+      DialogOK( frmNextPlayer, prevplayer, GetCurrPlayer() );
     } else {
       if( !StayBit ) {
 	EQAdd( SetStatus, DS_Wimpout );
@@ -638,15 +614,15 @@ void NextPlayer(Int x) {
   }
 
   // Clear scores
-  stor.scorethisroll =
-    stor.scorethisturn = 0;
-  stor.currscore = stor.player[stor.currplayer].score;
+  pref.scorethisroll =
+    pref.scorethisturn = 0;
+  pref.currscore = pref.player[GetCurrPlayer()].score;
   StayBit = false;
 
   if( GetFlag(flag_Suspend) ) {
-    stor.suspendcount = 0;
-    if( stor.player[stor.currplayer].suspend.flash > 0 ) {
-      unsuspend( stor.currplayer );
+    pref.suspendcount = 0;
+    if( pref.player[GetCurrPlayer()].suspend.flash > 0 ) {
+      unsuspend( GetCurrPlayer() );
     }
   }
 
@@ -671,11 +647,11 @@ void GameEvents(void)
   }
 
   /* Flash Futtless Flashes */
-  if( stor.flash && stor.scorethisroll == 0 ) {
+  if( pref.flash && pref.scorethisroll == 0 ) {
     Byte x;
     for( x = 0; x < NumCubes ; x++ ) {
-      if( !stor.cube[x].keep &&
-          stor.cube[x].value == stor.flash ) {
+      if( !pref.cube[x].keep &&
+          pref.cube[x].value == pref.flash ) {
         if( evenodd )
           CrossCube(x);
         else 
@@ -703,7 +679,7 @@ void GameEvents(void)
 
 void PlayerWon()
 {
-  DialogOK( frmWinner, stor.currplayer, -1 );
+  DialogOK( frmWinner, GetCurrPlayer(), -1 );
   ResetCubes();
   DrawState();
   return;
@@ -719,153 +695,15 @@ void NobodyWon() {
 
 void PlayerLost( Short player, CharPtr ptrString )
 {
-  stor.player[player].lost = true;
+  pref.player[player].lost = true;
   
   DialogOK( frmLost, player, -1 );
 }
 
-
-void LoadCubes() {
-  Word x,size;
-
-  /* Initialize EventQueue */
-  EQInit();
-
-  size = sizeof(stor);
-
-  /* Load up preferences into stor */
-  x = PrefGetAppPreferences( CREATOR, 0, &stor, &size, true);
-  if( x != storVersion ) {
-    /* This totally resets the whole game. */
-    Defaults();
-    ResetCubes();
-  }
-
-  /* Set the volume levels */
-  SndGetDefaultVolume(NULL, NULL, &SoundAmp);
-
-}
-
-void SaveCubes() {
-  PrefSetAppPreferences( CREATOR, 0, storVersion, &stor, sizeof(stor), true );
-}
-
-/* Defaults() -- Resets the game to default status
- */
-void Defaults(void) {
-  Word i;
-  
-  /* These only get set if the storage structures have changed */
-  stor.openingroll = DEFAULT_OPENINGROLL;
-  stor.numplayers = 1;
-  stor.numcomputers = 0;
-  stor.total = 1;
-  stor.nTrainWrecks = DEFAULT_nTRAINWRECKS;
-  stor.nSuspend = DEFAULT_nSUSPEND;
-  stor.winscore = DEFAULT_WINSCORE;
-  stor.flags = 0 | flag_NextPlayerPopUp;
-  
-  // Clear player names and scores.
-  for( i = 0; i < MaxPlayers; i++ ) {
-    StrCopy( stor.player[i].name, PlayerDefNames[i] );
-    stor.player[i].score = 0;
-  }
-
-}
-
-/* ResetCubes -- Resets all the cubes and draws them.
- * Args:    None    
- * Returns: None
- */
-void ResetCubes(void)
-{
-  Short x = 0;
-
-  FreezeBit = true;
-  EQReset();
-
-  for (x = 0; x < NumCubes; x++) {
-    stor.cube[x].value = stor.cube[x].keep = 0;
-  }
-
-  stor.scorethisturn = 0;
-  stor.scorethisroll = 0;
-  stor.currscore = 0;
-
-  stor.currplayer = -1; // No Game Running
-
-  stor.flash = 0;
-  stor.YMNWTBYM = false;
-
-  stor.leader = -1;
-  /* DO NOT use SetStatus() here.  It calls draw    *
-   * functions which don't work upon initialization */
-  stor.status = 0;
-
-  StayBit = false;
-}			
-
 void SetStatus( Int status )
 {
-  stor.status = status;
+  pref.status = status;
   DrawStatus();
 
 }
 
-void NewGame()
-{
-  Short x;
-
-  stor.flash = 0;
-  stor.YMNWTBYM = false;
-  stor.leader = -1;
-  stor.status = 0;
-  stor.currscore = 0;
-  stor.scorethisturn = 0;
-  stor.scorethisroll = 0;
-  stor.currplayer = 0;
-  stor.suspendcount = 0;
-
-  for (x = 0; x < NumCubes; x++) {
-    stor.cube[x].value = 0;
-    stor.cube[x].keep = false;
-  }
-
-  for (x = 0; x < stor.total ; x++ ) {
-    stor.player[x].lost      = false;
-    /* We don't need to set name */
-    stor.player[x].score     = 0;
-    stor.player[x].TWcount   = 0;
-    stor.player[x].suspend.flash		= 0;
-    stor.player[x].suspend.status		= 0;
-    stor.player[x].suspend.currscore		= 0;
-    stor.player[x].suspend.scorethisturn	= 0;
-    stor.player[x].suspend.scorethisroll	= 0;
-  }
-
-  for (x = stor.numplayers ; x < stor.total; x++ ) {
-    StrCopy( stor.player[x].name,
-             ComputerDefNames[x - stor.numplayers] );
-  }
-
-  StayBit = false;
-  FreezeBit = false;
-}
-
-
-inline
-Int GetFlag( Int flag ) {
-  return (stor.flags & flag);
-}  
-
-void SetFlag( Int f, Boolean b ) {
-  if( b ) {
-    stor.flags |= f;
-  } else {
-    stor.flags &= ~f;
-  }
-}
-
-Boolean IsAI( Int player ) {
-  return (player >= stor.numplayers)?true:false;
-}

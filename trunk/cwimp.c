@@ -27,6 +27,7 @@
 #include "dialog.h"
 #include "cwimp.h"
 #include "queue.h"
+#include "data.h"
 
 static Boolean MainFormHandleEvent (EventPtr e)
 {
@@ -74,7 +75,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
                         break;
 
                 case MenuItem_Variants:
-                        if ( stor.currplayer < 0 ) {
+                        if ( GetCurrPlayer() < 0 ) {
                                 DialogVariants();
                         } else {
                                 FrmAlert(NoVariants);
@@ -104,11 +105,11 @@ static Boolean MainFormHandleEvent (EventPtr e)
                         break;
 		
                 case btn_Roll:
-                        if ( stor.currplayer < 0 ) {
-                                DialogNewGame();
-                        } else {
+                        if ( isGameOn() ) {
                                 ShowButtons(false);
                                 Roll();
+                        } else {
+                                DialogNewGame();
                         }
                         break;
 
@@ -183,14 +184,14 @@ static Word StartApplication(void)
         }
 
         FrmGotoForm(MainForm);
-        LoadCubes();
+        LoadPrefs();
         return 0;
 }
 
 /* Save preferences, close forms, close app database */
 static void StopApplication(void)
 {
-        SaveCubes();
+        SavePrefs();
         EQDrain();
         FrmSaveAllForms();
         FrmCloseAllForms();

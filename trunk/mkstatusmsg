@@ -46,17 +46,18 @@ my $Defines = "#ifndef _VARIOUS_STRINGS_H_\n" .
 my $DrawStatus = "#include <Pilot.h>\n" . 
     "#include \"autogen.h\"\n" .
     "#include \"game.h\"\n" .
+    "#include \"data.h\"\n" .
     "#include \"statusmsg.h\"\n" .
     "#include \"lowlevel.h\"\n\n"  .
     "void DrawStatus() {\n" .
     "  Char msg[PLAYERMaxName+1];\n\n" .
-    "  switch ( stor.status ) {\n";
+    "  switch ( pref.status ) {\n";
 
 my $DialogStatus = "void DialogStatus() {\n" .
-    "  if( stor.status < 100 )\n" .
+    "  if( pref.status < 100 )\n" .
     "    FrmHelp( GenericHelp );\n" .
     "  else\n" .
-    "    FrmHelp( stor.status );\n" .
+    "    FrmHelp( pref.status );\n" .
     "}\n\n";
 
 my $Strings;
@@ -91,7 +92,7 @@ while (my $line = <IN>)
 	} elsif( $status =~ /\%s/ ) {
 	    $DrawStatus .= "  case $tag:\n" . 
 		"\tStrPrintF( msg, \"$status\", " .
-		"stor.player[stor.currplayer].name, NULL );\n" .
+		"GetName( GetCurrPlayer() ), NULL );\n" .
 		"\tSetFieldTextFromStr( statusLine, msg ); " . 
 		"break;\n";
 	    $result = \$Strings;

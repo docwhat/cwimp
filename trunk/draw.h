@@ -21,6 +21,13 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
+#include "data.h"
+
+#define SND_ERASE_CUBE	1
+#define SND_DRAW_CUBE	2
+#define SND_TOGGLE_TYPE	3
+
+
 #define BlankSymbol "\22"
 #define CheckSymbol "\20"
 
@@ -46,6 +53,8 @@ void PlaySound(Int type);
 
 void ShowControl(Word objID, Boolean enable);
 void ShowButtons(Int show);
+void DrawUserType(Short index, PlayerType type);
+
 #ifdef DEBUG
 void EQStatus(Int x);
 #endif

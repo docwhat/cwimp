@@ -24,11 +24,12 @@
 #include "autogen.h"
 #include "game.h"
 #include "draw.h"
+#include "data.h"
 
 void CheckAI(void)
 {
   Boolean isai;
-  isai = IsAI( stor.currplayer );
+  isai = IsAI( pref.currplayer );
 
   SetFlag( flag_PendingAI, isai );
   if( isai ) SetStatus( DS_Thinking );
@@ -64,7 +65,7 @@ Int AIChooseThree( Int c1, Int c2, Int c3 )
 
   count = 0;
   for( x = 0 ; x < NumCubes ; x++ ) {
-    if( stor.cube[x].keep )
+    if( pref.cube[x].keep )
       count++;
   }
 

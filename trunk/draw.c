@@ -21,8 +21,6 @@
 
 #include <Pilot.h>
 #include <SysEvtMgr.h>
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
 
 #include "autogen.h"
 #include "cwimp.h"
@@ -32,6 +30,7 @@
 #include "statusmsgstrings.h"
 #include "queue.h"
 #include "dialog.h"
+#include "data.h"
 
 #include "drawcon.h"
 #include "draw.h"
@@ -77,7 +76,7 @@ DrawIntro () {
         Boolean bstate;
 
         /* If a game is on, don't do the splash */
-        if( stor.currplayer >= 0 ) return;
+        if( isGameOn() ) return;
 
         // load bitmap resource and get handle
         Title_Handle = DmGet1Resource ('Tbmp', bmpTitle);
@@ -170,8 +169,8 @@ void ClearKeepBits(void)
 void DrawKeepBit(Int die)
 {
   
-        if ( stor.YMNWTBYM ||
-             (stor.cube[die].keep && stor.cube[die].value > 0) ){
+        if ( pref.YMNWTBYM ||
+             (pref.cube[die].keep && pref.cube[die].value > 0) ){
                 SetFieldTextFromStr( getDieID(die),
                                      CheckSymbol);
         } else {
@@ -223,12 +222,18 @@ void DrawPlayer(Int player) {
         WinEraseRectangle( &r, 0 );
 
         // Check for a game
-        if( stor.currplayer <= -1 )
+        if( !isGameOn() )
         {
                 return;
         }
 
-        name = stor.player[player].name;
+        if( pref.player[player].type == PlayerNone )
+        {
+                return;
+        }
+
+
+        name = GetName( player );
 
         /* Draw the Name */
         y = PLAYERTLy + player * PLAYEREXy;
@@ -236,24 +241,24 @@ void DrawPlayer(Int player) {
                       PLAYERTLx, y );
 
         /* Draw the Score */
-        StrIToA( msg, stor.player[player].score );
+        StrIToA( msg, pref.player[player].score );
         WinDrawChars( msg, StrLen( msg ),
                       SCOREx, y );
 
-        if ( stor.player[player].lost )
+        if ( pref.player[player].lost )
         {
                 CrossPlayer(player);
                 return;
         }
 
 
-        if( player == stor.currplayer )
+        if( player == pref.currplayer )
         {
                 InvertPlayer(player);
                 return;
         }
 
-        if( stor.leader == player )
+        if( pref.leader == player )
         {
                 LeadPlayer(player);
                 return;
@@ -275,17 +280,17 @@ void DrawCurrScore()
 {
         Char msg[6];
 
-        if ( stor.flash && stor.scorethisroll == 0 ) {
+        if ( pref.flash && pref.scorethisroll == 0 ) {
                 StrCopy( msg, NotApplicableString );
         } else {
-                StrIToA( msg, stor.scorethisroll );
+                StrIToA( msg, pref.scorethisroll );
         }
         SetFieldTextFromStr(scoreRoll,  msg);
 
-        StrIToA( msg, stor.scorethisturn );
+        StrIToA( msg, pref.scorethisturn );
         SetFieldTextFromStr(scoreTurn,  msg);
 
-        StrIToA( msg, stor.currscore );
+        StrIToA( msg, pref.currscore );
         SetFieldTextFromStr(scoreTot,  msg);
 
 }
@@ -355,14 +360,14 @@ void DrawCube(Int die)
         y = CUBETLy + (CUBESize + CUBESpace) * die;
   
         if ( die == 0 ) { 
-                tmpID = bmpBCube[ abs(stor.cube[die].value) ];
+                tmpID = bmpBCube[ abs(pref.cube[die].value) ];
         } else {
-                tmpID = bmpWCube[ abs(stor.cube[die].value) ];
+                tmpID = bmpWCube[ abs(pref.cube[die].value) ];
         }
 
         DrawBitmap( tmpID, CUBETLx, y );
 
-        if( stor.cube[die].value < 0 ) {
+        if( pref.cube[die].value < 0 ) {
                 GreyCube(die);
         }
 
@@ -398,11 +403,11 @@ void DrawWhiteCube(Int die)
 }
 
 void DrawRollButton() {
-        if( stor.currplayer < 0 ) {
+        if( pref.currplayer < 0 ) {
                 ShowControl( btn_Roll, 1 );
                 CtlSetLabel( GetObjectPtr(btn_Roll), StartString );
         } else {
-                if( IsAI( stor.currplayer ) ) {
+                if( IsAI( pref.currplayer ) ) {
                         ShowControl( btn_Roll, 0 );
                 } else {
                         ShowControl( btn_Roll, 1 );
@@ -413,12 +418,12 @@ void DrawRollButton() {
 
 void DrawTopStatusButton() {
 
-        if( stor.leader < 0 ) {
+        if( pref.leader < 0 ) {
                 ShowControl( btnTopStatus, 0 );
                 return;
         }
 
-        if( stor.leader >= 0 ) {
+        if( pref.leader >= 0 ) {
                 ShowControl( btnTopStatus, 1 );
                 CtlSetLabel( GetObjectPtr(btnTopStatus), LastLicksString );
                 return;
@@ -437,7 +442,7 @@ void DrawStayButton() {
         Int status = 0;
 
         /* No game, no brainer */
-        if( stor.currplayer < 0 ) {
+        if( pref.currplayer < 0 ) {
                 stay = false;
                 goto end;
         }
@@ -449,25 +454,25 @@ void DrawStayButton() {
                 goto end;
         }
 
-        if( stor.flash ) {
+        if( pref.flash ) {
                 stay = false;
                 status = DS_MustClearFlash;
                 goto end;
         }
 
-        if( stor.YMNWTBYM ) {
+        if( pref.YMNWTBYM ) {
                 stay = false;
                 status = DS_YMNWTBYM;
                 goto end;
         }
 
-        if( stor.scorethisturn == 0 ) {
+        if( pref.scorethisturn == 0 ) {
                 stay = false;
                 goto end;
         }
     
-        if( stor.player[stor.currplayer].score == 0 &&
-            stor.scorethisturn < stor.openingroll )
+        if( pref.player[pref.currplayer].score == 0 &&
+            pref.scorethisturn < pref.openingroll )
         {
                 status = DS_OpeningRoll;
                 stay = false;
@@ -475,8 +480,8 @@ void DrawStayButton() {
         }
 
         /* If we aren't winning in last licks */
-        if( stor.leader >= 0 &&
-            ( stor.player[stor.leader].score > stor.currscore ) )
+        if( pref.leader >= 0 &&
+            ( pref.player[pref.leader].score > pref.currscore ) )
         {
                 stay = false;
                 goto end;
@@ -484,12 +489,12 @@ void DrawStayButton() {
 
         if( GetFlag( flag_Eclipse ) ) {
                 /* Are we eclipsed? */
-                for( x = 0; x < stor.total; x++ ) {
-                        if( x == stor.currplayer ) continue;
-                        if( stor.player[x].score == stor.currscore ) break;
+                for( x = 0; x < pref.totalplayers; x++ ) {
+                        if( x == pref.currplayer ) continue;
+                        if( pref.player[x].score == pref.currscore ) break;
                 }
     
-                if( x != stor.total ) {
+                if( x != pref.totalplayers ) {
                         stay = false;
                         status = DS_Eclipse;
                         goto end;
@@ -546,7 +551,7 @@ void PlaySound(Int type) {
 
 void ShowControl(Word objID, Boolean enable) {
 
-        if ( !enable || IsAI( stor.currplayer ) ) {
+        if ( !enable || IsAI( pref.currplayer ) ) {
                 CtlHideControl( GetObjectPtr(objID) );
         } else { 
                 CtlShowControl( GetObjectPtr(objID) );
@@ -561,6 +566,36 @@ void ShowButtons(Int show) {
         } else {
                 ShowControl(btn_Stay, false);
         }
+}
+
+void DrawUserType(Short index, PlayerType type)
+{
+        Short x = NewGameUser;
+        Short y = NewGameTop + (12 * index);
+        RectangleType r = { {x-1, y-1},
+                            {11, 11} };
+
+        WinDrawRectangle( &r, 0 );
+        r.topLeft.x++;
+        r.topLeft.y++;
+        r.extent.x -=2;
+        r.extent.y -=2 ;
+        WinEraseRectangle( &r, 0 );
+
+
+        if( type == PlayerNone )
+        {
+                return;
+        }
+
+        if( type == PlayerHuman ) 
+        {
+                DrawBitmap(bmpHuman, x, y);
+        } else {
+                DrawBitmap(bmpRobot, x, y);
+        }
+
+        return;
 }
 
 #ifdef DEBUG

@@ -16,7 +16,7 @@ URL 	:= "http://docwhat.gerf.org/cwimp/"
 # mystart.c MUST go first
 SOURCES = \
 	$(TARGET).c  srand.c lowlevel.c game.c dialog.c draw.c statusmsg.c \
-	ai.c queue.c
+	ai.c queue.c data.c
 #OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
 OBJECTS = $(patsubst %.c,objs/%.o, $(SOURCES))
 PREDEPENDS = autogen.h
@@ -95,7 +95,7 @@ clean:
 	rm -f objs/* *~ *.bak core autogen.h
 
 veryclean: clean
-	rm -f ChangeLog $(TARGET).*prc TAGS
+	rm -f ChangeLog $(TARGET).*prc TAGS cscope.out
 	rm -f $(STATUSMSGS) rm -f $(TARGET).rcp
 
 spotless: veryclean

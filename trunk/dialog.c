@@ -20,9 +20,7 @@
  */
 
 #include <Pilot.h>
-#include <SysEvtMgr.h>
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
+/* #include <SysEvtMgr.h> */
 
 #include "autogen.h"
 #include "cwimp.h"
@@ -31,52 +29,10 @@
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
 #include "draw.h"
+#include "data.h"
 #include "ai.h"
 
 #include "dialog.h"
-
-/* Initialize extern structures */
-const UInt fieldGetNamesPlayer[MaxPlayers] = {
-        GnameP0,
-        GnameP1,
-        GnameP2,
-        GnameP3,
-        GnameP4,
-        GnameP5,
-        GnameP6,
-        GnameP7
-};
-const UInt fieldGetNamesLabel[MaxPlayers] = {
-        GnameL0,
-        GnameL1,
-        GnameL2,
-        GnameL3,
-        GnameL4,
-        GnameL5,
-        GnameL6,
-        GnameL7
-};
-
-const UInt pbtnVal[10] = {
-        pbtn_1,
-        pbtn_2,
-        pbtn_3,
-        pbtn_4,
-        pbtn_5,
-        pbtn_6,
-        pbtn_7,
-        pbtn_8,
-};
-const UInt cbtnVal[10] = {
-        cbtn_0,
-        cbtn_1,
-        cbtn_2,
-        cbtn_3,
-        cbtn_4,
-        cbtn_5,
-        cbtn_6,
-        cbtn_7,
-};
 
 static Char **val2name = (CharPtr[]) { NoneString,
                                        TenString,
@@ -85,6 +41,12 @@ static Char **val2name = (CharPtr[]) { NoneString,
                                        FourString,
                                        FiveString,
                                        SixString };
+
+struct {
+        PlayerType type;
+        Char hname[PLAYERMaxName+1];
+        Char aname[PLAYERMaxName+1];
+} tmppref[MaxPlayers];
 
 /*****
  ***** Local Functions
@@ -97,87 +59,28 @@ static void ToggleCheck( Word objID, Int flag )
         SetFlag( flag, !GetFlag(flag) );
 }
 
-/* So they can reference each other */
-static void SetPlayers( Short num );
-static void SetComputers( Short num );
-  
-static void SetPlayers( Short num ) {
-        FormPtr frm;
-        ControlPtr cPtr;
-        Word oIdx;
+static void NewGameToggleType( Short );
 
-        /* Bounds checking */
-        if( num > MaxPlayers || num < 1 ) {
-                ErrNonFatalDisplayIf( true, "SetPlayers: Out of Bounds");
-                return;
+static Short NewGamePlayerCount()
+{
+        Short x;
+        Short count = 0;
+        
+        for( x = 0; x < MaxPlayers; x++ )
+        {
+                if( tmppref[x].type != PlayerNone )
+                {
+                        count++;
+                }
         }
-
-        /* If it's set, we're done. */
-        if( stor.tmpplayers == num ) {
-                return;
-        }
-
-        frm = FrmGetActiveForm();
-
-        /* Unset the old one */
-        oIdx = FrmGetObjectIndex( frm, pbtnVal[stor.tmpplayers - 1] );
-        cPtr = FrmGetObjectPtr( frm, oIdx );
-        CtlSetValue( cPtr, false );
-
-        /* Set new one */
-        oIdx = FrmGetObjectIndex( frm, pbtnVal[num - 1] );
-        cPtr = FrmGetObjectPtr( frm, oIdx );
-        CtlSetValue( cPtr, true );
-
-        stor.tmpplayers = num;
-
-        if( stor.tmpcomputers + stor.tmpplayers > MaxPlayers ) {
-                SetComputers( MaxPlayers - stor.tmpplayers );
-        }
-  
-        return;
-}
-
-static void SetComputers( Short num ) {
-        FormPtr frm;
-        ControlPtr cPtr;
-        Word oIdx;
-
-        /* Bounds checking */
-        if( num > (MaxPlayers - 1) || num < 0 ) {
-                ErrNonFatalDisplayIf( true, "SetComputers: Out of Bounds");
-                return;
-        }
-
-        /* If it's set, we're done. */
-        if( stor.tmpcomputers == num ) {
-                return;
-        }
-
-        frm = FrmGetActiveForm();
-
-        /* Unset the old one */
-        oIdx = FrmGetObjectIndex( frm, cbtnVal[stor.tmpcomputers] );
-        cPtr = FrmGetObjectPtr( frm, oIdx );
-        CtlSetValue( cPtr, false );
-
-        /* Set new one */
-        oIdx = FrmGetObjectIndex( frm, cbtnVal[num] );
-        cPtr = FrmGetObjectPtr( frm, oIdx );
-        CtlSetValue( cPtr, true );
-
-        stor.tmpcomputers = num;
-
-        if( stor.tmpcomputers + stor.tmpplayers > MaxPlayers ) {
-                SetPlayers( MaxPlayers - stor.tmpcomputers );
-        }
-  
-        return;
+        
+        return count;
 }
 
 static Boolean DialogNewGameHandleEvent (EventPtr e)
 {
         Boolean handled = false;
+        Char tmpString[5];
         FormPtr frm;
     
         switch (e->eType) {
@@ -187,60 +90,37 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
                 handled = true;
                 break;
 
+        case penUpEvent:
+                if( e->screenX > NewGameUser &&
+                    e->screenX < (NewGameUser + NewGameUserSize) &&
+                    e->screenY > NewGameTop &&
+                    e->screenY < (NewGameTop + 12 * MaxPlayers) )
+                {
+                        Int p;
+                        p = (Int) ( ( e->screenY - NewGameTop ) / 12 );
+                        NewGameToggleType( p );
+                }
+                break;
+
         case ctlSelectEvent:
-                switch(e->data.ctlSelect.controlID) {
+                switch(e->data.ctlSelect.controlID)
+                {
 		
                 case btn_Variants_frmNewGame:
                         DialogVariants();
-                        handled = true;
                         break;
-
+                        
                 case btn_OK_frmNewGame:
-                        if( DialogGetNames() == false ) {
-                                handled = true;
-                                /* So, DGN was canceled, so we eat the result */
-                        }
+                        handled = !NewGamePlayerCount();
                         break;
-
+                        
                 case btn_Default_frmNewGame:
-                {
-                        Char tmpString[5];
-
-                        /* Reset Winning Score */
-                        stor.winscore = DEFAULT_WINSCORE;
-                        StrIToA( tmpString, stor.winscore );
+                        StrIToA( tmpString, DEFAULT_WINSCORE );
                         SetFieldTextFromStr( fld_winscore, tmpString );
 
-                        /* Reset Opening Roll */
-                        stor.openingroll = DEFAULT_OPENINGROLL;
-                        StrIToA( tmpString, stor.openingroll );
+                        StrIToA( tmpString, DEFAULT_OPENINGROLL );
                         SetFieldTextFromStr( fld_openingroll, tmpString );
-
-                        /* Reset number of players */
-                        SetComputers(0);
-                        SetPlayers(1);
-                }
-                handled = true;
-                break;
-
-                case cbtn_0:  SetComputers( 0 ); break;
-                case cbtn_1:  SetComputers( 1 ); break;
-                case cbtn_2:  SetComputers( 2 ); break;
-                case cbtn_3:  SetComputers( 3 ); break;
-                case cbtn_4:  SetComputers( 4 ); break;
-                case cbtn_5:  SetComputers( 5 ); break;
-                case cbtn_6:  SetComputers( 6 ); break;
-                case cbtn_7:  SetComputers( 7 ); break;
-
-                case pbtn_1:  SetPlayers( 1 );   break;
-                case pbtn_2:  SetPlayers( 2 );   break;
-                case pbtn_3:  SetPlayers( 3 );   break;
-                case pbtn_4:  SetPlayers( 4 );   break;
-                case pbtn_5:  SetPlayers( 5 );   break;
-                case pbtn_6:  SetPlayers( 6 );   break;
-                case pbtn_7:  SetPlayers( 7 );   break;
-                case pbtn_8:  SetPlayers( 8 );   break;
-
+                        break;
                 }
                 break;
 
@@ -266,7 +146,7 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
                 break;
 
         case ctlSelectEvent:
-                if( stor.currplayer >= 0 ) {
+                if( pref.currplayer >= 0 ) {
                         /* The player *cannot* continue a
                            game once they alter variants */
                         ResetCubes(); 
@@ -308,6 +188,66 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 }
 
 
+static void NewGameSetPlayerName( Int field, Short player)
+{
+        if( tmppref[player].type == PlayerNone )
+        {
+                ClearFieldText( field );
+                return;
+        }
+
+        if( tmppref[player].type == PlayerHuman )
+        {
+                SetFieldTextFromStr( field, tmppref[player].hname );
+                return;
+        }
+
+        SetFieldTextFromStr( field, tmppref[player].aname );
+        return;
+}
+
+static void NewGameGetPlayerName( Int field, Short player)
+{
+        FormPtr frm = FrmGetActiveForm();
+        CharPtr buff;
+
+        if( tmppref[player].type == PlayerNone )
+        {
+                return;
+        }
+
+        buff = FldGetTextPtr(
+                FrmGetObjectPtr(
+                        frm,
+                        FrmGetObjectIndex(
+                                frm,
+                                fldNGname0+player )
+                        )
+                );
+        if( tmppref[player].type == PlayerHuman )
+        {
+                StrCopy( tmppref[player].hname, buff );
+        }
+        if( tmppref[player].type == PlayerAI )
+        {
+                StrCopy( tmppref[player].aname, buff );
+        }
+}
+
+
+static void NewGameToggleType( Short p )
+{
+        NewGameGetPlayerName( fldNGname0 + p, p );
+        tmppref[p].type = (tmppref[p].type + 1) % 3;
+
+        DrawUserType( p, tmppref[p].type );
+        NewGameSetPlayerName( fldNGname0 + p, p );
+
+        PlaySound( SND_TOGGLE_TYPE );
+
+}
+
+
 /*****
  ***** Non Local Functions
  *****
@@ -332,41 +272,34 @@ void DialogNewGame() {
         FrmSetActiveForm(frm);
         FrmDrawForm(frm);
 
-        // Set Controls
-        // cbtnVal & pbtnVal
-        stor.tmpplayers = stor.numplayers;
-        stor.tmpcomputers = stor.numcomputers;
-        if ( stor.numplayers > 0 ) {
-                x = stor.numplayers;
-        } else {
-                x = 1;
-        }
-        CtlSetValue( GetObjectPtr( pbtnVal[x - 1] ), true );
+        for( x = 0; x < MaxPlayers; x++ )
+        {
+                tmppref[x].type = GetPlayerType( x );
+                StrCopy( tmppref[x].hname, pref.player[x].hname );
+                StrCopy( tmppref[x].aname, pref.player[x].aname );
 
-        if ( stor.numcomputers > 0 ) {
-                x = stor.numcomputers;
-        } else {
-                x = 0;
+                DrawUserType( x, tmppref[x].type );
+
+                NewGameSetPlayerName( fldNGname0+x, x );
         }
-        CtlSetValue( GetObjectPtr( cbtnVal[x] ), true );
 
         // Fill in WinScore with previous value.
-        if ( stor.winscore > 9999 ) { // Sanity check...
-                stor.winscore = DEFAULT_WINSCORE;
+        if ( pref.winscore > 9999 ) { // Sanity check...
+                pref.winscore = DEFAULT_WINSCORE;
         }
-        StrIToA( tmpString, stor.winscore );
+        StrIToA( tmpString, pref.winscore );
         SetFieldTextFromStr( fld_winscore, tmpString );
 
         // Fill in Opening Roll with previous value.
-        if ( stor.openingroll > stor.winscore || stor.openingroll <= 0 ) {
+        if ( pref.openingroll > pref.winscore || pref.openingroll <= 0 ) {
                 // Sanity check...
-                stor.openingroll = DEFAULT_OPENINGROLL;
+                pref.openingroll = DEFAULT_OPENINGROLL;
         }
-        StrIToA( tmpString, stor.openingroll );
+        StrIToA( tmpString, pref.openingroll );
         SetFieldTextFromStr( fld_openingroll, tmpString );
 
         // Set the focus to this field so the user can just start typing.
-        fldIndex =  FrmGetObjectIndex(frm, fld_winscore);
+        fldIndex =  FrmGetObjectIndex( frm, fldNGname0 );
         FrmSetFocus( frm, fldIndex );
 
         // Set the handler
@@ -379,29 +312,43 @@ void DialogNewGame() {
         if ( hitButton == btn_OK_frmNewGame ) {
                 Int num;
     
-                stor.winscore = DEFAULT_WINSCORE;
+                pref.winscore = DEFAULT_WINSCORE;
                 text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
                 if ( text != NULL ) {
                         num = StrAToI( text );
                         if( num <= 9999 && num >= 50 ) {
-                                stor.winscore = num;
+                                pref.winscore = num;
                         }
                 }
     
-                stor.openingroll = DEFAULT_OPENINGROLL;
+                pref.openingroll = DEFAULT_OPENINGROLL;
                 fldIndex =  FrmGetObjectIndex(frm, fld_openingroll);
                 text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
                 if ( text != NULL ) {
                         num = StrAToI( text );
-                        if( num < stor.winscore && num > 0 ) {
-                                stor.openingroll = num;
+                        if( num < pref.winscore && num > 0 ) {
+                                pref.openingroll = num;
                         }
                 }
-    
-                /* Set the number of players/AI */
-                stor.numplayers = stor.tmpplayers;
-                stor.numcomputers = stor.tmpcomputers;
-                stor.total = stor.numplayers + stor.numcomputers;
+
+
+                pref.totalplayers = 0;
+                for( x = 0; x < MaxPlayers; x++ )
+                {
+                        pref.player[x].type = tmppref[x].type;
+
+                        NewGameGetPlayerName( fldNGname0 + x, x );
+
+                        StrCopy( pref.player[x].hname,
+                                 tmppref[x].hname );
+                        StrCopy( pref.player[x].aname,
+                                 tmppref[x].aname );
+
+                        if( tmppref[x].type != PlayerNone )
+                        {
+                                pref.totalplayers++;
+                        }
+                }
         }
 
         // Delete the form, we're not using it
@@ -448,10 +395,10 @@ void DialogVariants() {
         CtlSetValue( GetObjectPtr(check_Suspend  ), GetFlag(flag_Suspend)   );
 
         // Fill in WinScore with previous value.
-        StrIToA( tmpString, stor.nTrainWrecks );
+        StrIToA( tmpString, pref.nTrainWrecks );
         SetFieldTextFromStr( fldnTrainWrecks, tmpString );
 
-        StrIToA( tmpString, stor.nSuspend );
+        StrIToA( tmpString, pref.nSuspend );
         SetFieldTextFromStr( fldnSuspend, tmpString );
 
         // Set the focus to this field so the user can just start typing.
@@ -468,17 +415,17 @@ void DialogVariants() {
         // Get Controls
         text = FldGetTextPtr( FrmGetObjectPtr( frm, fldIndex ) );
         if( text != NULL ) {
-                stor.nTrainWrecks = StrAToI( text );
+                pref.nTrainWrecks = StrAToI( text );
         } else {
-                stor.nTrainWrecks = 3;
+                pref.nTrainWrecks = 3;
         }    
 
         fldIndex =  FrmGetObjectIndex(frm, fldnSuspend);
         text = FldGetTextPtr( FrmGetObjectPtr( frm, fldIndex ) );
         if( text != NULL ) {
-                stor.nSuspend = StrAToI( text );
+                pref.nSuspend = StrAToI( text );
         } else {
-                stor.nSuspend = 10;
+                pref.nSuspend = 10;
         }    
     
         // Delete the form, we're not using it
@@ -501,10 +448,10 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
         switch ( frmname ) {
         case frmNextPlayer: 
                 fieldname = fldNextPlayer;
-                if( stor.total > 1 ) {
+                if( pref.totalplayers > 1 ) {
                         StrPrintF( msg, NextPlayerString,
-                                   stor.player[p1].name,
-                                   stor.player[p2].name,
+                                   GetName( p1 ),
+                                   GetName( p1 ),
                                    NULL);
                 } else {
                         StrPrintF( msg, "%s", NextSoloPlayerString, NULL );
@@ -512,30 +459,30 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
                 break;
 
         case frmSuspend: 
-                if( stor.total == 1 ) {
+                if( pref.totalplayers == 1 ) {
                         return;
                 }
                 fieldname = fldSuspend;
                 StrPrintF( msg, SuspendString,
-                           stor.player[p1].name,
-                           stor.player[p2].name,
+                           GetName( p1 ),
+                           GetName( p2 ),
                            NULL);
                 break;
 
 
         case frmLost:
                 fieldname = fldLost;
-                StrPrintF( msg, LostString, stor.player[p1].name, NULL );
+                StrPrintF( msg, LostString, GetName( p1 ), NULL );
                 break;
 
         case frmLeader:
                 fieldname = fldLeader;
-                StrPrintF( msg, LeaderString, stor.player[p1].name, NULL );
+                StrPrintF( msg, LeaderString, GetName( p1 ), NULL );
                 break;
 
         case frmWinner:
                 fieldname = fldWinner;
-                StrPrintF( msg, WinnerString, stor.player[p1].name, NULL );
+                StrPrintF( msg, WinnerString, GetName( p1 ), NULL );
                 break;
 
         case frmNobodyWon:
@@ -546,25 +493,25 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
         case frmBump:
                 fieldname = fldBump;
                 StrPrintF( msg, BumpString,
-                           stor.player[p2].name,
-                           stor.player[p1].name,
-                           stor.player[p2].score,
-                           stor.player[p1].score,
+                           GetName( p2 ),
+                           GetName( p1 ),
+                           pref.player[p2].score,
+                           pref.player[p1].score,
                            NULL );
                 break;
 
         case frmSampler:
                 fieldname = fldSampler;
-                StrPrintF( msg, SamplerString, stor.player[p1].name, NULL );
+                StrPrintF( msg, SamplerString, GetName( p1 ), NULL );
                 break;
 
 
         case frmTrainWreck:
                 fieldname = fldTrainWreck;
                 StrPrintF( msg, TrainWreckString,
-                           stor.player[p1].name, 
-                           stor.player[p1].TWcount,
-                           stor.nTrainWrecks,
+                           GetName( p1 ),
+                           pref.player[p1].TWcount,
+                           pref.nTrainWrecks,
                            NULL );
                 break;
 
@@ -609,7 +556,7 @@ Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 ) {
         FormPtr prevForm, frm;
         Word hitButton;
 
-        if( IsAI( stor.currplayer ) ) {
+        if( IsAI( pref.currplayer ) ) {
                 return AIChooseTwo( c1, c2 );
         }
   
@@ -652,7 +599,7 @@ Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 )
         FormPtr prevForm, frm;
         Word hitButton;
 
-        if( IsAI( stor.currplayer ) ) {
+        if( IsAI( pref.currplayer ) ) {
                 return AIChooseThree( c1, c2, c3 );
         }
   
@@ -733,75 +680,5 @@ void DialogPreferences() {
         // We don't care, as long as the dialog quits.
 }
 
-
-Boolean DialogGetNames() {
-        FormPtr prevForm, frm;
-        Word hitButton;
-        Boolean retVal = false;
-        CharPtr text;
-        Int i;
-        FieldPtr fp;
-        VoidPtr vPtr;
-        Word oIdx;
-
-        // Save previous form
-        prevForm = FrmGetActiveForm();
-        // Init new form
-        frm = FrmInitForm( frmGetNames);
-
-        // Set it
-        FrmSetActiveForm(frm);
-
-        // Set Controls
-        for( i = stor.tmpplayers ; i<MaxPlayers ; i++ ) {
-                fp = GetObjectPtr( fieldGetNamesPlayer[i] );
-                FldSetUsable ( fp, false );
-                FldEraseField( fp );
-                ShowControl( fieldGetNamesLabel[i], 0 );
-        }
-
-        FrmDrawForm(frm);
-	  
-        for( i=0; i < stor.tmpplayers ; i++ ) {
-                SetFieldTextFromStr( fieldGetNamesPlayer[i], stor.player[i].name );
-        }
-        FrmSetFocus( frm, FrmGetObjectIndex(frm, fieldGetNamesPlayer[0]) );
-
-
-        // Set the handler
-        // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
-
-        hitButton = FrmDoDialog(frm);
-
-        // Get Controls
-        if ( hitButton == btn_OK_frmGetNames ) {
-                for( i=stor.tmpplayers + 1;
-                     i < stor.tmpplayers + stor.tmpcomputers;
-                     i++ ) {
-                        StrPrintF( stor.player[i].name, "Robby%d", i );
-                }
-                for( i=0; i < stor.tmpplayers; i++ ) {
-                        oIdx = FrmGetObjectIndex( frm, fieldGetNamesPlayer[i]);
-                        vPtr = FrmGetObjectPtr( frm, oIdx );
-                        text = FldGetTextPtr( vPtr );
-                        StrCopy( stor.player[i].name, text );
-          
-                }
-      
-                retVal = true;
-        }
-
-        FrmSetFocus( frm, noFocus );
-
-        // Delete the form, we're not using it
-        FrmDeleteForm(frm);
-
-        // Restore previous form.
-        if (prevForm) {
-                FrmSetActiveForm(prevForm);
-        }
-
-        return retVal;
-}
 
 
