@@ -186,12 +186,11 @@ static inline Int getPLAYERy(Int player)
         return PLAYERTLy + player * PLAYEREXy;
 }
 
-
 static void CrossPlayer(Int player) {
         Int y;
         y = getPLAYERy(player) + 6;
-        WinDrawLine( PLAYERTLx-3, y,
-                     150,         y );
+        WinDrawLine( PLAYERTLx-3,           y,
+                     PLAYERTLx+3+PLAYEREXx, y );
 }
 
 static void LeadPlayer(Int player) {
@@ -206,11 +205,9 @@ static void LeadPlayer(Int player) {
         WinDrawBitmap( bmpP, SYMBOLx, y );
   
         MemHandleUnlock( bmpHandle );
-
 }
 
 static void InvertPlayer(Int player) {
-        /* This is from namePlayerX in cwimp.rcp.in */
         RectangleType r = { {SYMBOLx, getPLAYERy(player)},
                             {155 - SYMBOLx, PLAYEREXy} };
 
