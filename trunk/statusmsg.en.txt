@@ -331,3 +331,116 @@ Mersenne Twister by Makoto Matsumoto and Takuji Nishimura,
 Accelerated by Shawn Cokus,
 16 bit version of the Twister by Troy D. Gillette
 .
+
+END
+
+TRANSLATION "en"
+BEGIN
+
+# Menu Items: Main_Menu
+"Game" = "Game"
+# Item:
+"New" = "New"
+"N" = "N"
+# Item:
+"Reset" = "Reset"
+"R" = "R"
+# Item:
+"Defaults" = "Defaults"
+# Item:
+"Help" = "Help"
+"H" = "H"
+# Item:
+"About" = "About"
+"A" = "A"
+"Options" = "Options"
+# Item:
+"Variants" = "Variants"
+"V" = "V"
+# Item:
+"Preferences" = "Preferences"
+"P" = "P"
+
+# Form: MainForm
+" CWimp " = " CWimp "
+"Roll" = "Roll"
+"Turn" = "Turn"
+"Total" = "Total"
+"Player" = "Player"
+"Stay" = "Stay"
+
+# Form: frmNewGame
+"New Game" = "New Game"
+"How many human players?" = "How many human players?"
+"How many computer players?" = "How many computer players?"
+"Winning Score:" = "Winning Score:"
+"OK" = "OK"
+"Cancel" = "Cancel"
+
+# Form: frmVariants
+"Variations" = "Variations"
+"Bump" = "Bump"
+"Eclipse" = "Eclipse"
+"Cosmic Sampler" = "Cosmic Sampler"
+"Full House" = "Full House"
+"(n)Suspend" = "(n)Suspend"
+"n = " = "n = "
+"(n)Train Wrecks" = "(n)Train Wrecks"
+"Done" = "Done"
+
+# Form: frmPreferences
+"Next Player Dialog" = "Next Player Dialog"
+
+# Form: frmGetNames
+"Player Names" = "Player Names"
+"Back" = "Back"
+"CWimp\n" = "CWimp\n"
+"\251 1999-$YEAR\n" = "\251 1999-$YEAR\n"
+"Steve Schwartz\nChristian H\366ltje\n\n" = "Steve Schwartz\nChristian H\366ltje\n\n"
+"Please press the 'i' for more info\n" = "Please press the 'i' for more info\n"
+"Debug Info" = "Debug Info"
+
+# Form: frmNextPlayer
+"Next Player" = "Next Player"
+
+# Form: frmChooseTwo
+"Choose" = "Choose"
+
+# Form: frmChooseThree
+
+# Form: frmHelpText
+"Help and Hints" = "Help and Hints"
+
+# Form: frmLost
+"You Lost!" = "You Lost!"
+"Rats!" = "Rats!"
+
+# Form: frmLeader
+"You're the Leader!" = "You're the Leader!"
+"Cool!" = "Cool!"
+
+# Form: frmTrainWreck
+"TrainWreck!" = "TrainWreck!"
+"Ow!" = "Ow!"
+
+# Form: frmNobodyWon
+"Nobody Won!" = "Nobody Won!"
+"Oh." = "Oh."
+
+# Form: frmWinner
+"You've Won!" = "You've Won!"
+"Yea!" = "Yea!"
+
+# Form: frmBump
+"Bumped!" = "Bumped!"
+"Hah" = "Hah"
+
+# Form: frmSampler
+"Sampler!" = "Sampler!"
+
+# Form: frmSuspend
+"Suspended!" = "Suspended!"
+"oh." = "oh."
+"Game Status Info" = "Game Status Info"
+
+END

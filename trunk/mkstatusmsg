@@ -59,6 +59,7 @@ my $DialogStatus = "void DialogStatus() {\n" .
     "}\n\n";
 
 my $Strings;
+my $PreStrings;
 
 my $count = 1;
 while (my $line = <IN>)
@@ -66,6 +67,13 @@ while (my $line = <IN>)
     # Remove trailing newlines
     chomp $line;
     next if ( $line =~ /^\#/ );
+    if ( $line =~ /^END/ ) {
+	while ( my $newline = <IN> ) {
+	    next if( $newline =~ /^\#/ );
+	    $PreStrings .= $newline;
+	}
+	last;
+    }
     
     if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
 	my $tag 	= $1;
@@ -129,6 +137,8 @@ print OUT "#endif";
 close OUT or die "Unable to close $sfile: $!";
 
 open( OUT, ">$rcpfile" ) or die "Unable to write to `$rcpfile`: $!";
+print OUT $PreStrings;
+print OUT;
 print OUT $Strings;
 close OUT or die "Unable to close $rcpfile: $!";
 

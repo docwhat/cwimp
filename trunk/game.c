@@ -57,7 +57,7 @@ void ToggleKeep(Byte die)
  * Returns:
  *     int   -- Number from 1 to 6 inclusive
  */
-#ifndef DEBUGROLL
+#ifdef DEBUGROLL
 #warning The game is unplayable with DEBUG on
 int RollCube (void)
 {

@@ -13,13 +13,15 @@ LIBS =
 
 CC = m68k-palmos-coff-gcc
 
-CFLAGS = -Wall -g -O2 -DDEBUG -DERROR_CHECK_LEVEL=ERROR_CHECK_FULL
+CFLAGS = -Wall -g -O2 -DDEBUG \
+	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL \
+	-DLANG=$(LANGUAGE)
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
 #
 # Debug Rolling turns of 'rigged' rolling
 #-DDEBUGROLL
 
-PILRC		:= pilrc -q
+PILRC		:= pilrc
 OBJRES		:= m68k-palmos-coff-obj-res
 NM		:= m68k-palmos-coff-nm
 BUILDPRC	:= build-prc
@@ -43,12 +45,11 @@ objs/%.o: %.c
 
 $(TARGET)Rsc.h: $(TARGET).rcp images
 	@echo -- Pilrc\'ing $*
-	$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
+	$(PILRC) -q -L $(LANGUAGE) -H $(TARGET)Rsc.h $(TARGET).rcp objs/
 	@if [ ! -d objs ]; then mkdir objs ; fi
-	mv *.bin objs/
 
 
-$(TARGET).rcp: $(TARGET).rcp.$(LANGUAGE).in version $(FIXVERSION) statusmsg.rcp
+$(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
 	@echo -- Fixing version and building $@
 	$(FIXVERSION) $<
 

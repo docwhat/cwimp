@@ -6,6 +6,31 @@
 #
 # $Id$
 
+# This needs to be here for translations to work
+FIXVERSION: INCLUDE statusmsg.rcp
+
+##
+## Menu  (This needs to go at the top for stripstrings to work)
+##
+MENU ID Main_Menu
+BEGIN
+	PULLDOWN "Game"
+		BEGIN
+		MENUITEM "New"		ID MenuItem_New		"N"
+		MENUITEM "Reset"	ID MenuItem_Reset	"R"
+		MENUITEM "Defaults"	ID MenuItem_Defaults
+		MENUITEM SEPARATOR
+		MENUITEM "Help"		ID MenuItem_Help	"H"
+		MENUITEM "About"	ID MenuItem_About	"A"
+		END
+	PULLDOWN "Options"
+		BEGIN
+		MENUITEM "Variants"	ID MenuItem_Variants	"V"
+		MENUITEM "Preferences"	ID MenuItem_Preferences	"P"
+		END
+END
+
+
 
 FORM ID MainForm AT (0 0 160 160)
     NOFRAME
@@ -189,7 +214,7 @@ BEGIN
     FIELD ID fldNextPlayer AT (4 12 102 60) NONEDITABLE FONT 0
 	  MULTIPLELINES
 
-    BUTTON "Okay" ID AUTOID4 AT (3  70 AUTO AUTO)
+    BUTTON "OK" ID AUTOID4 AT (3  70 AUTO AUTO)
 END
 
 
@@ -231,7 +256,7 @@ BEGIN
 	  MULTIPLELINES
     SCROLLBAR ID sclHelpText AT ( PREVRIGHT+1 PREVTOP 7 122 ) VALUE 0 MIN 0
 	  MAX 0 PAGESIZE 2
-    BUTTON "Okay" ID AUTOID5 AT (3 140  AUTO AUTO)
+    BUTTON "OK" ID AUTOID5 AT (3 140  AUTO AUTO)
 END
 
 
@@ -306,7 +331,7 @@ MODAL
 SAVEBEHIND
 HELPID DS_Bump
 BEGIN
-    TITLE "Bump!"
+    TITLE "Bumped!"
     FORMBITMAP AT (2 20) BITMAP bmpBump
     FIELD ID fldBump AT (36 12 84 63) NONEDITABLE FONT 0 MULTIPLELINES
 
@@ -381,31 +406,8 @@ BITMAP ID bmp4b		"images/cube4b.bmp"	COMPRESS
 BITMAP ID bmp5b		"images/cube5b.bmp"	COMPRESS
 BITMAP ID bmp6b		"images/cube6b.bmp"	COMPRESS
 
-##
-##
-##
-MENU ID Main_Menu
-BEGIN
-	PULLDOWN "Game"
-		BEGIN
-		MENUITEM "New"		ID MenuItem_New		"N"
-		MENUITEM "Reset"	ID MenuItem_Reset	"R"
-		MENUITEM "Defaults"	ID MenuItem_Defaults
-		MENUITEM SEPARATOR
-		MENUITEM "Help"		ID MenuItem_Help	"H"
-		MENUITEM "About"	ID MenuItem_About	"A"
-		END
-	PULLDOWN "Options"
-		BEGIN
-		MENUITEM "Variants"	ID MenuItem_Variants	"V"
-		MENUITEM "Preferences"	ID MenuItem_Preferences	"P"
-		END
-END
-
 APPLICATIONICONNAME 1000 "CWimp"
 ICON "images/cwimp.bmp"
 VERSION 1 "$VERSION"
-
-FIXVERSION: INCLUDE statusmsg.rcp
 
 #EOF
