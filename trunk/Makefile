@@ -124,7 +124,12 @@ archive: zip
 install: $(TARGET).prc
 	$(PILOTXFER) -i $(TARGET).prc
 
-.PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res
+setver:
+	vim version
+	cvs tag `tail -n 1 version | sed 's/[ \.]/\-/g'`
+
+.PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res \
+	setver
 
 # Include the dependency info
 include $(patsubst %.c,deps/%.d, $(SOURCES))
