@@ -111,7 +111,7 @@ TAGS: $(SOURCES) $(wildcard *.h)
 	etags $^
 
 archive: zip
-	mv -v $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
+	mv -iv $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
 #-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
 
 floppy: clean
