@@ -376,9 +376,20 @@ void TurnLogic() {
 
   DrawCurrScore();
 
-  /* 
-   * Start looking at the next turn...
-   */
+  if( stor.leader == stor.currplayer ) {
+    /* Who else is in the game? */
+    for( x = 0 ; x < stor.numplayers ; x++ ) {
+      if( x == stor.currplayer ) continue;
+      if( !stor.player[x].lost ) break;
+    }
+    /* No one else in the game! */
+    if( x == stor.numplayers ) {
+      PlayerWon();
+      return;
+    }
+  }
+      
+  /* The turn has ended */
   if ( ( stor.scorethisroll == 0 &&
 	 !stor.flash ) || 
        StayBit ) {
@@ -402,20 +413,14 @@ void TurnLogic() {
 	    x = stor.numplayers;
 	  }
 	}
-      }
+      } /* end bump code */
 
       stor.player[stor.currplayer].score = stor.currscore;
     }
     
-    if( stor.leader == stor.currplayer ) {
-      /* We've looped and we're back at the leader */
-      PlayerWon();
-      return;
-    }
-
     /* Last Licks Stuff */
     if( ! stor.player[stor.currplayer].lost &&
-	( stor.currscore > stor.winscore ||
+	( stor.player[stor.currplayer].score > stor.winscore ||
 	  stor.leader >= 0 ) ) {
       if( stor.leader < 0 ) {
 	/* Hasn't been set, this guy is it */
@@ -423,10 +428,11 @@ void TurnLogic() {
 	DialogOK( frmLeader, stor.currplayer, -1 );
       } else {
 	/* We're in LastLicks already */
-	/* There is a leader, did we beat 'em */
-	if( stor.currscore > stor.player[stor.leader].score ) {
+	/* There is a leader, did we beat 'em? */
+	if( stor.player[stor.currplayer].score >
+	    stor.player[stor.leader].score ) {
 	  Byte lastleader = stor.leader;
-
+	  
 	  stor.leader = stor.currplayer;
 	  /* Clean up old bits */
 	  DrawPlayerScore( lastleader ); 
@@ -435,10 +441,10 @@ void TurnLogic() {
 	  /* Well, we didn't beat the leader... */
 	  PlayerLost( stor.currplayer, "Didn't beat the leader" );
 	}
-
+	
       } /* If(stor.leader < 0) ... */
     } /* End Last Licks Stuff */
-  
+    
     NextPlayer();
     return;
   }
