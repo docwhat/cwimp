@@ -293,24 +293,35 @@ void DrawTopStatusButton() {
 }
 
 
-    
-
+/*
+ * This should probably go in game.c
+ */    
 void DrawStayButton() {
+  int x;
 
   /* No game, no brainer */
-  if( stor.currplayer < 0 )
-    {
-      ShowControl( btn_Stay, 0 );
-      return;
-    }
+  if( stor.currplayer < 0 ) {
+    ShowControl( btn_Stay, 0 );
+    return;
+  }
 
-  if( stor.flash ||
-      stor.YMNWTBYM ||
-      stor.scorethisturn == 0 )
-    {
-      ShowControl( btn_Stay, 0 );
-      return;
-    }
+  if( stor.YMNWTBYM ) {
+    ShowControl( btn_Stay, 0 );
+    SetStatus( DS_YMNWTBYM );
+    return;
+  }
+
+  if( stor.flash ) {
+    ShowControl( btn_Stay, 0 );
+    SetStatus( DS_MustClearFlash );
+    return;
+  }
+
+  if( stor.scorethisturn == 0 ) {
+    ShowControl( btn_Stay, 0 );
+    SetStatus( 0 );
+    return;
+  }
     
   if( stor.player[stor.currplayer].score == 0 &&
       stor.scorethisturn < stor.openingroll )
@@ -325,10 +336,25 @@ void DrawStayButton() {
     {
       ShowControl( btn_Stay, 0 );
       return;
-    }      
+    }
+
+  if( stor.flags & flag_Eclipse ) {
+    /* Are we eclipsed? */
+    for( x = 0; x < stor.numplayers; x++ ) {
+      if( x == stor.currplayer ) continue;
+      if( stor.player[x].score == stor.currscore ) break;
+    }
+    
+    if( x != stor.numplayers ) {
+      ShowControl( btn_Stay, 0 );
+      SetStatus( DS_Eclipse );
+      return;
+    }
+  }
 
   /* Otherwise, show it */
   ShowControl( btn_Stay, 1 );
+  SetStatus( 0 );
 }
 
 

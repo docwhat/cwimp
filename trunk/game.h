@@ -103,7 +103,6 @@ void AddScore(Short points);
 void ScoreRoll(void);
 void TurnLogic(void);
 
-void StatusLine(void);
 void SetStatus( UInt status );
 
 void NextPlayer(void);

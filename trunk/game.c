@@ -473,7 +473,6 @@ void TurnLogic() {
   }
 
   DrawStayButton();
-  StatusLine();
 }
 
 void NextPlayer() {
@@ -641,28 +640,6 @@ void ResetCubes(void)
    * functions which don't work upon initialization */
   stor.status = 0;
 }			
-
-void StatusLine( )
-{
-
-  if( stor.YMNWTBYM && stor.flash ) {
-    SetStatus( DS_YMNWTFlash );
-    return;
-  }
-
-  if ( stor.YMNWTBYM ) {
-    SetStatus( DS_YMNWTBYM );
-    return;
-  } 
-
-  if ( stor.flash ) {
-    SetStatus( DS_MustClearFlash );
-    return;
-  }
-
-  // Make it blank.
-  SetStatus( 0 );
-}
 
 void SetStatus( UInt status )
 {

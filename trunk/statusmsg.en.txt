@@ -30,6 +30,11 @@ CSTRING: NoneString
 None
 .
 
+DS_Eclipse: Eclipsed!
+With the Eclipse variation in effect, you cannot stay when your
+total score equals someone elses.
+.
+
 DS_MustClearFlash: Must Clear Flash
 In a previous turn you rolled a Flash
 (a three of a kind).
@@ -156,19 +161,6 @@ The new player has used no dice for scoring. No points have been scored for
 this turn yet.
 
 You can't 'stay' without rolling once.
-.
-
-
-DS_YMNWTFlash: Clear Flash & YMNWTBYM
-You just got a Flash (a three of a kind).
-In addition, you scored with all your dice, giving you a
-'You May Not Want To But You Must' reroll of all the dice.
-
-Now you get to roll with all five dice to clear your Flash.
-You clear a Flash by rolling all symbols that were *not* in your
-Flash.
-
-Unfortunately, Wimping Out can clear your Flash.
 .
 
 
