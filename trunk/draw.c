@@ -174,6 +174,7 @@ void DrawState()
   }
 
   DrawStayButton();
+  DrawRollButton();
   DrawStatus();
 }
 
@@ -266,7 +267,23 @@ void DrawCube(Byte die)
       
 }
 
+void DrawRollButton() {
+  if( stor.currplayer < 0 ) {
+    CtlSetLabel( GetObjectPtr(btn_Roll), StartString );
+  } else {
+    CtlSetLabel( GetObjectPtr(btn_Roll), RollString );
+  }
+}
+    
+
 void DrawStayButton() {
+
+  /* No game, no brainer */
+  if( stor.currplayer < 0 )
+    {
+      ShowControl( btn_Stay, 0 );
+      return;
+    }
 
   if( stor.flash ||
       stor.YMNWTBYM ||
