@@ -2,7 +2,7 @@
 #define _GAME_H_
 /* $Id$
  */
-#include "cwrollerRsc.h"
+#include "resource.h"
 
 #define FlamingSun  3  // There isn't a 3 on the BlackDie...
 

@@ -166,7 +166,7 @@ INFORMATION
 BEGIN
 	TITLE "About"
 	MESSAGE "CWRoller\n" \
-	"Version: alpha1\n" \
+	"Version: alpha 2\n" \
 	"\n" \
 	"Steve Schwartz\nChristian H\366ltje\n" \
 	" \251 1999\n\n" \
@@ -280,6 +280,6 @@ MENU ID Main_Menu
 END
 
 APPLICATIONICONNAME 1000 "Wimpout"
-ICON "cwroller.bmp"
+ICON "cwimp.bmp"
 VERSION 1 "alpha1"
 

@@ -1,11 +1,16 @@
 ## Makefile for Cosmic Wimpout
 
-TARGET = cwroller
+TARGET = cwimp
 APPNAME = "Cosmic Wimpout"
 APPID = "CWSS"
+LANGUAGE = en
 
-OBJS = $(TARGET).o lowlevel.o game.c draw.c statusmsg.c
+SOURCES = cwimp.c  draw.c  game.c  lowlevel.c  statusmsg.c
+OBJECTS = $(TARGET).o lowlevel.o game.o draw.o statusmsg.o
 LIBS =
+GRESOURCES = code0001.$(TARGET).grc code0000.$(TARGET).grc \
+	data0000.$(TARGET).grc *.bin pref0000.$(TARGET).grc \
+	 rloc0000.$(TARGET).grc
 
 CC = m68k-palmos-coff-gcc
 
@@ -28,51 +33,61 @@ all: $(TARGET).prc
 .c.s:
 	$(CC) $(CSFLAGS) $<
 
-$(TARGET)Rsc.h: bin.res
+%.d: %.c
+	$(SHELL) -ec '$(CC) -DDEPENDENCY -MM $(CFLAGS) $< \
+		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
+		[ -s $@ ] || rm -f $@'
 
-$(TARGET).prc: bin.res code0000.$(TARGET).grc code0001.$(TARGET).grc data0000.$(TARGET).grc pref0000.$(TARGET).grc rloc0000.$(TARGET).grc
-	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) code0001.$(TARGET).grc code0000.$(TARGET).grc data0000.$(TARGET).grc *.bin pref0000.$(TARGET).grc rloc0000.$(TARGET).grc
+#	perl -pi -e 's/resource.h/resource.h $(TARGET)Rsc.h/g' $@
 
-code0000.$(TARGET).grc: $(TARGET)
-	$(OBJRES) $(TARGET)
+%.rcp: version
+	$(FIXVERSION) $@
 
-code0001.$(TARGET).grc: code0000.$(TARGET).grc
+$(TARGET).prc: $(GRESOURCES)
+	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) $^
 
-data0000.$(TARGET).grc: code0000.$(TARGET).grc
+%.grc: $(TARGET)
+	$(OBJRES) $^
 
-pref0000.$(TARGET).grc: code0000.$(TARGET).grc
-
-rloc0000.$(TARGET).grc: code0000.$(TARGET).grc
-
-bin.res: $(TARGET).rcp $(TARGET).bmp version
-	$(FIXVERSION) rcponly
-	$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
+*.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
+	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
+	@$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp . > /dev/null
 	touch bin.res
 
-$(TARGET): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -o $(TARGET) $(LIBS)
+$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
+	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
 	@echo "** Unresolved Symbols for $(TARGET)"
 	@! $(NM) -u $(TARGET) | grep .
 	@echo "** End of Unresolved Symbols for $(TARGET)"
 
-send: $(TARGET).prc
-	$(PILOTXFER) -i $(TARGET).prc
-
-depend:
-	makedepend -DNOSYSHEADERS -Y -I. *.c
-
 clean:
-	-rm -f *.[oa] $(TARGET) *.bin bin.res *.grc Makefile.bak $(TARGET)Rsc.h *~ core
+	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ core
 
-spotless: clean
-	-rm -f $(TARGET).prc pilot.ram pilot.scratch cwroller.*.zip
+veryclean: clean
+	-rm -f $(TARGET).prc pilot.ram pilot.scratch $(TARGET).*.zip \
+	*.bak
 
-zip: $(TARGET).prc clean
-	-rm -f cwroller.*.zip
-	zip cwroller.$(VERSION).`date +"%y%m%d"`.zip [a-zMNTC]*
+spotless: veryclean
+	-rm -f *.d $(TARGET)Rsc.h
 
-archive: zip
-	-scp -P7070 cwroller.*.zip gerf.org:src/archive/
+zip: binzip srczip
+
+$(TARGET).$(VERSION).src.zip srczip: veryclean
+	-rm -f $(TARGET).*.src.zip
+	cd .. && \
+	zip -r $(TARGET).$(VERSION).src.zip \
+		cwimp \
+		-x cwimp/CVS/\* -x cwimp/\*.d
+
+$(TARGET).$(VERSION).bin.zip binzip: $(TARGET).prc
+	-rm -f $(TARGET).*.bin.zip
+	cd .. && \
+	zip -r $(TARGET).$(VERSION).bin.zip \
+		cwimp/$(TARGET).prc \
+		cwimp/README
+
+archive: srczip
+	-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
 
 floppy: clean
 	-mdeltree a:\*
@@ -80,15 +95,13 @@ floppy: clean
 	-mdir a:
 
 install: $(TARGET).prc
-	pilot-xfer -i $(TARGET).prc
+	$(PILOTXFER) -i $(TARGET).prc
 
-.PHONY: depend clean veryclean zip archive floppy
+money:
+	@echo What, you think I\'m made of money\?
 
-# DO NOT DELETE
+.PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res
 
-cwroller.o: callback.h statusmsg.h game.h cwrollerRsc.h draw.h cwroller.h
-draw.o: callback.h cwroller.h cwrollerRsc.h lowlevel.h game.h statusmsg.h
-draw.o: draw.h
-game.o: cwroller.h cwrollerRsc.h draw.h game.h statusmsg.h
-lowlevel.o: lowlevel.h
-statusmsg.o: game.h cwrollerRsc.h statusmsg.h lowlevel.h
+# Include the dependency info
+include $(SOURCES:.c=.d)
+# EOF

@@ -4,12 +4,10 @@
  */
 /* $Id$
  */
-#ifndef NOSYSHEADERS
+
 #include <Pilot.h>
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
-#endif
-
 
 #include "game.h"
 #include "statusmsg.h"

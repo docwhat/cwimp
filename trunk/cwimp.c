@@ -1,18 +1,12 @@
 /* $Id$
  */
 
-#ifndef NOSYSHEADERS
 #include <Pilot.h>
-//#include <Common.h>
-//#include <System/SysAll.h>
-//#include <UI/UIAll.h>
-#endif
-
 #include "callback.h"
 #include "statusmsg.h"
 #include "game.h"
 #include "draw.h"
-#include "cwroller.h"
+#include "cwimp.h"
 
 static Boolean MainFormHandleEvent (EventPtr e)
 {

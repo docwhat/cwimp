@@ -1,13 +1,11 @@
 /* $Id$
  * 
  */
-#ifndef NOSYSHEADERS
 #include <Pilot.h>
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
-#endif
 
-#include "cwroller.h"
+#include "cwimp.h"
 #include "draw.h"
 #include "statusmsg.h"
 

@@ -3,7 +3,8 @@
 /* $Id$
  */
 
-#include "cwrollerRsc.h"
+#include "resource.h"
+
 #define CREATOR  0x43575353 // `CWSS`
 
 #endif
