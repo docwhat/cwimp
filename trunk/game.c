@@ -640,6 +640,9 @@ void LoadCubes() {
   if( (x == noPreferenceFound) || 
       (stor.version != storVersion) ) {
     /* This totally resets the whole game. */
+    if( x != noPreferenceFound ) {
+      FrmAlert(alertResetting);
+    }
     Defaults();
     ResetCubes();
   }
