@@ -31,6 +31,7 @@ newEvent(void (*func)(Int), Int data) {
   EQPtr new;
 
   new = MemPtrNew(sizeof(EQ));
+  ErrNonFatalDisplayIf(new == NULL, "Queue:new failed to get memory");
   new->next = NULL;
   new->func = func;
   new->data = data;
@@ -67,8 +68,8 @@ Boolean EQRunNext(void) {
   data = ptr->data;
   EQueue->next = ptr->next;
 
-  MemPtrFree( ptr );
-  
+  ErrNonFatalDisplayIf( MemPtrFree( ptr ),
+                        "Queue:RunNext failed to free memory.");
   func(data);
   return true;
 }
@@ -76,18 +77,24 @@ Boolean EQRunNext(void) {
 void EQReset(void)
 {
   EQPtr ptr;
-  EQPtr next;
+  EQPtr top;
 
   if( EQIsEmpty() ) return;
 
-  ptr = EQueue->next;
+  top = EQueue->next;
 
-  while( ptr->next != NULL ) {
-    next = ptr->next;
-    MemPtrFree( ptr );
-    ptr = next;
+  for( ptr = top;
+       ptr != NULL;
+       ptr = top ) {
+    top = top->next;
+    ErrNonFatalDisplayIf( MemPtrFree( ptr ),
+                          "Queue:RunNext failed to free memory.");
   }
 
+  ErrNonFatalDisplayIf( top != NULL,
+                        "Queue:RunNext EQueue isn't empty.");
+
+  EQueue->next = top;
 }
 
 Boolean EQIsEmpty(void)
