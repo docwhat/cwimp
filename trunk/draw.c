@@ -452,6 +452,12 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
   
   CALLBACK_PROLOGUE
 
+    if( stor.currplayer > 0 ) {
+      /* The player *cannot* continue a
+         game once they alter variants */
+      ResetCubes(); 
+    }
+
     switch (e->eType) {
     case frmOpenEvent:
 	  frm = FrmGetActiveForm();
@@ -502,7 +508,7 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 }
 
 
-void DialogVarients() {
+void DialogVariants() {
   FormPtr prevForm, frm;
   Word hitButton;
   Word fldIndex;
@@ -990,7 +996,7 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	  switch(e->data.ctlSelect.controlID) {
 		
 	  case btn_Variants_frmNewGame:
-	    DialogVarients();
+	    DialogVariants();
 	    handled = true;
 	    break;
 
