@@ -23,8 +23,10 @@ LIBS =
 
 CC = m68k-palmos-coff-gcc
 
-CFLAGS = -Wall -O2 -DDEBUG \
-	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL \
+DFLAGS = -DDEBUG \
+	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL
+
+CFLAGS = -Wall -O2 $(DFLAGS)\
 	-DLANG=$(LANGUAGE) -nostartfiles \
 	-DVERSION='"$(VERSION)"'
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
@@ -32,12 +34,12 @@ CFLAGS = -Wall -O2 -DDEBUG \
 # Debug Rolling turns of 'rigged' rolling
 #-DDEBUGROLL
 
-PILRC		:= pilrc
-OBJRES		:= m68k-palmos-coff-obj-res
-NM		:= m68k-palmos-coff-nm
-SED		:= sed
-BUILDPRC	:= build-prc
-PILOTXFER	:= pilot-xfer
+PILRC		 = pilrc
+OBJRES		 = m68k-palmos-coff-obj-res
+NM		 = m68k-palmos-coff-nm
+SED		 = sed
+BUILDPRC	 = build-prc
+PILOTXFER	 = coldsync -mr
 FIXVERSION	:= ./fixversion
 MKSTATUSMSG	:= ./mkstatusmsg
 DEPEND		:= ./depend.sh
@@ -140,7 +142,7 @@ archive: zip
 
 
 install: $(TARGET).$(LANGUAGE).prc
-	$(PILOTXFER) -i $(TARGET).$(LANGUAGE).prc
+	$(PILOTXFER) $(TARGET).$(LANGUAGE).prc
 
 setver:
 	vim version
