@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 2000 Christian Höltje
+    Copyright (C) 1999-2000 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,10 @@ static Boolean MainFormHandleEvent (EventPtr e)
 	  MenuEraseStatus(NULL);
 
 	  switch(e->data.menu.itemID) {
+	  case MenuItem_Help:
+		FrmHelp( GenericHelp );
+		break;
+
 	  case MenuItem_About:
 		FrmAlert(About_Info);
 		break;
@@ -62,10 +66,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
 		if ( stor.currplayer < 0 ) {
 		  DialogVarients();
 		} else {
-		  FrmCustomAlert( calertDEBUG,
-						  "Can't do variants during game", 
-						  "ToDo: do this properly",
-						  " ");
+		  FrmHelp( HelpVariants );
 		}
 		break;
 
@@ -92,7 +93,11 @@ static Boolean MainFormHandleEvent (EventPtr e)
 		break;
 		
 	  case btn_Roll:
-		Roll();
+		if ( stor.currplayer < 0 ) {
+		  DialogNewGame();
+		} else {
+		  Roll();
+		}
 		break;
 	  }
 	  handled = true;

@@ -1,7 +1,7 @@
 /* $Id$ 
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 2000 Christian Höltje
+    Copyright (C) 1999-2000 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by

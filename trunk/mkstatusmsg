@@ -2,7 +2,7 @@
 # $Id$
 #
 #   CWimp - Dice game for the palm handhelds.
-#   Copyright (C) 2000 Christian Höltje
+#   Copyright (C) 1999-2000 Christian Höltje
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -33,25 +33,27 @@ if( ! defined $text or ! -f $text ) {
 
 my $base = "statusmsg";
 
-my $cfile = "$base.c";
-my $hfile = "$base.h";
-
+my $cfile	= "$base.c";
+my $rcpfile	= "$base.rcp";
     
 open( IN, "$text" ) or die "Unable to read $text: $!";
 my $DrawStatus = "#include <Pilot.h>\n" . 
     "#include <System/SysAll.h>\n" . 
     "#include <UI/UIAll.h>\n" .
     "#include \"game.h\"\n" .
-    "#include \"$hfile\"\n" .
+    "#include \"statusmsg.h\"\n" .
     "#include \"lowlevel.h\"\n\n"  .
     "void DrawStatus() {\n\n" .
     "  switch ( stor.status ) {\n";
 
-my $DialogStatus = "void DialogStatus() {\n\n" .
-    "  switch ( stor.status ) {\n";
+my $DialogStatus = "void DialogStatus() {\n" .
+    "  if( stor.status < 100 )\n" .
+    "    FrmHelp( GenericHelp );\n" .
+    "  else\n" .
+    "    FrmHelp( stor.status );\n" .
+    "}\n\n";
 
-my $Headers = "extern void DrawStatus();\n" . 
-    "extern void DialogStatus();\n";
+my $Strings;
 
 my $count = 1;
 while (my $line = <IN>)
@@ -62,37 +64,35 @@ while (my $line = <IN>)
     if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
 	my $tag 	= $1;
 	my $status	= $2;
-	$Headers .= "#define $tag " . $count++ . "\n";
 	$DrawStatus .= "  case $tag: SetFieldTextFromStr( statusLine, \"$status\" ); break;\n";
-	$DialogStatus .= "  case $tag: FrmCustomAlert( calertSTATUS, \"";
+	$Strings .= "STRING $tag \"";
 	while ( my $newline = <IN> ) {
 	    chomp $newline;
 	    last if ( $newline =~ /^\./ );
 	    if( $newline =~ /^\s*$/ ) {
-		$DialogStatus =~ s/\s$//;
-		$DialogStatus .= "\\n\\n";
+		$Strings =~ s/\s$//;
+		$Strings .= "\\n\\n";
 		next;
 	    }
-	    $DialogStatus .= $newline . " ";
+	    $Strings .= $newline . " ";
 	}
-	$DialogStatus =~ s/\s$//;
-	$DialogStatus .= "\",\" \",\" \" ); break;\n";
+	$Strings =~ s/\s$//;
+	$Strings .= "\"\n\n";
     }
     
 }
 close( IN );
 
 $DrawStatus .= "  default: ClearFieldText( statusLine ); break;\n}\n}\n\n";
-$DialogStatus .= "  default: break;\n}\n}\n\n";
 
 open( OUT, ">$cfile" ) or die "Unable to write to `$cfile`: $!";
 print OUT $DrawStatus;
 print OUT $DialogStatus;
 close OUT or die "Unable to close $cfile: $!";
 
-open( OUT, ">$hfile" ) or die "Unable to write to `$hfile`: $!";
-print OUT $Headers;
-close OUT or die "Unable to close $hfile: $!";
+open( OUT, ">$rcpfile" ) or die "Unable to write to `$rcpfile`: $!";
+print OUT $Strings;
+close OUT or die "Unable to close $rcpfile: $!";
 
 exit 0;
 

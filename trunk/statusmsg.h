@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 1999-2000 Christian Höltje
+    Copyright (C) 2000 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,11 +19,5 @@
 
  */
 
-#ifndef _CWROLLER_H_
-#define _CWROLLER_H_
-
-#include "resource.h"
-
-#define CREATOR  0x43575353 // `CWSS`
-
-#endif
+extern void DrawStatus();
+extern void DialogStatus();

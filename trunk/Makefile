@@ -46,7 +46,7 @@ all: $(TARGET).rcp $(TARGET).prc
 		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 		[ -s $@ ] || rm -f $@'
 
-%.rcp: %.rcp.$(MYLANG).in version $(FIXVERSION)
+%.rcp: %.rcp.$(MYLANG).in version $(FIXVERSION) statusmsg.rcp
 	rm -f $@ $(TARGET)Rsc.h
 	$(FIXVERSION) $<
 
@@ -56,7 +56,7 @@ $(TARGET).prc: $(GRESOURCES) tver0001.bin Makefile
 %.grc: $(TARGET)
 	$(OBJRES) $^
 
-statusmsg.c statusmsg.h: statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
+statusmsg.c statusmsg.rcp: statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
 	$(MKSTATUSMSG) $<
 
 tver0001.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
@@ -74,7 +74,7 @@ ChangeLog:
 
 clean:
 	rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
-	rm -f statusmsg.c statusmsg.h
+	rm -f statusmsg.c statusmsg.rcp
 
 veryclean: clean
 	rm -f $(TARGET).prc pilot.ram pilot.scratch \

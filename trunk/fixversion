@@ -2,7 +2,7 @@
 # $Id$
 #
 #   CWimp - Dice game for the palm handhelds.
-#   Copyright (C) 2000 Christian Höltje
+#   Copyright (C) 1999-2000 Christian Höltje
 #
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -78,15 +78,18 @@ sub EditRCP( $$ )
 	# Substitute Year
 	$line =~ s/\$YEAR/$year/g;
 
-	if( $line =~ /^FIXVER:\s+(\S+)\s+(\S.*)$/ ) {
-	    my $tag = $1;
-	    my $args = $2;
+	if( $line =~ /^FIXVERS?I?O?N?:\s+(\S.+)$/ ) {
+	    my ( $tag, @args ) = split /\s+/, $1;
 	    my $endtag = 0;
 	    my $input;
+	    if( $tag =~ /INCLUDE/i ) {
+		print OUT DoInclude( @args );
+		next;
+	    }
 	    while ( my $newline = <IN> ) {
 		if( $newline =~ /^FIXVER:\s+($tag)\s+END/i ) {
 		    if ( $tag =~ /LOOP/i ) {
-			print OUT DoLoop( $input, $args );
+			print OUT DoLoop( $input, @args );
 		    }
 		    $endtag = 1;
 		    last;
@@ -112,10 +115,25 @@ sub EditRCP( $$ )
 
 }
 
+sub DoInclude( $ )
+{
+    my $file = shift;
+    my $return;
+    
+    open( DIIN, "$file" ) or die "Unable to open `$file': $!";
+    while( <DIIN> ) {
+	$return .= $_;
+    }
+    close( DIIN ) or die "Unable to close `$file': $!";
+
+    return $return;
+}
+
+
 sub DoLoop( $$ )
 {
     my $input = shift;
-    my ( $count, $end ) = split / /, shift;
+    my ( $count, $end ) = @_;
     my $return;
 
     for( ; $count <= $end ; $count++ ) {

@@ -29,3 +29,62 @@ You can't 'stay' without rolling once.
 .
 
 
+GenericHelp: Play CWimp!
+Welcome to CWimp!
+
+I am going to try to give you the basics of the game.  Don't worry too much
+if I miss something, as help will be available via the 'i' at anytime.
+
+First of all, CWimp is a dice game.  The white dice all have the symbols
+for 2, 3, 4, 6, '5' and '10'.  '5' and '10' are the only directly scoring
+dice.  Each is worth 5 and 10 points respectively.
+
+The black die has the same symbols, but the 3 is replaced with a Flaming Sun
+or wildcard.  You can score it like any other symbol that you choose.  How ever
+there are rules that can prevent you from controlling that.
+
+During one turn, you can roll as often as you like as long as you don't
+'Wimp Out' (or score nothing) on a roll.  If you 'Stay' (when you are able),
+then your score is added to your total and the next person goes.
+
+Each time you score on a dice it is put aside (marked with a dot) and
+cannot be rolled on again until you have scored on all dice.
+If you score with all your dice (ie, there are dots next to all of them)
+then 'You May Not Want To, But You Must' roll the dice again.
+
+
+If you roll three of a kind, it is called a 'Flash'.  You must score a flash
+if you have three of a kind.  That means if you get two symbols and a Flaming
+Sun, you must take the flash. A Flash scores 10 times the symbol or score
+value. A Flash of 3s is worth 30 and a Flash of '10's is worth 100 points!
+
+You must clear a Flash before you can continue the game.  To clear a Flash,
+you roll your non-scoring dice, as if in a normal turn, but you get no
+points for that roll (and must roll again) if any of the dice match the
+Flash.  Wimping out is a legit way of clearing a flash, however.
+
+A Freight Train is like a Flash, but with 5 dice.  A Freight Train scores
+100 times the symbol!  The exception is if you roll a '10' Freight Train,
+in which case you've gone Super Nova and lost.  The other exception is if
+you roll all 6s, in which case, you won!  Note: You can't roll all 3s, as
+the Flaming sun is on the '3' side of the black die.
+
+Upon starting the game, you must score more than opening roll (which defaults
+to 35 points, see 'Variants') before you can 'stay'.
+
+To win the game, a player must pass the Winning Score (see 'New Game').
+Once someone has passed the winning score, then all the other players
+get in Last Licks, one more turn with a chance to pass the leader.
+
+If someone passes the leader, then Last Licks starts again with the
+players who haven't already gotten in their Last Licks (and have not
+passed the leader).
+
+In addition to the straight forward way to play the game, you can play
+Variants that add a different flavour to the game.  See the Varients
+menu under 'Options'.
+
+Ciao!\n
+      DocWhat
+.
+

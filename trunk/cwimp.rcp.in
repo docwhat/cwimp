@@ -8,8 +8,7 @@
 
 
 FORM ID MainForm AT (0 0 160 160)
-	NOFRAME
-    NOSAVEBEHIND
+    NOFRAME
     USABLE
     MENUID Main_Menu
 
@@ -154,8 +153,8 @@ BEGIN
 	"\n" \
 # \366 is umlaut 'o'
 # \251 is the copyright symbol
-	"Steve Schwartz\nChristian H\366ltje\n" \
-	" \251 $YEAR\n\n" \
+	"\251 1999-$YEAR\n" \
+	"Steve Schwartz\nChristian H\366ltje\n\n" \
 	"Please press the 'i' for more info\n"
 	BUTTONS "Done" 
 END
@@ -180,8 +179,8 @@ STRING ID HelpAbout
 # \263 is the ^3 character
 	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n\n" \
 	"This is free software, and you are welcome to redistribute it "\
-	"under certain conditions; See the COPYING file that should have come "\
-	"with this program.\n\n"\
+	"under certain conditions; See the COPYING file that should "\
+	"have come with this program.\n\n"\
 	"More info and new versions can be gotten at\n"\
 	"http://docwhat.gerf.org/cwimp/\n\n"\
 	"Bugs may be submitted at\n"\
@@ -287,12 +286,13 @@ BITMAP ID bmp6b    "cube6b.bmp"    COMPRESS
 ##
 ##
 MENU ID Main_Menu
-	BEGIN
+BEGIN
 	PULLDOWN "Game"
 		BEGIN
 		MENUITEM "New"   ID MenuItem_New   "N"
 		MENUITEM "Reset" ID MenuItem_Reset "R"
 		MENUITEM SEPARATOR
+		MENUITEM "Help"  ID MenuItem_Help  "H"
 		MENUITEM "About" ID MenuItem_About "A"
 		END
 	PULLDOWN "Options"
@@ -305,3 +305,7 @@ END
 APPLICATIONICONNAME 1000 "CWimp"
 ICON "cwimp.bmp"
 VERSION 1 "$VERSION"
+
+FIXVERSION: INCLUDE statusmsg.rcp
+
+#EOF
