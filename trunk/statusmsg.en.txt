@@ -1,6 +1,14 @@
 # $Id$
 #
 
+STRING: RollString
+Roll
+.
+
+STRING: StartString
+Start
+.
+
 STRING: PickScoreString
 Pick a scoring value for your Flaming Sun.
 .
