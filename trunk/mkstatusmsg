@@ -1,0 +1,100 @@
+#!/usr/bin/perl
+# $Id$
+#
+#   CWimp - Dice game for the palm handhelds.
+#   Copyright (C) 2000 Christian Höltje
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+$| = 1;
+use strict;
+use 5.004;
+use Fcntl;
+
+
+my $text = shift @ARGV;
+
+if( ! defined $text or ! -f $text ) {
+    print "Can't read text file\n";
+    print "Syntax: $0 <.txt file>\n";
+    exit 1;
+}
+
+my $base = "statusmsg";
+
+my $cfile = "$base.c";
+my $hfile = "$base.h";
+
+    
+open( IN, "$text" ) or die "Unable to read $text: $!";
+my $DrawStatus = "#include <Pilot.h>\n" . 
+    "#include <System/SysAll.h>\n" . 
+    "#include <UI/UIAll.h>\n" .
+    "#include \"game.h\"\n" .
+    "#include \"$hfile\"\n" .
+    "#include \"lowlevel.h\"\n\n"  .
+    "void DrawStatus() {\n\n" .
+    "  switch ( stor.status ) {\n";
+
+my $DialogStatus = "void DialogStatus() {\n\n" .
+    "  switch ( stor.status ) {\n";
+
+my $Headers = "extern void DrawStatus();\n" . 
+    "extern void DialogStatus();\n";
+
+my $count = 1;
+while (my $line = <IN>)
+{
+    # Remove trailing newlines
+    chomp $line;
+    
+    if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
+	my $tag 	= $1;
+	my $status	= $2;
+	$Headers .= "#define $tag " . $count++ . "\n";
+	$DrawStatus .= "  case $tag: SetFieldTextFromStr( statusLine, \"$status\" ); break;\n";
+	$DialogStatus .= "  case $tag: FrmCustomAlert( calertSTATUS, \"";
+	while ( my $newline = <IN> ) {
+	    chomp $newline;
+	    last if ( $newline =~ /^\./ );
+	    if( $newline =~ /^\s*$/ ) {
+		$DialogStatus =~ s/\s$//;
+		$DialogStatus .= "\\n\\n";
+		next;
+	    }
+	    $DialogStatus .= $newline . " ";
+	}
+	$DialogStatus =~ s/\s$//;
+	$DialogStatus .= "\",\" \",\" \" ); break;\n";
+    }
+    
+}
+close( IN );
+
+$DrawStatus .= "  default: ClearFieldText( statusLine ); break;\n}\n}\n\n";
+$DialogStatus .= "  default: break;\n}\n}\n\n";
+
+open( OUT, ">$cfile" ) or die "Unable to write to `$cfile`: $!";
+print OUT $DrawStatus;
+print OUT $DialogStatus;
+close OUT or die "Unable to close $cfile: $!";
+
+open( OUT, ">$hfile" ) or die "Unable to write to `$hfile`: $!";
+print OUT $Headers;
+close OUT or die "Unable to close $hfile: $!";
+
+exit 0;
+
+
+

@@ -27,6 +27,8 @@ NM = m68k-palmos-coff-nm
 BUILDPRC = build-prc
 PILOTXFER = pilot-xfer
 FIXVERSION = ./fixversion
+MKSTATUSMSG = ./mkstatusmsg
+MYLANG = en
 
 VERSION=$(shell $(FIXVERSION) version)
 
@@ -39,13 +41,12 @@ all: $(TARGET).rcp $(TARGET).prc
 	$(CC) $(CSFLAGS) $<
 
 %.d: %.c
+	@echo Making dependency info for $<...
 	@$(SHELL) -ec '$(CC) -DDEPENDENCY -MM $(CFLAGS) $< \
 		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 		[ -s $@ ] || rm -f $@'
 
-#	perl -pi -e 's/resource.h/resource.h $(TARGET)Rsc.h/g' $@
-
-%.rcp: %.rcp.in version $(FIXVERSION)
+%.rcp: %.rcp.$(MYLANG).in version $(FIXVERSION)
 	rm -f $@ $(TARGET)Rsc.h
 	$(FIXVERSION) $<
 
@@ -54,6 +55,9 @@ $(TARGET).prc: $(GRESOURCES) tver0001.bin Makefile
 
 %.grc: $(TARGET)
 	$(OBJRES) $^
+
+statusmsg.c statusmsg.h: statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
+	$(MKSTATUSMSG) $<
 
 tver0001.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
 	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
@@ -69,14 +73,15 @@ ChangeLog:
 	cvs2cl
 
 clean:
-	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
+	rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
+	rm -f statusmsg.c statusmsg.h
 
 veryclean: clean
-	-rm -f $(TARGET).prc pilot.ram pilot.scratch \
+	rm -f $(TARGET).prc pilot.ram pilot.scratch \
 	*.bak TAGS
 
 spotless: veryclean
-	-rm -f *.d $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
+	rm -f *.d $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
 
 zip: srczip binzip
 

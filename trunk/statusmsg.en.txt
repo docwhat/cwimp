@@ -1,0 +1,31 @@
+# $Id$
+#
+
+DS_MustClearFlash: Must Clear Flash
+In a previous turn you rolled a flash
+(a three of a kind).
+
+In order to clear this flash and continue with your turn, all the dice
+of your next roll must be different from the flash.  If any dice match
+the flash, then that roll doesn't count and you will have to roll again.
+.
+
+
+DS_YMNWTBYM: Y.M.N.W.T.B.Y.M.
+You May Not Want To But You Must:
+
+You have scored with all the dice and are not allowed to 'stay' without
+rolling at least one more time.
+.
+
+
+DS_NextPlayer: Next Player's Turn
+It is the next player's turn.
+
+The new player has used no dice for scoring. No points have been scored for
+this turn yet.
+
+You can't 'stay' without rolling once.
+.
+
+
