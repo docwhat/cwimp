@@ -41,8 +41,8 @@ all: $(TARGET).prc
 
 #	perl -pi -e 's/resource.h/resource.h $(TARGET)Rsc.h/g' $@
 
-%.rcp: version
-	$(FIXVERSION) $@
+%.rcp: %.rcp.in version
+	$(FIXVERSION) $<
 
 $(TARGET).prc: $(GRESOURCES)
 	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) $^
@@ -64,7 +64,7 @@ ChangeLog:
 	cvs2cl
 
 clean:
-	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ core ChangeLog
+	-rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
 
 veryclean: clean
 	-rm -f $(TARGET).prc pilot.ram pilot.scratch \

@@ -1,4 +1,24 @@
 #!/usr/bin/perl
+# $Id$
+#
+#   CWimp - Dice game for the palm handhelds.
+#   Copyright (C) 2000 Christian Höltje
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+
 $| = 1;
 use strict;
 use 5.004;
@@ -24,30 +44,31 @@ if ( $ARGV[0] eq "version" )
     exit 0;
 }
 
-if ( $ARGV[0] =~ /\.rcp$/i )
+if ( $ARGV[0] =~ /(^.*\.rcp).in$/i )
 {
-    &EditRCP( $ARGV[0] );
+    &EditRCP( $ARGV[0], $1 );
     exit 0;
 }
 
 
 # Functions
 
-sub EditRCP( $ )
+sub EditRCP( $$ )
 {
     my $file = shift;
-    print "Set version to '$version' in $file\n";
-    my(@ARGV) = ($file);
+    my $outfile = shift;
+    print "Set version to '$version' in $outfile\n";
 
-    local $^I = "";
+    open( IN, "$file" ) or die "Unable to read $file: $!";
+    open( OUT, ">$outfile" ) or die "Unable to write $file: $!";
 	
-    while (<>)
+    while (<IN>)
     {
         s/(version:\s)[^\\]+\\n/$1$version\\n/i;
-        print;
-		
-        close ARGV if eof;              # Reset $.
+        print OUT;
     }
 
-    $^I = undef;
+    close( OUT );
+    close( IN );
+
 }
