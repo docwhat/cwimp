@@ -78,12 +78,7 @@ floppy: clean
 install: $(TARGET).prc
 	pilot-xfer -i $(TARGET).prc
 
-checkin: 
-	ci -l 	cwroller.c cwroller.h \
-		draw.c draw.h \
-		game.c game.h \
-		statusmsg.c statusmsg.h \
-		lowlevel.c lowlevel.h
+.PHONY: depend clean veryclean zip archive floppy
 
 # DO NOT DELETE
 
