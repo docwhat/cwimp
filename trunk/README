@@ -1,17 +1,21 @@
-CWimp is currently BETA.
+CWimp is currently pre-BETA.
 
 Information can be gotten off of my webpage:
 http://docwhat.gerf.org/cwimp
 
-This software is licensed ONLY to be used by approved BETA testers.
-If you were not contacted for BETA testing by Steve Schwartz or
-Christian Holtje, then you have an illegal copy and should email me at:
-docwhat@gerf.org
+CWimp is GPL'd software.  Please see the accompaning file, COPYING for
+information.
 
-I will then let you enter the BETA program or ask that you distroy your copy
-pending the final release of CWimp.
+At this time, CWimp is pre-beta.  It never got to the beta phase.
+It currently lacks and end-game, AI and some other features I consider
+necessary for it to be finished.
 
-Note:  The software will, in all likely hood, be released under a 'free'
-license (free as in freedom).  GPL or BSD are two obvious licenses.
+I will gladly accept patches and help in finishing this project, but I
+haven't had enough time to normally dedicate the hours and money needed
+finish it (mainly a good Palm programming book if such a thing exists).
+
+It was written using GCC under linux.
+
+Ciao!
 
 docwhat@gerf.org
