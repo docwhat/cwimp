@@ -98,6 +98,19 @@ With the Eclipse variation in effect, you cannot stay when your
 total score equals someone elses.
 .
 
+DS_OpeningRoll: Opening Roll
+Before you can 'stay' and start saving your points from one turn
+to the next, your score for this turn must be
+greater or equal to the Opening Roll value (as set when you
+started a new game).
+
+If you don't score more than this in a turn, then you get zero
+points for the turn and it becomes the next player's turn.
+
+By default you must score in one turn 35 points or more before
+you can 'stay'.
+.
+
 DS_MustClearFlash: Must Clear Flash
 In a previous turn you rolled a Flash
 (a three of a kind).
@@ -361,9 +374,19 @@ Edit the default names to your satisfaction, then press 'OK'.
 .
 
 STRING: HelpNewGame
-Select the number of human and computer players.
+Here, you may select the number of human and computer players,
+the winning score and minimum opening roll.
 
-Press OK when you're done or press Cancel if you've changed your mind.
+The winning score is the amount needed to win the game.
+
+The opening roll is the minimum amount needed to start 
+scoring points in the game.
+
+The Default button will allow you to reset the number of players,
+the winning score and the opening roll.
+
+The Variants button will allow you to select any variants you might
+want to play with.
 .
 
 STRING: HelpAbout
@@ -434,6 +457,8 @@ BEGIN
 "How many human players?" = "How many human players?"
 "How many computer players?" = "How many computer players?"
 "Winning Score:" = "Winning Score:"
+"Opening Roll:" = "Opening Roll:"
+"Default" = "Default"
 "OK" = "OK"
 "Cancel" = "Cancel"
 

@@ -207,13 +207,14 @@ DrawIntro () {
     EvtFlushPenQueue();
     
     delay = .01 * SysTicksPerSecond();
-    
-    r.extent.y = 128;
-    r.topLeft.y = 16; // BLOCKSIZE
+
+    /* Bottom */
+    r.extent.y = 159;
+    r.topLeft.y = 0; // BLOCKSIZE
     
     for (i = 0; i <= 16; i++) {
       r.extent.x = i;
-      for (x = 0; x <= 144; x += 16) {
+      for (x = 0; x < 160; x += 16) {
         r.topLeft.x = x;
         WinEraseRectangle (&r, 0);
       }
@@ -414,6 +415,7 @@ void DrawStayButton() {
   if( stor.player[stor.currplayer].score == 0 &&
       stor.scorethisturn < stor.openingroll )
     {
+      status = DS_OpeningRoll;
       stay = false;
       goto end;
     }
@@ -444,9 +446,7 @@ void DrawStayButton() {
  end:
   ShowControl( btn_Stay, stay );
   SetFlag( flag_CanStay, stay );
-  if( IsAI( stor.currplayer ) && status != 0 ) {
-    SetStatus( status );
-  }
+  SetStatus( status );
 }
 
 
@@ -491,6 +491,15 @@ void DialogNewGame() {
   }
   StrIToA( tmpString, stor.winscore );
   SetFieldTextFromStr( fld_winscore, tmpString );
+
+  // Fill in Opening Roll with previous value.
+  if ( stor.openingroll > stor.winscore || stor.openingroll <= 0 ) {
+    // Sanity check...
+    stor.openingroll = 35;
+  }
+  StrIToA( tmpString, stor.openingroll );
+  SetFieldTextFromStr( fld_openingroll, tmpString );
+
   // Set the focus to this field so the user can just start typing.
   fldIndex =  FrmGetObjectIndex(frm, fld_winscore);
   FrmSetFocus( frm, fldIndex );
@@ -501,17 +510,31 @@ void DialogNewGame() {
   hitButton = FrmDoDialog(frm);
 
   if ( hitButton == btn_OK_frmNewGame ) {
-	text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
-	if ( text != NULL ) {
-  	  stor.winscore = StrAToI( text );
-	} else {
-	  stor.winscore = 300;
-	}
-
-        /* Set the number of players/AI */
-	stor.numplayers = stor.tmpplayers;
-	stor.numcomputers = stor.tmpcomputers;
-        stor.total = stor.numplayers + stor.numcomputers;
+    Int num;
+    
+    stor.winscore = 300;
+    text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
+    if ( text != NULL ) {
+      num = StrAToI( text );
+      if( num <= 9999 && num >= 50 ) {
+        stor.winscore = num;
+      }
+    }
+    
+    stor.openingroll = 35;
+    fldIndex =  FrmGetObjectIndex(frm, fld_openingroll);
+    text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
+    if ( text != NULL ) {
+      num = StrAToI( text );
+      if( num < stor.winscore && num > 0 ) {
+        stor.openingroll = num;
+      }
+    }
+    
+    /* Set the number of players/AI */
+    stor.numplayers = stor.tmpplayers;
+    stor.numcomputers = stor.tmpcomputers;
+    stor.total = stor.numplayers + stor.numcomputers;
   }
 
   // Delete the form, we're not using it
@@ -696,9 +719,9 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
 
 
   case frmLost:
-    fieldname = fldLost;
-    StrPrintF( msg, LostString, stor.player[p1].name, NULL );
-    break;
+      fieldname = fldLost;
+      StrPrintF( msg, LostString, stor.player[p1].name, NULL );
+      break;
 
   case frmLeader:
     fieldname = fldLeader;
@@ -1111,6 +1134,27 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	    }
 	    break;
 
+          case btn_Default_frmNewGame:
+            {
+              Char tmpString[5];
+
+              /* Reset Winning Score */
+              stor.winscore = 300;
+              StrIToA( tmpString, stor.winscore );
+              SetFieldTextFromStr( fld_winscore, tmpString );
+
+              /* Reset Opening Roll */
+              stor.openingroll = 35;
+              StrIToA( tmpString, stor.openingroll );
+              SetFieldTextFromStr( fld_openingroll, tmpString );
+
+              /* Reset number of players */
+              SetComputers(0);
+              SetPlayers(1);
+            }
+            handled = true;
+            break;
+
 	  case cbtn_0:  SetComputers( 0 ); break;
 	  case cbtn_1:  SetComputers( 1 ); break;
 	  case cbtn_2:  SetComputers( 2 ); break;
@@ -1158,10 +1202,14 @@ static VoidPtr GetObjectPtr (Word objID) {
 static void ShowControl(Word objID, Boolean enable) {
 
   if ( !enable || IsAI( stor.currplayer ) ) {
-	CtlHideControl( GetObjectPtr(objID) );
+    CtlHideControl( GetObjectPtr(objID) );
   } else { 
-	CtlShowControl( GetObjectPtr(objID) );
+    CtlShowControl( GetObjectPtr(objID) );
   }
-
+  
 }
 
+// Local Variables:
+// mode:c
+// c-basic-offset:2
+// End:
