@@ -130,7 +130,7 @@ binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LAN
 		cwimp/README
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
 	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).bin
-	echo -e "\nCWimp\nVersion $(VERSION)" > \
+#	echo -e "\nCWimp\nVersion $(VERSION)" > \
 #	.info.$(TARGET).$(VERSION).$(LANGUAGE).bin
 
 
