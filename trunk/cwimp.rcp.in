@@ -326,28 +326,28 @@ END
 ##
 ##
 ##
-BITMAP ID bmpLost	"lost.bmp"		COMPRESS
-BITMAP ID bmpLeader	"leader.bmp"		COMPRESS
-BITMAP ID bmpWinner	"winner.bmp"		COMPRESS
-BITMAP ID bmpTrainWreck	"trainwreck.bmp"	COMPRESS
-BITMAP ID bmpNobodyWon	"nobodywon.bmp"		COMPRESS
-BITMAP ID bmpBump	"bump.bmp"		COMPRESS
+BITMAP ID bmpLost	"images/lost.bmp"	COMPRESS
+BITMAP ID bmpLeader	"images/leader.bmp"	COMPRESS
+BITMAP ID bmpWinner	"images/winner.bmp"	COMPRESS
+BITMAP ID bmpTrainWreck	"images/trainwreck.bmp"	COMPRESS
+BITMAP ID bmpNobodyWon	"images/nobodywon.bmp"	COMPRESS
+BITMAP ID bmpBump	"images/bump.bmp"	COMPRESS
 
-BITMAP ID bmpBlank	"cubeblank.bmp"	COMPRESS
+BITMAP ID bmpBlank	"images/cubeblank.bmp"	COMPRESS
 
-BITMAP ID bmp10w	"cube10w.bmp"	COMPRESS
-BITMAP ID bmp2w		"cube2w.bmp"	COMPRESS
-BITMAP ID bmp3w		"cube3w.bmp"	COMPRESS
-BITMAP ID bmp4w		"cube4w.bmp"	COMPRESS
-BITMAP ID bmp5w		"cube5w.bmp"	COMPRESS
-BITMAP ID bmp6w		"cube6w.bmp"	COMPRESS
+BITMAP ID bmp10w	"images/cube10w.bmp"	COMPRESS
+BITMAP ID bmp2w		"images/cube2w.bmp"	COMPRESS
+BITMAP ID bmp3w		"images/cube3w.bmp"	COMPRESS
+BITMAP ID bmp4w		"images/cube4w.bmp"	COMPRESS
+BITMAP ID bmp5w		"images/cube5w.bmp"	COMPRESS
+BITMAP ID bmp6w		"images/cube6w.bmp"	COMPRESS
 
-BITMAP ID bmp10b	"cube10b.bmp"	COMPRESS
-BITMAP ID bmp2b		"cube2b.bmp"	COMPRESS
-BITMAP ID bmpfsb	"cubefs.bmp"	COMPRESS
-BITMAP ID bmp4b		"cube4b.bmp"	COMPRESS
-BITMAP ID bmp5b		"cube5b.bmp"	COMPRESS
-BITMAP ID bmp6b		"cube6b.bmp"	COMPRESS
+BITMAP ID bmp10b	"images/cube10b.bmp"	COMPRESS
+BITMAP ID bmp2b		"images/cube2b.bmp"	COMPRESS
+BITMAP ID bmpfsb	"images/cubefs.bmp"	COMPRESS
+BITMAP ID bmp4b		"images/cube4b.bmp"	COMPRESS
+BITMAP ID bmp5b		"images/cube5b.bmp"	COMPRESS
+BITMAP ID bmp6b		"images/cube6b.bmp"	COMPRESS
 
 ##
 ##
@@ -371,7 +371,7 @@ BEGIN
 END
 
 APPLICATIONICONNAME 1000 "CWimp"
-ICON "cwimp.bmp"
+ICON "images/cwimp.bmp"
 VERSION 1 "$VERSION"
 
 FIXVERSION: INCLUDE statusmsg.rcp

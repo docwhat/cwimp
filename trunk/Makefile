@@ -1,19 +1,15 @@
 ## Makefile for CWimp
 
-TARGET = cwimp
-APPNAME = "CWimp"
-APPID = "CWmp"
+TARGET	:= cwimp
+APPNAME	:= "CWimp"
+APPID	:= "CWmp"
 LANGUAGE = en
-URL = "http://docwhat.gerf.org/cwimp/"
+URL 	:= "http://docwhat.gerf.org/cwimp/"
 
 SOURCES = $(TARGET).c  draw.c  game.c  lowlevel.c  statusmsg.c srand.c
-OBJECTS = $(patsubst %.c,%.o, $(SOURCES))
+OBJECTS = $(patsubst %.c,objs/%.o, $(SOURCES))
+PREDEPENDS = $(TARGET)Rsc.h
 LIBS =
-GRESOURCES = code0001.$(TARGET).grc code0000.$(TARGET).grc \
-	data0000.$(TARGET).grc pref0000.$(TARGET).grc \
-	 rloc0000.$(TARGET).grc
-
-#	data0000.$(TARGET).grc *.bin pref0000.$(TARGET).grc \
 
 CC = m68k-palmos-coff-gcc
 
@@ -21,68 +17,79 @@ CFLAGS = -Wall -g -O2 -DDEBUG
 # Debug Rolling turns of 'rigged' rolling
 #-DDEBUGROLL
 
-PILRC = pilrc
-OBJRES = m68k-palmos-coff-obj-res
-NM = m68k-palmos-coff-nm
-BUILDPRC = build-prc
-PILOTXFER = pilot-xfer
-FIXVERSION = ./fixversion
-MKSTATUSMSG = ./mkstatusmsg
-MYLANG = en
+PILRC		:= pilrc -q
+OBJRES		:= m68k-palmos-coff-obj-res
+NM		:= m68k-palmos-coff-nm
+BUILDPRC	:= build-prc
+PILOTXFER	:= pilot-xfer
+FIXVERSION	:= ./fixversion
+MKSTATUSMSG	:= ./mkstatusmsg
+DEPEND		:= ./depend.sh
 
 VERSION=$(shell $(FIXVERSION) version)
 
-all: $(TARGET).rcp $(TARGET).prc
+all: dirs $(TARGET).prc
 
-.S.o:
-	$(CC) $(TARGETFLAGS) -c $<
+.PHONY: dirs
 
-.c.s:
-	$(CC) $(CSFLAGS) $<
+dirs:
+	@if [ ! -d deps ]; then mkdir deps ; fi
+	@if [ ! -d objs ]; then mkdir objs ; fi
 
-%.d: %.c
-	@echo Making dependency info for $<...
-	@$(SHELL) -ec '$(CC) -DDEPENDENCY -MM $(CFLAGS) $< \
-		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
-		[ -s $@ ] || rm -f $@'
+deps/%.d: $(PREDEPENDS) $(DEPEND) %.c
+	@echo -- Making dependency info for $*.c
+	$(DEPEND) $(CC) $(CFLAGS)  $*.c > $@
 
-%.rcp: %.rcp.$(MYLANG).in version $(FIXVERSION) statusmsg.rcp
-	rm -f $@ $(TARGET)Rsc.h
+objs/%.o: %.c
+	@echo -- Compiling $*.c
+	$(CC) $(CFLAGS) -c -o objs/$*.o $*.c
+
+$(TARGET)Rsc.h: $(TARGET).rcp images
+	@echo -- Pilrc\'ing $*
+	$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
+	mv *.bin objs/
+
+
+$(TARGET).rcp: $(TARGET).rcp.$(LANGUAGE).in version $(FIXVERSION) statusmsg.rcp
+	@echo -- Fixing version and building $@
 	$(FIXVERSION) $<
 
-$(TARGET).prc: $(GRESOURCES) tver0001.bin Makefile
-	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) $(GRESOURCES) *.bin
+$(TARGET).prc: $(TARGET)Rsc.h objs/code0000.cwimp.grc
+	@echo -- Building $@
+	cd objs && \
+	$(BUILDPRC) ../$(TARGET).prc $(APPNAME) $(APPID) *.grc *.bin
 
-%.grc: $(TARGET)
-	$(OBJRES) $^
+objs/%.grc: objs/$(TARGET)
+	@echo -- Converting objects $*
+	cd objs && \
+	$(OBJRES) $(TARGET)
 
 STATUSMSGS:= statusmsgstrings.h statusmsg.c statusmsg.rcp
-$(STATUSMSGS): statusmsg.$(MYLANG).txt $(MKSTATUSMSG)
+$(STATUSMSGS): statusmsg.$(LANGUAGE).txt $(MKSTATUSMSG)
+	@echo -- Making status messages
 	$(MKSTATUSMSG) $<
 
-tver0001.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
-	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
-	@$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp . > /dev/null
+objs/$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
+	@echo -- Compiling $@
+	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LIBS)
 
-$(TARGET): $(TARGET)Rsc.h $(OBJECTS) 
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
-	@echo "** Unresolved Symbols for $(TARGET)"
-	@! $(NM) -u $(TARGET) | grep .
-	@echo "** End of Unresolved Symbols for $(TARGET)"
+clean:
+	rm -f objs/* *~ *.bak core
+	rm -f $(STATUSMSGS)
+
+veryclean: clean
+	rm -f ChangeLog $(TARGET).prc TAGS
+
+spotless: veryclean
+	rm -f deps/*
+	rm -f $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
 
 ChangeLog:
 	cvs2cl
 
-clean:
-	rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
-	rm -f $(STATUSMSGS)
-
-veryclean: clean
-	rm -f $(TARGET).prc pilot.ram pilot.scratch \
-	*.bak TAGS
-
-spotless: veryclean
-	rm -f *.d $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
+#
+# Extra non-compiling rules
+#
 
 zip: srczip binzip
 
@@ -114,19 +121,12 @@ archive: zip
 	mv -iv $(TARGET).*.zip $(TARGET).*.dsc $(HOME)/lib/docwhat.web/files/
 #-scp -P7070 $(TARGET).*.zip gerf.org:src/archive/
 
-floppy: clean
-	-mdeltree a:\*
-	-mcopy * a:
-	-mdir a:
 
 install: $(TARGET).prc
 	$(PILOTXFER) -i $(TARGET).prc
 
-money:
-	@echo What, you think I\'m made of money\?
-
 .PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res
 
 # Include the dependency info
-include $(SOURCES:.c=.d)
+include $(patsubst %.c,deps/%.d, $(SOURCES))
 # EOF
