@@ -50,94 +50,88 @@ FIXVER: LOOP END
 
    END
 
-FORM ID frmNewGame AT (2 30 156 128)
+FORM ID frmNewGame AT (CENTER@160/2 CENTER@160/2 134 108)
 MODAL
 HELPID HelpNewGame
 SAVEBEHIND
 BEGIN
     TITLE "New Game"
-    LABEL "How many human players?" ID AUTOID AT (5 20) FONT 1
-    PUSHBUTTON  "1"  ID pbtn_01 AT (4           PREVBOTTOM+2 AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "2"  ID pbtn_02 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "3"  ID pbtn_03 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "4"  ID pbtn_04 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "5"  ID pbtn_05 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "6"  ID pbtn_06 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "7"  ID pbtn_07 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "8"  ID pbtn_08 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "9"  ID pbtn_09 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
-    PUSHBUTTON  "10" ID pbtn_10 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    LABEL "How many human players?" ID AUTOID AT (5 16)
+    PUSHBUTTON "1" ID pbtn_1 AT (4 PREVBOTTOM+2 AUTO AUTO) GROUP 1
+FIXVER: LOOP 2 10
+    PUSHBUTTON "$LOOP" ID pbtn_$LOOP AT (PREVRIGHT+1 PREVTOP AUTO AUTO) GROUP 1
+FIXVER: LOOP END
 
-    LABEL "How many computer players?" ID AUTOID AT (5 PREVBOTTOM+8) FONT 1
-    PUSHBUTTON  "0"  ID cbtn_00 AT (4           PREVBOTTOM+2 AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "1"  ID cbtn_01 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "2"  ID cbtn_02 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "3"  ID cbtn_03 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "4"  ID cbtn_04 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "5"  ID cbtn_05 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "6"  ID cbtn_06 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "7"  ID cbtn_07 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "8"  ID cbtn_08 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
-    PUSHBUTTON  "9"  ID cbtn_09 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    LABEL "How many computer players?" ID AUTOID AT (5 PREVBOTTOM+4)
+    PUSHBUTTON "0" ID cbtn_0 AT (4 PREVBOTTOM+2 AUTO AUTO) GROUP 2
+FIXVER: LOOP 1 9
+    PUSHBUTTON "$LOOP" ID cbtn_$LOOP AT (PREVRIGHT+1 PREVTOP AUTO AUTO) GROUP 2
+FIXVER: LOOP END
 
-	LABEL "Winning Score:" ID AUTOID AT (15 PREVBOTTOM+8) FONT 1 
-	FIELD ID fld_winscore AT (PREVRIGHT+5 PREVTOP 20 12) UNDERLINED MAXCHARS 4 NUMERIC
+    LABEL "Winning Score:" ID AUTOID AT (15 PREVBOTTOM+4)
+    FIELD ID fld_winscore AT (PREVRIGHT+5 PREVTOP 20 12)
+	  UNDERLINED MAXCHARS 4 NUMERIC
 
-    BUTTON "OK"     ID btn_OK_frmNewGame AT (5 PREVBOTTOM+8 AUTO 12) LEFTANCHOR FRAME FONT 1
-    BUTTON "Cancel" ID btn_Cancel_frmNewGame AT (PREVRIGHT+8 PREVTOP AUTO 12) LEFTANCHOR FRAME FONT 0
-    BUTTON "Variants" ID btn_Variants_frmNewGame AT (PREVRIGHT+11 PREVTOP AUTO 12) LEFTANCHOR FRAME FONT 0
+    BUTTON "OK"     ID btn_OK_frmNewGame AT (4 PREVBOTTOM+4 AUTO AUTO) FONT 1
+    BUTTON "Cancel" ID btn_Cancel_frmNewGame AT (PREVRIGHT+4 PREVTOP AUTO AUTO)
+    BUTTON "Variants" ID btn_Variants_frmNewGame AT (PREVRIGHT+8 PREVTOP AUTO AUTO)
+
 END
 
 
-FORM ID frmVariants AT (2 32 156 126)
+FORM ID frmVariants AT (CENTER@160/2 CENTER@160/2 100 120)
 MODAL
 HELPID HelpVariants
 SAVEBEHIND
 BEGIN
-    TITLE "Variations"
-	CHECKBOX "Bump"             ID check_Bump      AT ( 5 15 AUTO AUTO )
-	CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO ) 
-	CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO ) 
-	CHECKBOX "(n)Train Wrecks"  ID check_nTW       AT ( 5 PREVBOTTOM AUTO AUTO ) 
-	CHECKBOX "Full House"       ID check_FullHouse AT ( 5 PREVBOTTOM AUTO AUTO ) 
-	CHECKBOX "Suspend"          ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO ) 
-	CHECKBOX "Insurance Points" ID check_Insurance AT ( 5 PREVBOTTOM AUTO AUTO ) 
-    BUTTON "Done" ID AUTOID1 AT (5 PREVBOTTOM+8 AUTO AUTO)
+TITLE "Variations"
+   CHECKBOX "Bump"             ID check_Bump      AT ( 5 15 AUTO AUTO )
+   CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "(n)Train Wrecks"  ID check_nTW       AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "Full House"       ID check_FullHouse AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "Suspend"          ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "Insurance Points" ID check_Insurance AT ( 5 PREVBOTTOM AUTO AUTO )
+   BUTTON "Done" ID AUTOID1 AT (5 120-15 AUTO AUTO)
 END
 
 ##
 ##
 ##
-FORM ID frmPreferences AT (30 100 128 58)
+FORM ID frmPreferences AT (CENTER@160/2 CENTER@160/2 110 46)
 MODAL
 HELPID HelpPreferences
 SAVEBEHIND
 BEGIN
 	TITLE "Preferences"
-	CHECKBOX "Next Player Popup Dialog" ID check_NextPlayerPopUp AT ( 5 15 AUTO AUTO )
-	BUTTON "Done" ID AUTOID2 AT (5 PREVBOTTOM+8 AUTO AUTO)
+	CHECKBOX "Next Player Dialog" ID check_NextPlayerPopUp AT
+		 ( 4 14 AUTO AUTO )
+
+	BUTTON "Done" ID AUTOID2 AT (4 46-15 AUTO AUTO)
 END
 
 ##
 ##
 ##
-FORM ID frmGetNames AT (2 2 156 156)
+FORM ID frmGetNames AT (CENTER@160/2 CENTER@160/2 100 142)
 MODAL
 HELPID HelpGetNames
 SAVEBEHIND
 BEGIN
-	TITLE "Set Player Names"
-	LABEL "Set the Player's Names" ID AUTOID AT (15 15) FONT 1
+    TITLE "Player Names"
 
-# Another one of my loops to make life easier
-FIXVER: LOOP 0 9
-	LABEL "$LOOPPLUSONE:" ID GnameL$LOOP AT (10 PREVBOTTOM)
-    FIELD ID GnameP$LOOP AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+    LABEL "1:" ID GnameL0 AT (4 13)
+    FIELD ID GnameP0 AT (16 PREVTOP 80 11)
+	  UNDERLINED MAXCHARS 32 AUTOSHIFT
+FIXVER: LOOP 1 9
+    LABEL "$LOOPPLUSONE:" ID GnameL$LOOP AT (4 PREVBOTTOM)
+    FIELD ID GnameP$LOOP AT (16 PREVTOP 80 11)
+	  UNDERLINED MAXCHARS 32 AUTOSHIFT
 FIXVER: LOOP END
 
-    BUTTON "OK"   ID btn_OK_frmGetNames AT (5 PREVBOTTOM+5 AUTO 12)  FRAME FONT 1
-    BUTTON "Back" ID AUTOID3            AT (PREVRIGHT+8 PREVTOP AUTO 12) FRAME FONT 0
-	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
+    BUTTON "OK" ID btn_OK_frmGetNames AT (5 PREVBOTTOM+5 AUTO 12) FONT 1
+    BUTTON "Back" ID AUTOID3 AT (PREVRIGHT+8 PREVTOP AUTO 12)
+    GRAFFITISTATEINDICATOR AT (140 PREVTOP)
 END
 
 
@@ -160,38 +154,6 @@ BEGIN
 	BUTTONS "Done" 
 END
 
-##
-##
-##
-STRING ID statusClearFlashFirst "Clear Flash First"
-
-STRING ID HelpVariants "ToDo: list and describe varients\n"
-
-STRING ID HelpPreferences "ToDo: preference help\n"
-
-STRING ID HelpGetNames "ToDo: HelpGetNames\n"
-
-STRING ID HelpNewGame "Select the number of human and computer players.\n" \
-	"\n" \
-	"Press OK when you're done or press Cancel if you've changed your mind.\n"
-
-STRING ID HelpAbout
-# \231 is the TM character
-# \263 is the ^3 character
-	"This is free software, and you are welcome to redistribute it "\
-	"under certain conditions; See the COPYING file that should "\
-	"have come with this program.\n\n"\
-	"More info and new versions can be gotten at\n"\
-	"http://docwhat.gerf.org/cwimp/\n\n"\
-	"Bugs may be submitted at\n"\
-	"http://gerf.org/cgi-bin/cwimp-bugs\n\n"\
-	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n" \
-	"The default player names are based upon "\
-	"Jim Henson company's Muppets\231\n\n"\
-	"Mersenne Twister by Makoto Matsumoto and Takuji Nishimura,"\
-	"Accelerated by Shawn Cokus,"\
-	"16 bit version by Troy D. Gillette,\n"
-
 
 ##
 ##
@@ -206,7 +168,8 @@ BEGIN
 	BUTTONS "Done" 
 END
 
-FORM ID frmNextPlayer AT (30 50 110 85)
+
+FORM ID frmNextPlayer AT (30 CENTER@160/2 110 85)
 MODAL
 SAVEBEHIND
 HELPID DS_NextPlayer
@@ -261,6 +224,48 @@ BEGIN
 END
 
 
+FORM ID frmLost AT (35 CENTER@160/2 120 85)
+MODAL
+SAVEBEHIND
+HELPID DS_Lost
+BEGIN
+    TITLE "You Lost!"
+    FORMBITMAP AT (2 20) BITMAP bmpLost
+    FIELD ID fldLost AT (36 12 84 70) NONEDITABLE FONT 0 MULTIPLELINES
+
+    BUTTON "Rats!" ID AUTOID6 AT (3 70 AUTO AUTO)
+END
+
+
+FORM ID frmLeader AT (35 CENTER@160/2 120 85)
+MODAL
+SAVEBEHIND
+HELPID DS_Leader
+BEGIN
+    TITLE "You're the Leader!"
+    FORMBITMAP AT (2 20) BITMAP bmpLeader
+    FIELD ID fldLeader AT (36 12 84 70) NONEDITABLE FONT 0 MULTIPLELINES
+
+    BUTTON "Cool!" ID AUTOID6 AT (3 70 AUTO AUTO)
+END
+
+
+
+FORM ID frmWinner AT (CENTER@160/2 CENTER@160/2 90 94)
+MODAL
+SAVEBEHIND
+HELPID DS_Winner
+BEGIN
+    TITLE "You've Won!"
+    FORMBITMAP AT (CENTER@(90-32)/2 16) BITMAP bmpWinner
+    FIELD ID fldWinner AT (4 (16+32+4) 90-8 26)
+	  NONEDITABLE FONT 0 MULTIPLELINES
+
+    BUTTON "Yea!" ID AUTOID6 AT (CENTER@90/2 94-15 AUTO AUTO)
+END
+
+
+
 ##
 ##
 ##
@@ -276,21 +281,25 @@ END
 ##
 ##
 ##
-BITMAP ID bmpBlank "cubeblank.bmp" COMPRESS
+BITMAP ID bmpLost	"lost.bmp"	COMPRESS
+BITMAP ID bmpLeader	"leader.bmp"	COMPRESS
+BITMAP ID bmpWinner	"winner.bmp"	COMPRESS
 
-BITMAP ID bmp10w   "cube10w.bmp"   COMPRESS
-BITMAP ID bmp2w    "cube2w.bmp"    COMPRESS
-BITMAP ID bmp3w    "cube3w.bmp"    COMPRESS
-BITMAP ID bmp4w    "cube4w.bmp"    COMPRESS
-BITMAP ID bmp5w    "cube5w.bmp"    COMPRESS
-BITMAP ID bmp6w    "cube6w.bmp"    COMPRESS
+BITMAP ID bmpBlank	"cubeblank.bmp"	COMPRESS
 
-BITMAP ID bmp10b   "cube10b.bmp"   COMPRESS
-BITMAP ID bmp2b    "cube2b.bmp"    COMPRESS
-BITMAP ID bmpfsb   "cubefs.bmp"    COMPRESS
-BITMAP ID bmp4b    "cube4b.bmp"    COMPRESS
-BITMAP ID bmp5b    "cube5b.bmp"    COMPRESS
-BITMAP ID bmp6b    "cube6b.bmp"    COMPRESS
+BITMAP ID bmp10w	"cube10w.bmp"	COMPRESS
+BITMAP ID bmp2w		"cube2w.bmp"	COMPRESS
+BITMAP ID bmp3w		"cube3w.bmp"	COMPRESS
+BITMAP ID bmp4w		"cube4w.bmp"	COMPRESS
+BITMAP ID bmp5w		"cube5w.bmp"	COMPRESS
+BITMAP ID bmp6w		"cube6w.bmp"	COMPRESS
+
+BITMAP ID bmp10b	"cube10b.bmp"	COMPRESS
+BITMAP ID bmp2b		"cube2b.bmp"	COMPRESS
+BITMAP ID bmpfsb	"cubefs.bmp"	COMPRESS
+BITMAP ID bmp4b		"cube4b.bmp"	COMPRESS
+BITMAP ID bmp5b		"cube5b.bmp"	COMPRESS
+BITMAP ID bmp6b		"cube6b.bmp"	COMPRESS
 
 ##
 ##

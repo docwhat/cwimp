@@ -373,7 +373,7 @@ void TurnLogic() {
   DrawCurrScore();
 
   /* 
-   * Player lost turn
+   * Start looking at the next turn...
    */
   if ( ( stor.scorethisroll == 0 &&
 	 !stor.flash ) || 
@@ -396,20 +396,18 @@ void TurnLogic() {
       if( stor.leader < 0 ) {
 	/* Hasn't been set, this guy is it */
 	stor.leader = stor.currplayer;
-	FrmCustomAlert( calertDEBUG,
-			stor.player[stor.currplayer].name,
-			"has passed the win score, Last Licks",
-			"ToDo" );
+	DialogOK( frmLeader, stor.currplayer, -1 );
       } else {
 	/* We're in LastLicks already */
 	/* There is a leader, did we beat 'em */
 	if( stor.player[stor.currplayer].score >
 	    stor.player[stor.leader].score ) {
+	  Byte lastleader = stor.leader;
+
 	  stor.leader = stor.currplayer;
-	  FrmCustomAlert( calertDEBUG,
-			  "You're the leader!",
-			  stor.player[stor.currplayer].name,
-			  "ToDo" );
+	  /* Clean up old bits */
+	  DrawPlayerScore( lastleader ); 
+	  DialogOK( frmLeader, stor.currplayer, -1 );
 	} else {
 	  /* Well, we didn't beat the leader... */
 	  PlayerLost( stor.currplayer, "Didn't beat the leader" );
@@ -499,7 +497,8 @@ void NextPlayer() {
   }
   
   if ( stor.flags & flag_NextPlayerPopUp ) {
-    DialogNextPlayer( prevplayer, stor.currplayer );
+    //    DialogNextPlayer( prevplayer, stor.currplayer );
+    DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
     DrawState();
   } else {
     SetStatus( DS_NextPlayer );
@@ -509,12 +508,8 @@ void NextPlayer() {
   
 }
 
-// ToDo: Say why player won
 void PlayerWon() {
-  FrmCustomAlert( calertDEBUG,
-		  "Winner!",
-		  stor.player[stor.currplayer].name,
-		  "ToDo: Winner()" );
+  DialogOK( frmWinner, stor.currplayer, -1 );
   ResetCubes();
   DrawState();
   return;
@@ -523,14 +518,9 @@ void PlayerWon() {
 
 void PlayerLost( Short player, CharPtr ptrString )
 {
-  // ToDo: Rewrite this thing
   stor.player[player].lost = true;
   
-  FrmCustomAlert( calertDEBUG,
-                  ptrString,
-                  "ToDo: PlayerLost()",
-                  "	" );
-  
+  DialogOK( frmLost, player, -1 );
 }
 
 
