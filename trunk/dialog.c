@@ -24,7 +24,7 @@
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
 
-#include "callback.h"
+#include "autogen.h"
 #include "cwimp.h"
 #include "lowlevel.h"
 #include "game.h"
@@ -495,7 +495,7 @@ void DialogVariants() {
 void DialogOK ( Word frmname, Short p1, Short p2 ) {
         FormPtr prevForm, frm;
         Word hitButton;
-        Char msg[(MaxName * 2) + 128];
+        Char msg[(PLAYERMaxName * 2) + 128];
         Word fieldname = 0;
 
         switch ( frmname ) {

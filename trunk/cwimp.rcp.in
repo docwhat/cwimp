@@ -16,20 +16,22 @@ FIXVERSION: INCLUDE statusmsg.rcp
 ##
 MENU ID Main_Menu
 BEGIN
-	PULLDOWN "Game"
-		BEGIN
-		MENUITEM "New"		ID MenuItem_New		"N"
-		MENUITEM "Reset"	ID MenuItem_Reset	"R"
-		MENUITEM "Defaults"	ID MenuItem_Defaults
-		MENUITEM SEPARATOR
-		MENUITEM "How to Play"	ID MenuItem_Help	"H"
-		MENUITEM "About"	ID MenuItem_About	"A"
-		END
-	PULLDOWN "Options"
-		BEGIN
-		MENUITEM "Variants"	ID MenuItem_Variants	"V"
-		MENUITEM "Preferences"	ID MenuItem_Preferences	"P"
-		END
+	PULLDOWN "$$GAME"
+	BEGIN
+		MENUITEM "$$NEW"	ID MenuItem_New		"$$NEWCHAR"
+		MENUITEM "$$RESET"	ID MenuItem_Reset	"$$RESETCHAR"
+		MENUITEM "$$DEFAULTS"	ID MenuItem_Defaults
+	END
+	PULLDOWN "$$OPTIONS"
+	BEGIN
+		MENUITEM "$$VARIANTS"	ID MenuItem_Variants	"$$VARCHAR"
+		MENUITEM "$$PREFERENCES" ID MenuItem_Preferences "$$PREFCHAR"
+	END
+        PULLDOWN "$$HELP"
+        BEGIN
+		MENUITEM "$$TUTORIAL"	ID MenuItem_Help	"$$TUTORCHAR"
+		MENUITEM "$$ABOUT"	ID MenuItem_About	"$$ABOUTCHAR"
+        END
 END
 
 
@@ -41,28 +43,28 @@ FORM ID MainForm AT (0 0 160 160)
 
     BEGIN
 
-	TITLE " CWimp "
+	TITLE "$$MAINFORMTITLE"
 
     BUTTON " " ID btnTopStatus AT (CENTER@105 1 100 11) NOFRAME FONT 1
-    LABEL "Roll" AUTOID AT (40  17)  FONT 1
+    LABEL "$$ROLL" AUTOID AT (40  17)  FONT 1
     FIELD ID scoreRoll AT (PREVLEFT+4  PREVBOTTOM-2 50 11) NONEDITABLE
 
-    LABEL "Turn" AUTOID AT (70 17)  FONT 1
+    LABEL "$$TURN" AUTOID AT (70 17)  FONT 1
     FIELD ID scoreTurn AT (PREVLEFT+4  PREVBOTTOM-2 50 11) NONEDITABLE
 
-    LABEL "Total" AUTOID AT (110 17)  FONT 1
+    LABEL "$$TOTAL" AUTOID AT (110 17)  FONT 1
     FIELD ID scoreTot AT (PREVLEFT+4  PREVBOTTOM-2 50 11) NONEDITABLE
 
-    LABEL "Player" AUTOID AT (PLAYERTLx-10  PLAYERTLy-12) FONT 1
-    LABEL "Total"  AUTOID AT (SCOREx-5     PLAYERTLy-12) FONT 1
+    LABEL "$$PLAYER" AUTOID AT (PLAYERTLx-10  PLAYERTLy-12) FONT 1
+    LABEL "$$TOTAL2"  AUTOID AT (SCOREx-5     PLAYERTLy-12) FONT 1
 
     FIELD ID idDie0     AT (23 25             10 8) NONEDITABLE FONT 3 MAXCHARS 2
 FIXVER: LOOP 1 4
     FIELD ID idDie$LOOP AT (23 PREVBOTTOM+14  10 8) NONEDITABLE FONT 3 MAXCHARS 2
 FIXVER: LOOP END
 
-    BUTTON "Roll" ID btn_Roll AT (1 131          26  11) LEFTANCHOR FRAME FONT 0
-    BUTTON "Stay" ID btn_Stay AT (1 PREVBOTTOM+4 26  11) LEFTANCHOR FRAME FONT 0
+    BUTTON "$$BTNROLL" ID btn_Roll AT (1 131          26  11) LEFTANCHOR FRAME FONT 0
+    BUTTON "$$BTNSTAY" ID btn_Stay AT (1 PREVBOTTOM+4 26  11) LEFTANCHOR FRAME FONT 0
 
     FIELD       ID statusLine AT (30  148 121  AUTO) NONEDITABLE FONT 1 MAXCHARS 20
     BUTTON "\12"  ID btn_Info AT (151 148  9  AUTO) NOFRAME FONT 3
@@ -75,7 +77,7 @@ MODAL
 HELPID HelpNewGame
 SAVEBEHIND
 BEGIN
-    TITLE "New Game"
+    TITLE "$$NEWGAME"
     LABEL "How many human players?" AUTOID AT (5 16)
     PUSHBUTTON "1" ID pbtn_1 AT (4 PREVBOTTOM+2 AUTO AUTO) GROUP 1
 FIXVER: LOOP 2 8
@@ -98,8 +100,8 @@ FIXVER: LOOP END
 
     BUTTON "Default" ID btn_Default_frmNewGame AT (PREVRIGHT+6 PREVTOP AUTO AUTO)      
 
-    BUTTON "OK"     ID btn_OK_frmNewGame AT (4 128-15 AUTO AUTO) FONT 1
-    BUTTON "Cancel" ID btn_Cancel_frmNewGame AT (PREVRIGHT+4 PREVTOP AUTO AUTO)
+    BUTTON "$$OK"     ID btn_OK_frmNewGame AT (4 128-15 AUTO AUTO) FONT 1
+    BUTTON "$$CANCEL" ID btn_Cancel_frmNewGame AT (PREVRIGHT+4 PREVTOP AUTO AUTO)
     BUTTON "Variants" ID btn_Variants_frmNewGame AT (PREVRIGHT+8 PREVTOP AUTO AUTO)
 
 END
@@ -111,20 +113,20 @@ HELPID HelpVariants
 SAVEBEHIND
 BEGIN
 TITLE "Variations"
-   CHECKBOX "Bump"             ID check_Bump      AT ( 5 15 AUTO AUTO )
-   CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO )
-   CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "$$BUMP"		ID check_Bump	  AT ( 5 15 AUTO AUTO )
+   CHECKBOX "$$ECLIPSE"		ID check_Eclipse  AT ( 5 PREVBOTTOM AUTO AUTO )
+   CHECKBOX "$$COSMICSAMPLER"   ID check_Sampler  AT ( 5 PREVBOTTOM AUTO AUTO )
 
-   CHECKBOX "(n)Suspend"       ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
-   LABEL "n = " AUTOID AT (25 PREVBOTTOM) 
+   CHECKBOX "$$NSUSPEND"       ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO )
+   LABEL "$$N EQUALS" AUTOID AT (25 PREVBOTTOM) 
    FIELD ID fldnSuspend AT (PREVRIGHT+2 PREVTOP 10 11)
 	 UNDERLINED MAXCHARS 2 NUMERIC
 
-   CHECKBOX "(n)Train Wrecks"  ID check_nTW     AT ( 5 PREVBOTTOM+1 AUTO AUTO)
-   LABEL "n = " AUTOID AT (25 PREVBOTTOM) 
+   CHECKBOX "$$NTRAINWRECKS"  ID check_nTW     AT ( 5 PREVBOTTOM+1 AUTO AUTO)
+   LABEL "$$N EQUALS" AUTOID AT (25 PREVBOTTOM) 
    FIELD ID fldnTrainWrecks AT (PREVRIGHT+2 PREVTOP 10 11)
 	 UNDERLINED MAXCHARS 2 NUMERIC
-   BUTTON "Done" ID btn_OK_frmVariants AT (5 120-15 AUTO AUTO)
+   BUTTON "$$OK" ID btn_OK_frmVariants AT (5 120-15 AUTO AUTO)
 END
 
 ##
@@ -135,13 +137,13 @@ MODAL
 HELPID HelpPreferences
 SAVEBEHIND
 BEGIN
-	TITLE "Preferences"
-	CHECKBOX "Next Player Dialog" ID check_NextPlayerPopUp AT
+	TITLE "$$PREFERENCES"
+	CHECKBOX "$$NEXTPLAYERDIALOG" ID check_NextPlayerPopUp AT
 		 ( 4 14 AUTO AUTO )
-	CHECKBOX "Force Sound Off" ID check_ForceSoundOff AT
+	CHECKBOX "$$FORCESOUNDOFF" ID check_ForceSoundOff AT
 		 ( 4 28 AUTO AUTO )
 
-	BUTTON "Done" AUTOID AT (4 60-15 AUTO AUTO)
+	BUTTON "$$OK" AUTOID AT (4 60-15 AUTO AUTO)
 END
 
 ##
@@ -163,8 +165,8 @@ FIXVER: LOOP 1 7
 	  UNDERLINED MAXCHARS 32 AUTOSHIFT
 FIXVER: LOOP END
 
-    BUTTON "OK" ID btn_OK_frmGetNames AT (5 PREVBOTTOM+5 AUTO 12) FONT 1
-    BUTTON "Back" AUTOID AT (PREVRIGHT+8 PREVTOP AUTO 12)
+    BUTTON "$$OK" ID btn_OK_frmGetNames AT (5 PREVBOTTOM+5 AUTO 12) FONT 1
+    BUTTON "$$CANCEL" AUTOID AT (PREVRIGHT+8 PREVTOP AUTO 12)
     GRAFFITISTATEINDICATOR AT (100-12 BOTTOM@142-2)
 END
 
@@ -185,7 +187,7 @@ BEGIN
 	"\251 1999-$YEAR\n" \
 	"Steve Schwartz\nChristian H\366ltje\n\n" \
 	"Please press the 'i' for more info\n"
-	BUTTONS "Done" 
+	BUTTONS "$$OK" 
 END
 
 ##
@@ -196,7 +198,7 @@ WARNING
 BEGIN
 	TITLE "Not During a Game"
 	MESSAGE "You cannot change the variants during a game."
-	BUTTONS "OK" 
+	BUTTONS "$$OK" 
 END
 
 
@@ -210,7 +212,7 @@ BEGIN
 	MESSAGE "1: ^1\n" \
 	        "2: ^2\n" \
 			"3: ^3\n"
-	BUTTONS "Done" 
+	BUTTONS "$$OK" 
 END
 
 
@@ -219,7 +221,7 @@ ERROR
 BEGIN
 	TITLE "OS Version"
 	MESSAGE "This program needs OS version 2.0 or greater to run\n"
-	BUTTONS "OK" 
+	BUTTONS "$$OK" 
 END
 
 
@@ -230,7 +232,7 @@ BEGIN
 	MESSAGE "Due to a new version of CWimp, I'm " \
                 "resetting your preferences. All settings and "\
                 "and games are lost."
-	BUTTONS "OK" 
+	BUTTONS "$$OK" 
 END
 
 
@@ -243,7 +245,7 @@ BEGIN
     FIELD ID fldNextPlayer AT (4 12 102 60) NONEDITABLE FONT 0
 	  MULTIPLELINES
 
-    BUTTON "OK" AUTOID AT (3  70 AUTO AUTO)
+    BUTTON "$$OK" AUTOID AT (3  70 AUTO AUTO)
 END
 
 
@@ -256,8 +258,8 @@ BEGIN
     FIELD ID fldChooseTwo AT (2 12 98 60) NONEDITABLE FONT 0
 	  MULTIPLELINES
 
-    BUTTON "Err" ID btnChooseTwo1 AT (6  70 40 AUTO)
-    BUTTON "Err" ID btnChooseTwo2 AT (54 70 40 AUTO)
+    BUTTON "$$ERR" ID btnChooseTwo1 AT (6  70 40 AUTO)
+    BUTTON "$$ERR" ID btnChooseTwo2 AT (54 70 40 AUTO)
 END
 
 
@@ -285,7 +287,7 @@ BEGIN
 	  MULTIPLELINES
     SCROLLBAR ID sclHelpText AT ( PREVRIGHT+1 PREVTOP 7 122 ) VALUE 0 MIN 0
 	  MAX 0 PAGESIZE 2
-    BUTTON "OK" AUTOID AT (3 140  AUTO AUTO)
+    BUTTON "$$OK" AUTOID AT (3 140  AUTO AUTO)
 END
 
 
@@ -337,7 +339,7 @@ BEGIN
     FORMBITMAP AT (2 20) BITMAP bmpNobodyWon
     FIELD ID fldNobodyWon AT (36 12 84 63) NONEDITABLE FONT 0 MULTIPLELINES
 
-    BUTTON "Oh." AUTOID AT (3 70 AUTO AUTO)
+    BUTTON "$$OH" AUTOID AT (3 70 AUTO AUTO)
 END
 
 
@@ -351,7 +353,7 @@ BEGIN
     FIELD ID fldWinner AT (4 (16+32+4) 90-8 26)
 	  NONEDITABLE FONT 0 MULTIPLELINES
 
-    BUTTON "Yea!" AUTOID AT (CENTER@90/2 94-15 AUTO AUTO)
+    BUTTON "$$YEA" AUTOID AT (CENTER@90/2 94-15 AUTO AUTO)
 END
 
 

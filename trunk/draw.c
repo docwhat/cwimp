@@ -24,7 +24,7 @@
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
 
-#include "callback.h"
+#include "autogen.h"
 #include "cwimp.h"
 #include "lowlevel.h"
 #include "game.h"
@@ -32,7 +32,6 @@
 #include "statusmsgstrings.h"
 #include "queue.h"
 #include "dialog.h"
-
 
 #include "drawcon.h"
 #include "draw.h"
@@ -216,7 +215,7 @@ static void InvertPlayer(Int player) {
 
 void DrawPlayer(Int player) {
         Int y;
-        Char msg[MaxName];
+        Char msg[PLAYERMaxName];
         Char *name;
         RectangleType r = { {SYMBOLx, getPLAYERy(player)},
                             {159 - SYMBOLx, PLAYEREXy} };

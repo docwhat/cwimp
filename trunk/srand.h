@@ -25,5 +25,4 @@
 void sgenrand(unsigned short seed);
 unsigned short genrand(void);
 
-
 #endif

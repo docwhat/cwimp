@@ -41,14 +41,15 @@ open( IN, "$text" ) or die "Unable to read $text: $!";
 my $Defines = "#ifndef _VARIOUS_STRINGS_H_\n" .
     "#define _VARIOUS_STRINGS_H_\n\n";
 
+#    "#include <System/SysAll.h>\n" . 
+#    "#include <UI/UIAll.h>\n" .
 my $DrawStatus = "#include <Pilot.h>\n" . 
-    "#include <System/SysAll.h>\n" . 
-    "#include <UI/UIAll.h>\n" .
+    "#include \"autogen.h\"\n" .
     "#include \"game.h\"\n" .
     "#include \"statusmsg.h\"\n" .
     "#include \"lowlevel.h\"\n\n"  .
     "void DrawStatus() {\n" .
-    "  Char msg[MaxName+1];\n\n" .
+    "  Char msg[PLAYERMaxName+1];\n\n" .
     "  switch ( stor.status ) {\n";
 
 my $DialogStatus = "void DialogStatus() {\n" .

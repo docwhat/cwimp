@@ -21,8 +21,6 @@
 #ifndef _DIALOG_H_
 #define _DIALOG_H_
 
-#include "game.h"
-
 void DialogNewGame();
 void DialogVariants();
 void DialogOK( Word frm, Short player1, Short player2 );

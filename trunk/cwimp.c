@@ -20,7 +20,7 @@
  */
 
 #include <Pilot.h>
-#include "callback.h"
+#include "autogen.h"
 #include "statusmsg.h"
 #include "game.h"
 #include "draw.h"

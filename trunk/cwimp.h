@@ -22,8 +22,6 @@
 #ifndef _CWIMP_H_
 #define _CWIMP_H_
 
-#include "resource.h"
-
 #define OLDCREATOR  0x43575353 // `CWSS`
 #define CREATOR     0x43576D70 // 'CWmp'
 

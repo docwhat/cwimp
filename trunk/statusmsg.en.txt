@@ -440,59 +440,73 @@ TRANSLATION "en"
 BEGIN
 
 # Menu Items: Main_Menu
-"Game" = "Game"
-# Item:
-"New" = "New"
-"N" = "N"
-# Item:
-"Reset" = "Reset"
-"R" = "R"
-# Item:
-"Defaults" = "Defaults"
-# Item:
-"Help" = "Help"
-"H" = "H"
-# Item:
-"About" = "About"
-"A" = "A"
-"Options" = "Options"
-# Item:
-"Variants" = "Variants"
-"V" = "V"
-# Item:
-"Preferences" = "Preferences"
-"P" = "P"
+#### Generic TERMS
+"$$OK" = "OK"
+"$$CANCEL" = "Cancel"
+# The Err is for buttons that get rewritten by
+# the program. If they aren't, it's an error.
+"$$ERR" = "Err"
 
-# Form: MainForm
-" CWimp " = " CWimp "
-"Roll" = "Roll"
-"Turn" = "Turn"
-"Total" = "Total"
-"Player" = "Player"
-"Stay" = "Stay"
 
-# Form: frmNewGame
-"New Game" = "New Game"
+#### Menu: Game
+"$$GAME" = "Game"
+
+"$$NEW" = "New"
+"$$NEWCHAR" = "N"
+
+"$$RESET" = "Reset"
+"$$RESETCHAR" = "R"
+
+"$$DEFAULTS" = "Defaults"
+
+#### Menu: Options
+"$$OPTIONS" = "Options"
+
+"$$VARIANTS" = "Variants"
+"$$VARCHAR" = "V"
+
+"$$PREFERENCES" = "Preferences"
+"$$PREFCHAR" = "P"
+
+#### Menu: Help
+"$$HELP" = "Help"
+
+"$$TUTORIAL" = "Tutorial"
+"$$TUTORCHAR" = "T"
+
+"$$ABOUT" = "About"
+"$$ABOUTCHAR" = "A"
+
+#### Form: MainForm
+"$$MAINFORMTITLE" = " CWimp "
+"$$ROLL" = "Roll"
+"$$TURN" = "Turn"
+"$$TOTAL" = "Total"
+"$$PLAYER" = "Player"
+"$$TOTAL2" = "Total"
+"$$BTNROLL" = "Roll"
+"$$BTNSTAY" = "Stay"
+
+#### Form: frmNewGame
+"$$NEWGAME" = "New Game"
 "How many human players?" = "How many human players?"
 "How many computer players?" = "How many computer players?"
 "Winning Score:" = "Winning Score:"
 "Opening Roll:" = "Opening Roll:"
 "Default" = "Default"
-"OK" = "OK"
-"Cancel" = "Cancel"
 
-# Form: frmVariants
+#### Form: frmVariants
 "Variations" = "Variations"
-"Bump" = "Bump"
-"Eclipse" = "Eclipse"
-"Cosmic Sampler" = "Cosmic Sampler"
-"(n)Suspend" = "(n)Suspend"
-"n = " = "n = "
-"(n)Train Wrecks" = "(n)Train Wrecks"
-"Done" = "Done"
+"$$BUMP" = "Bump"
+"$$ECLIPSE" = "Eclipse"
+"$$COSMICSAMPLER" = "Cosmic Sampler"
+"$$NSUSPEND" = "(n)Suspend"
+"$$N EQUALS" = "n = "
+"$$NTRAINWRECKS" = "(n)Train Wrecks"
 
-# Form: frmPreferences
-"Next Player Dialog" = "Next Player Dialog"
+#### Form: frmPreferences
+"$$NEXTPLAYERDIALOG" = "Next Player Dialog"
+"$$FORCESOUNDOFF" = "Force Sound Off"
 
 # Form: frmGetNames
 "Player Names" = "Player Names"
@@ -532,7 +546,7 @@ BEGIN
 
 # Form: frmWinner
 "You've Won!" = "You've Won!"
-"Yea!" = "Yea!"
+"$$YEA" = "Yea!"
 
 # Form: frmBump
 "Bumped!" = "Bumped!"
@@ -543,7 +557,7 @@ BEGIN
 
 # Form: frmSuspend
 "Suspended!" = "Suspended!"
-"oh." = "oh."
+"$$OH" = "oh."
 "Game Status Info" = "Game Status Info"
 
 END

@@ -22,9 +22,6 @@
 #ifndef _LOWLEVEL_H_
 #define _LOWLEVEL_H_
 
-#include <System/SysAll.h>
-#include <UI/UIAll.h>
-
 void     DrawBitmap (Word BitmapID, int formX, int formY);
 FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP);
 FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH);

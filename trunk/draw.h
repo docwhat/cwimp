@@ -21,19 +21,8 @@
 #ifndef _DRAW_H_
 #define _DRAW_H_
 
-// Symbol Font3
-#define BlankSymbol "\22" 
+#define BlankSymbol "\22"
 #define CheckSymbol "\20"
-#define CurrSymbol  "<"
-#define OutSymbol   "x"
-#define LeadSymbol  "L"
-// 20 - dot
-// 22 - Empty
-// 23 - diamond
-// 26 - check
-//  3 - left double arrow
-//  4 - right double arrow
-//  7 - down arrow
 
 void DrawIntro();
 void DrawCurrScore();
@@ -47,15 +36,11 @@ void CrossCube(Int die);
 
 void DrawPlayers(void);
 void DrawPlayer(Int player);
-#if 0
-void DrawPlayerScore(Short player);
-#endif
 void ClearKeepBits(void);
 void DrawKeepBit(Int die);
 void DrawTopStatusButton();
 void DrawRollButton();
 void DrawStayButton();
-
 
 void PlaySound(Int type);
 

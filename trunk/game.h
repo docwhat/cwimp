@@ -21,19 +21,17 @@
 
 #ifndef _GAME_H_
 #define _GAME_H_
-#include "resource.h"
-#include <Pilot.h>
+
+#include "drawcon.h"
 
 #define FlamingSun  3  // There isn't a 3 on the BlackDie...
 
-/* Make sure you change the prefVersion if you change the
+/* Make sure you change the storVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion  2
+#define storVersion  3
 #define NumCubes     5  // Number of cubes
 #define MaxPlayers   8  // Maximum Number of Players
-/* Make sure that MaxName matches the MAXCHARS from the .rcp file */
-#define MaxName     32  // Maximum player name size
 
 /* 
  * Defaults
@@ -81,7 +79,7 @@ struct Storage {
   /* Player array */
   struct {
     Boolean lost;
-    Char    name[MaxName+1];
+    Char    name[PLAYERMaxName+1];
     Short   score;
     struct {
       Short   flash;

@@ -19,6 +19,9 @@
 
  */
 
+#include <Pilot.h>
+
+#include "autogen.h"
 #include "game.h"
 #include "draw.h"
 

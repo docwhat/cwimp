@@ -19,8 +19,8 @@
 
 */
 
+#include <Pilot.h>
 #include "lowlevel.h"
-
 
 /* DrawBitmap -- Places a bitmap at a specified location
  * Args:    

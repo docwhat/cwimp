@@ -19,9 +19,13 @@
 
  */
 
+#include <Pilot.h>
+#if 0
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
+#endif
 
+#include "autogen.h"
 #include "cwimp.h"
 #include "draw.h"
 #include "dialog.h"

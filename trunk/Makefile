@@ -19,7 +19,7 @@ SOURCES = \
 	ai.c queue.c
 #OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
 OBJECTS = $(patsubst %.c,objs/%.o, $(SOURCES))
-PREDEPENDS = $(TARGET)Rsc.h
+PREDEPENDS = autogen.h
 LIBS =
 
 CC = m68k-palmos-gcc
@@ -62,17 +62,17 @@ objs/%.o: %.c
 	@echo -- Compiling $*.c
 	$(CC) $(CFLAGS) -c -o objs/$*.o $*.c
 
-$(TARGET)Rsc.h: $(TARGET).rcp images
+autogen.h: $(TARGET).rcp images
 	@echo -- Pilrc\'ing $*
 	@if [ ! -d objs ]; then mkdir objs ; fi
-	$(PILRC) -q -L $(LANGUAGE) -H $(TARGET)Rsc.h $(TARGET).rcp objs/
+	$(PILRC) -q -L $(LANGUAGE) -H autogen.h $(TARGET).rcp objs/
 
 
 $(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
 	@echo -- Fixing version and building $@
 	$(FIXVERSION) $<
 
-$(TARGET).$(LANGUAGE).prc: $(TARGET)Rsc.h objs/code0000.cwimp.grc
+$(TARGET).$(LANGUAGE).prc: autogen.h objs/code0000.cwimp.grc
 	@echo -- Building $@
 	cd objs && \
 	$(BUILDPRC) ../$(TARGET).$(LANGUAGE).prc $(APPNAME) $(APPID) *.grc *.bin
@@ -87,12 +87,12 @@ $(STATUSMSGS): statusmsg.$(LANGUAGE).txt $(MKSTATUSMSG)
 	@echo -- Making status messages
 	$(MKSTATUSMSG) $<
 
-objs/$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
+objs/$(TARGET): autogen.h $(OBJECTS)
 	@echo -- Compiling $@
 	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $@ 
 
 clean:
-	rm -f objs/* *~ *.bak core $(TARGET)Rsc.h
+	rm -f objs/* *~ *.bak core autogen.h
 
 veryclean: clean
 	rm -f ChangeLog $(TARGET).*prc TAGS
