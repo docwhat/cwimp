@@ -54,7 +54,7 @@ extern const UInt bmpWCube[6];
 extern const UInt bmpBCube[6];   
 
 
-
+void DrawIntro();
 void DrawCurrScore();
 void DrawState();
 void DrawCube(Byte die);
@@ -71,6 +71,5 @@ Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
 Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
 void DialogPreferences();
 Boolean DialogGetNames();
-void EnableControl(Word objID, Boolean enable);
 
 #endif

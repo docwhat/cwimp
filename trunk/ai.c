@@ -28,16 +28,12 @@ void CheckAI(void)
   isai = IsAI( stor.currplayer );
 
   SetFlag( flag_PendingAI, isai );
-
-  EnableControl( btn_Roll, !isai );
-  EnableControl( btn_Stay, !isai );
-
 }
 
 
 void AITurn(void)
 {
-#ifdef DEBUG
+#ifdef DEBUG_NO
   FrmCustomAlert( calertDEBUG, "Pre-AITurn", " ", " " );
 #endif
 

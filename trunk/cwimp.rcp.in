@@ -399,6 +399,7 @@ END
 ##
 ##
 ##
+BITMAP ID bmpTitle      "images/title.bmp"      COMPRESS
 BITMAP ID bmpLost	"images/lost.bmp"	COMPRESS
 BITMAP ID bmpLeader	"images/leader.bmp"	COMPRESS
 BITMAP ID bmpWinner	"images/winner.bmp"	COMPRESS

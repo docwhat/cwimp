@@ -694,8 +694,6 @@ void Defaults(void) {
     stor.player[i].score = 0;
   }
 
-  EnableControl( btn_Roll, true );
-  EnableControl( btn_Stay, true );
 }
 
 /* ResetCubes -- Resets all the cubes and draws them.
@@ -705,11 +703,6 @@ void Defaults(void) {
 void ResetCubes(void)
 {
   Short x = 0;
-
-  if ( stor.version != storVersion ) {
-    /* These only get set if the storage structures have changed */
-    Defaults();
-  }
 
   for (x = 0; x < NumCubes; x++) {
     stor.cube[x].value = stor.cube[x].keep = 0;
@@ -774,8 +767,6 @@ void NewGame()
   }
 
   StayBit = false;
-  EnableControl( btn_Roll, true );
-  EnableControl( btn_Stay, true );
 }
 
 

@@ -20,6 +20,7 @@
  */
 
 #include <Pilot.h>
+#include <SysEvtMgr.h>
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
 
@@ -146,6 +147,73 @@ const UInt cbtnVal[10] = {
 static Char **val2name = (CharPtr[]) { NoneString,
                                        "10", "two", "three",
                                        "four", "5", "six" };
+
+/*
+ * This function is based heavily on the DrawIntro and DrawBlinds
+ * functions in Vexed, a Cool GPL Palm Game by
+ * "james mccombe" <cybertube@earthling.net>
+ * http://spacetube.tsx.org
+ */
+void
+DrawIntro () {
+  VoidHand Title_Handle;
+  BitmapPtr Title;
+  char text[40];
+  SWord penx, peny;
+  Boolean bstate;
+
+
+  // load bitmap resource and get handle
+  Title_Handle = DmGet1Resource ('Tbmp', bmpTitle);
+  // lock the bitmap resource into memory and get a pointer to it
+  Title = MemHandleLock (Title_Handle);
+
+  // draw the bitmap ( 160x160 )
+  // WinDrawBitmap (Title, 22, 52);
+  WinDrawBitmap (Title, 0, 0);
+
+  /* Text Strings */
+  StrPrintF (text, "for the Palm%c", 153);
+  WinDrawChars (text, StrLen (text), 52, 50);
+
+  StrPrintF (text, "Version %s", VERSION);
+  WinDrawChars (text, StrLen (text), 55, 90);
+
+
+  // unload the bitmap from memory (unlock)
+  MemHandleUnlock (Title_Handle);
+
+  // Loop till screen is tapped
+  while (bstate)
+    EvtGetPen (&penx, &peny, &bstate);
+  while (!bstate)
+    EvtGetPen (&penx, &peny, &bstate);
+
+  /* Clear out the Pen Queue if it's in the screen part */
+  if( peny < 160 )
+    EvtFlushPenQueue();
+
+  // DrawBlinds
+  {
+    int i, x;
+    RectangleType r;
+    
+    r.extent.y = 128;
+    r.topLeft.y = 16; // BLOCKSIZE
+    
+    for (i = 0; i <= 16; i++)
+      {
+        r.extent.x = i;
+        for (x = 0; x <= 144; x += 16)
+          {
+            r.topLeft.x = x;
+            WinEraseRectangle (&r, 0);
+          }
+        SysTaskDelay (1);
+      }
+  }
+
+}
 
 
 void DrawState()
@@ -275,9 +343,15 @@ void DrawCube(Byte die)
 
 void DrawRollButton() {
   if( stor.currplayer < 0 ) {
+    ShowControl( btn_Roll, 1 );
     CtlSetLabel( GetObjectPtr(btn_Roll), StartString );
   } else {
-    CtlSetLabel( GetObjectPtr(btn_Roll), RollString );
+    if( IsAI( stor.currplayer ) ) {
+      ShowControl( btn_Roll, 0 );
+    } else {
+      ShowControl( btn_Roll, 1 );
+      CtlSetLabel( GetObjectPtr(btn_Roll), RollString );
+    }
   }
 }
 
@@ -302,49 +376,46 @@ void DrawTopStatusButton() {
  */    
 void DrawStayButton() {
   int x;
-  Boolean isai;
-
-  isai = IsAI( stor.currplayer );
+  /* By default: Show stay button, and set status to nothing */
+  Boolean stay = true;
+  Int status = 0;
 
   /* No game, no brainer */
   if( stor.currplayer < 0 ) {
-    ShowControl( btn_Stay, 0 );
-    return;
+    stay = false;
+    goto end;
   }
 
-  if( isai ) SetStatus( DS_Thinking );
-
   if( stor.flash ) {
-    ShowControl( btn_Stay, 0 );
-    if( !isai ) SetStatus( DS_MustClearFlash );
-    return;
+    stay = false;
+    status = DS_MustClearFlash;
+    goto end;
   }
 
   if( stor.YMNWTBYM ) {
-    ShowControl( btn_Stay, 0 );
-    if( !isai ) SetStatus( DS_YMNWTBYM );
-    return;
+    stay = false;
+    status = DS_YMNWTBYM;
+    goto end;
   }
 
   if( stor.scorethisturn == 0 ) {
-    ShowControl( btn_Stay, 0 );
-    if( !isai ) SetStatus( 0 );
-    return;
+    stay = false;
+    goto end;
   }
     
   if( stor.player[stor.currplayer].score == 0 &&
       stor.scorethisturn < stor.openingroll )
     {
-      ShowControl( btn_Stay, 0 );
-      return;
+      stay = false;
+      goto end;
     }
 
   /* If we aren't winning in last licks */
   if( stor.leader >= 0 &&
       ( stor.player[stor.leader].score > stor.currscore ) )
     {
-      ShowControl( btn_Stay, 0 );
-      return;
+      stay = false;
+      goto end;
     }
 
   if( stor.flags & flag_Eclipse ) {
@@ -355,15 +426,22 @@ void DrawStayButton() {
     }
     
     if( x != stor.total ) {
-      ShowControl( btn_Stay, 0 );
-      if( !isai ) SetStatus( DS_Eclipse );
-      return;
+      stay = false;
+      status = DS_Eclipse;
+      goto end;
     }
   }
 
-  /* Otherwise, show it */
-  ShowControl( btn_Stay, 1 );
-  if( !isai ) SetStatus( 0 );
+  /* Actually do what we need to do */
+ end:
+  if( IsAI( stor.currplayer ) ) {
+    status = DS_Thinking;
+  }
+
+  ShowControl( btn_Stay, stay );
+  SetFlag( flag_CanStay, stay );
+  SetStatus( status );
+  
 }
 
 
@@ -1078,8 +1156,6 @@ static VoidPtr GetObjectPtr (Word objID) {
 
 static void ShowControl(Word objID, Boolean enable) {
 
-  SetFlag( flag_CanStay, enable );
-
   if ( !enable || IsAI( stor.currplayer ) ) {
 	CtlHideControl( GetObjectPtr(objID) );
   } else { 
@@ -1088,6 +1164,3 @@ static void ShowControl(Word objID, Boolean enable) {
 
 }
 
-void EnableControl(Word objID, Boolean enable) {
-  CtlSetEnabled( GetObjectPtr(objID), enable );
-}

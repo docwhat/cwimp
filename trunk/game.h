@@ -35,6 +35,9 @@
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
 #define MaxName    32  // Maximum player name size
 
+#ifndef VERSION
+#define VERSION "TestOnly"
+#endif
 
 struct Storage {
 

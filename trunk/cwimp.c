@@ -36,6 +36,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
     switch (e->eType) {
     case frmOpenEvent:
       frm = FrmGetActiveForm();
+      DrawIntro();
       FrmDrawForm(frm);
       DrawState();  // Draw those dice!
       handled = true;
@@ -179,12 +180,12 @@ static void EventLoop(void)
   EventType e;
 
   do {
-    EvtGetEvent(&e, 10 * SysTicksPerSecond());
+    EvtGetEvent(&e, 0.7 * SysTicksPerSecond());
     if (! SysHandleEvent (&e))
-      if (! MenuHandleEvent (NULL, &e, &err))
-	if (! ApplicationHandleEvent (&e))
-	  FrmDispatchEvent (&e);
-    GameEvents();
+      if (! MenuHandleEvent (NULL, &e, &err) )
+	if (! ApplicationHandleEvent (&e) )
+	  if( ! FrmDispatchEvent (&e) )
+            GameEvents();
   } while (e.eType != appStopEvent);
 }
 

@@ -18,7 +18,8 @@ CC = m68k-palmos-coff-gcc
 
 CFLAGS = -Wall -O2 -DDEBUG \
 	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL \
-	-DLANG=$(LANGUAGE) -nostartfiles
+	-DLANG=$(LANGUAGE) -nostartfiles \
+	-DVERSION='"$(VERSION)"'
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
 #
 # Debug Rolling turns of 'rigged' rolling
