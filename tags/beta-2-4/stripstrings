@@ -1,0 +1,51 @@
+#!/usr/bin/perl -w
+$| = 1;
+use strict;
+
+my %hash;
+
+while ( my $line = <STDIN> ) {
+    chomp $line;
+    next if ( $line =~ /BITMAP\s+ID/i );
+    next if ( $line =~ /APPLICATIONICONNAME/i );
+    next if ( $line =~ /ICON/i );
+    next if ( $line =~ /VERSION/i );
+
+
+
+    if( $line =~ /MENU\s+ID\s+(\S+)$/i ) {
+	print "\n# Menu Items: $1\n";
+	next;
+    }
+
+    if( $line =~ s/^.*MENUITEM\s+(\"[^\"]+\")//i ) {
+	print "# Item:\n$1 = $1\n";
+	$hash{$1}++;
+	if( $line =~ /(\"[^\"]+\")/ ) {
+	    print "$1 = $1\n";
+	    $hash{$1}++;
+	}
+	next;
+    }
+
+    if( $line =~ /FORM\s+ID\s+(\S+)/i ) {
+	print "\n# Form: $1\n";
+	next;
+    }
+
+    next if ( $line =~ /\^[123]/ );
+
+    if( $line =~ s/^.*(\"[^\"]+\").*$/$1/g ) {
+	next if( exists $hash{$line} );
+
+	next if ( $line =~ /\$LOOP/ );
+	next if ( $line =~ /\"\d+\"/ );
+	next if ( $line =~ /\"\d+:\"/ );
+	next if ( $line =~ /\" \"/ );
+	next if ( $line =~ /\"Err\"/ );
+	next if ( $line =~ /\"\\\S+\"/ );
+
+	print "$line = $line\n";
+	$hash{$line}++;
+    }
+}

@@ -1,0 +1,148 @@
+#!/usr/bin/perl
+# $Id$
+#
+#   CWimp - Dice game for the palm handhelds.
+#   Copyright (C) 1999-2000 Christian Höltje
+#
+#   This program is free software; you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation; either version 2 of the License, or
+#   (at your option) any later version.
+#
+#   This program is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#
+#   You should have received a copy of the GNU General Public License
+#   along with this program; if not, write to the Free Software
+#   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+$| = 1;
+use strict;
+use 5.004;
+use Fcntl;
+
+
+my $text = shift @ARGV;
+
+if( ! defined $text or ! -f $text ) {
+    print "Can't read text file\n";
+    print "Syntax: $0 <.txt file>\n";
+    exit 1;
+}
+
+my $base = "statusmsg";
+
+my $cfile	= "$base.c";
+my $sfile	= "$base" . "strings.h";
+my $rcpfile	= "$base.rcp";
+    
+open( IN, "$text" ) or die "Unable to read $text: $!";
+my $Defines = "#ifndef _VARIOUS_STRINGS_H_\n" .
+    "#define _VARIOUS_STRINGS_H_\n\n";
+
+my $DrawStatus = "#include <Pilot.h>\n" . 
+    "#include <System/SysAll.h>\n" . 
+    "#include <UI/UIAll.h>\n" .
+    "#include \"game.h\"\n" .
+    "#include \"statusmsg.h\"\n" .
+    "#include \"lowlevel.h\"\n\n"  .
+    "void DrawStatus() {\n" .
+    "  Char msg[MaxName+1];\n\n" .
+    "  switch ( stor.status ) {\n";
+
+my $DialogStatus = "void DialogStatus() {\n" .
+    "  if( stor.status < 100 )\n" .
+    "    FrmHelp( GenericHelp );\n" .
+    "  else\n" .
+    "    FrmHelp( stor.status );\n" .
+    "}\n\n";
+
+my $Strings;
+my $PreStrings;
+
+my $count = 1;
+while (my $line = <IN>)
+{
+    # Remove trailing newlines
+    chomp $line;
+    next if ( $line =~ /^\#/ );
+    if ( $line =~ /^END/ ) {
+	while ( my $newline = <IN> ) {
+	    next if( $newline =~ /^\#/ );
+	    $PreStrings .= $newline;
+	}
+	last;
+    }
+    
+    if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
+	my $tag 	= $1;
+	my $status	= $2;
+	$status =~ s/\"/\\\"/g;
+	my $result;
+
+	if( $tag =~ /^(CSTRING|DEFINE)/ ) {
+	    $result = \$Defines;
+	    $$result .= "#define $status \"";
+	} elsif( $tag =~ /^STRING/ ) {
+	    $result = \$Strings;
+	    $$result .= "STRING ID $status \"";
+	} elsif( $status =~ /\%s/ ) {
+	    $DrawStatus .= "  case $tag:\n" . 
+		"\tStrPrintF( msg, \"$status\", " .
+		"stor.player[stor.currplayer].name, NULL );\n" .
+		"\tSetFieldTextFromStr( statusLine, msg ); " . 
+		"break;\n";
+	    $result = \$Strings;
+	    $$result .= "STRING ID $tag \"";
+	} else {
+	    $DrawStatus .= "  case $tag: SetFieldTextFromStr( " .
+		"statusLine, \"$status\" ); break;\n";
+	    $result = \$Strings;
+	    $$result .= "STRING ID $tag \"";
+	}
+	while ( my $newline = <IN> ) {
+	    chomp $newline;
+	    next if ( $newline =~ /^\#/ );
+	    last if ( $newline =~ /^\./ );
+	    if( $newline =~ /^\s*$/ ) {
+		$$result =~ s/\s$//;
+		$$result .= "\\n\\n";
+		next;
+	    }
+	    $$result .= $newline . " ";
+	}
+	$$result =~ s/\s$//;
+	$$result .= "\"\n\n";
+
+    }
+    
+}
+close( IN );
+
+$DrawStatus .= "  default: ClearFieldText( statusLine ); break;\n}\n}\n\n";
+
+my $notice = "/* This is an automagically generate file. Don't Edit */\n";
+
+open( OUT, ">$cfile" ) or die "Unable to write to `$cfile`: $!";
+print OUT $notice;
+print OUT $DrawStatus;
+print OUT $DialogStatus;
+close OUT or die "Unable to close $cfile: $!";
+
+open( OUT, ">$sfile" ) or die "Unable to write to '$sfile': $!";
+print OUT $notice;
+print OUT $Defines;
+print OUT "#endif";
+close OUT or die "Unable to close $sfile: $!";
+
+open( OUT, ">$rcpfile" ) or die "Unable to write to `$rcpfile`: $!";
+print OUT $PreStrings;
+print OUT;
+print OUT $Strings;
+close OUT or die "Unable to close $rcpfile: $!";
+
+exit 0;
+
+
+
