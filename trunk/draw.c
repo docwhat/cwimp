@@ -196,14 +196,19 @@ void DrawPlayerScore(Byte player) {
   StrIToA( msg, stor.player[player].score );
   SetFieldTextFromStr( fieldScorePlayer[player], msg );
 
-  // ToDo: Add marker for players out of the game
-  if ( player == stor.currplayer ) {
-	SetFieldTextFromStr( fieldMarkPlayer[player], ArrowSymbol );
-  } else {
-	ClearFieldText( fieldMarkPlayer[player] );
-	// SetFieldTextFromStr( fieldMarkPlayer[player], BlankSymbol );
+#if 0
+  if ( stor.player[player].lost ) {
+    SetFieldTextFromStr( fieldMarkPlayer[player], OutSymbol );
   }
-}
+  else
+#endif
+ if ( player == stor.currplayer ) {
+    SetFieldTextFromStr( fieldMarkPlayer[player], CurrSymbol );
+  } else {
+    ClearFieldText( fieldMarkPlayer[player] );
+    // SetFieldTextFromStr( fieldMarkPlayer[player], BlankSymbol );
+  }
+  }
 
 
 void DrawCurrScore()
@@ -245,7 +250,9 @@ void DrawCube(Byte die)
 	tmpID = bmpBlank;
   } else {
 	DrawBitmap( bmpBlank, CubesLeft, y );  // Put up the blank tile
+#if 0
 	SysTaskDelay( 0.15*sysTicksPerSecond); // Delay for cinematic effect
+#endif
   }
 
   DrawBitmap( tmpID, CubesLeft, y );

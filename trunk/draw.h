@@ -26,16 +26,18 @@
 // Symbol Font3
 #define BlankSymbol "\22" 
 #define CheckSymbol "\20"
-#define ArrowSymbol "\3"
-#define OutSymbol   "\7"
+#define CurrSymbol  "\3"
+#define OutSymbol   "\4"
 // 20 - dot
 // 23 - diamond
 // 26 - check
-//  3 - left arrow
+//  3 - left double arrow
+//  4 - right double arrow
+//  7 - down arrow
 
 #define CubesLeft   2  // Start Drawing Cubes from here
 #define CubesTop   19  // From the top, remember that the tab is about 15
-#define CubeShift   5  // Space between Cubes
+#define CubeShift   2  // Space between Cubes
 #define CubeSize   20  // This size Cube should do
 
 

@@ -437,7 +437,7 @@ void NextPlayer() {
 void PlayerLost( Short player, CharPtr ptrString )
 {
   // ToDo: Rewrite this thing
-  stor.player[player].lost = 1;
+  stor.player[player].lost = true;
   
   FrmCustomAlert( calertDEBUG,
                   ptrString,
