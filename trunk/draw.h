@@ -72,5 +72,6 @@ Int DialogChooseThree( CharPtr fText, CharPtr bOne, CharPtr bTwo,
 		      CharPtr bThree );
 void DialogPreferences();
 Boolean DialogGetNames();
+void EnableControl(Word objID, Boolean enable);
 
 #endif

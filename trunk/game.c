@@ -19,7 +19,6 @@
 
  */
 
-#include <Pilot.h>
 #include <System/SysAll.h>
 #include <UI/UIAll.h>
 
@@ -28,9 +27,41 @@
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
 #include "srand.h"
-
+#include "ai.h"
 
 #include "game.h"
+
+
+/*
+ * Default Names
+ */
+
+static
+Char **PlayerDefNames = (CharPtr[]){
+                           "Scooter",
+                           "Fozzie",
+                           "Kermit",
+                           "Gonzo",
+                           "Ms. Piggy",
+                           "Animal",
+                           "Rowlf",
+                           "Robin",
+                           "Statler",
+                           "Waldorf" };
+
+static
+Char **ComputerDefNames = (CharPtr[]){
+                             "Eliza",
+                             "HAL",
+                             "Kryten",
+                             "Holly",
+                             "Queeg",
+                             "Robbie",
+                             "DeepThought",
+                             "Guardian",
+                             "Vger" };
+
+
 
 
 struct Storage stor;
@@ -38,19 +69,6 @@ Boolean StayBit; // Normally false, unless player wants to stay
 
 static Char val2name[7][8] = { "Err", /* So I don't have to subtract 1 */
 			       "10", "two", "three", "four", "5", "six" };
-
-/* ToggleKeep -- Toggles the fieldKeepBit
- * Args: 
- *     int   -- The die to change (0-4)
- * Returns:
- */
-void ToggleKeep(Byte die)
-{
-
-  stor.cube[die].keep = !stor.cube[die].keep;
-
-  DrawKeepBit(die);
-}
 
 /* RollCube -- Returns a random number from 1 to 6 inclusive.
  * Args: None
@@ -114,7 +132,7 @@ static void unsuspend( Short p ) {
 
 
 
-/* RollEm -- Rolls all 5 and draws them.
+/* Roll -- Rolls all 5 and draws them.
  * Args:    None
  * Returns: None
  */
@@ -158,18 +176,20 @@ void Roll(void)
   TurnLogic();
 }
 
+/* User decided to stay */
 void Stay() {
   StayBit = true;
   TurnLogic();
-
 }
 
+/* Add <points> to the current players (temporary) score */
 void AddScore(Short points) {
   stor.scorethisroll += points;
   stor.scorethisturn += points;
   stor.currscore += points;
 }
 
+/* Score all the points for this roll */
 void ScoreRoll() {
   Short aCounting[7];
   Short P1 = 0;
@@ -441,12 +461,12 @@ void TurnLogic() {
 
   if( stor.leader == stor.currplayer ) {
     /* Who else is in the game? */
-    for( x = 0 ; x < stor.numplayers ; x++ ) {
+    for( x = 0 ; x < stor.total ; x++ ) {
       if( x == stor.currplayer ) continue;
       if( !stor.player[x].lost ) break;
     }
     /* No one else in the game! */
-    if( x == stor.numplayers ) {
+    if( x == stor.total ) {
       PlayerWon();
       return;
     }
@@ -460,7 +480,7 @@ void TurnLogic() {
     if ( StayBit ) {
       /* Bump Variation */
       if( stor.flags & flag_Bump ) {
-	for ( x = 0 ; x < stor.numplayers ; x++ ) {
+	for ( x = 0 ; x < stor.total ; x++ ) {
 	  if ( stor.player[x].score == stor.currscore ) {
 	    DialogOK( frmBump, stor.currplayer, x );
 
@@ -473,7 +493,7 @@ void TurnLogic() {
 	    DrawPlayerScore( x );
 
 	    /* There can be only one ... */
-	    x = stor.numplayers;
+	    x = stor.total;
 	  }
 	}
       } /* end bump code */
@@ -536,6 +556,8 @@ void TurnLogic() {
   }
 
   DrawStayButton();
+  CheckAI();
+  return;
 }
 
 void NextPlayer() {
@@ -545,10 +567,10 @@ void NextPlayer() {
   prevplayer = stor.currplayer;
 
   while(1) {
-    stor.currplayer = (stor.currplayer + 1) % stor.numplayers;
+    stor.currplayer = (stor.currplayer + 1) % stor.total;
     if ( prevplayer == stor.currplayer ) {
       /* We've looped around or there is only one player */
-      if ( stor.numplayers > 1 ) {
+      if ( stor.total > 1 ) {
 	/* If there is more than one player */
 	if( !stor.player[stor.currplayer].lost ) {
 	  PlayerWon();
@@ -585,7 +607,7 @@ void NextPlayer() {
     } else {
       if( !StayBit ) {
 	SetStatus( DS_TurnOver );
-	SysTaskDelay(1*sysTicksPerSecond);
+	SysTaskDelay( 1 * SysTicksPerSecond() );
       }
       SetStatus( DS_NextPlayer );
     }
@@ -605,10 +627,23 @@ void NextPlayer() {
   }
 
   DrawState();
-
+  /* so we can process AI stuff */
+  CheckAI();
 }
 
-void PlayerWon() {
+void GameEvents(void)
+{
+
+  if( stor.flags & flag_PendingAI ) {
+    /* Turn This Off! */
+    SetFlag( flag_PendingAI, false );
+    AITurn();
+  }
+  
+}
+
+void PlayerWon()
+{
   DialogOK( frmWinner, stor.currplayer, -1 );
   ResetCubes();
   DrawState();
@@ -640,13 +675,11 @@ void LoadCubes() {
   if( (x == noPreferenceFound) || 
       (stor.version != storVersion) ) {
     /* This totally resets the whole game. */
-    if( x != noPreferenceFound ) {
-      FrmAlert(alertResetting);
-    }
     Defaults();
     ResetCubes();
   }
 
+  SetFlag( flag_PendingAI, IsAI( stor.currplayer ) );
 }
 
 void SaveCubes() {
@@ -656,33 +689,27 @@ void SaveCubes() {
 /* Defaults() -- Resets the game to default status
  */
 void Defaults(void) {
-  Word x;
+  Word i;
   
   /* These only get set if the storage structures have changed */
   stor.version = storVersion;
   stor.openingroll = 35;
   stor.numplayers = 1;
   stor.numcomputers = 0;
+  stor.total = 1;
   stor.nTrainWrecks = 3;
   stor.nSuspend = 10;
   stor.winscore = 300;
   stor.flags = 0 | flag_NextPlayerPopUp;
   
   // Clear player names and scores.
-  StrCopy( stor.player[0].name, "Scooter" );
-  StrCopy( stor.player[1].name, "Fozzie" );
-  StrCopy( stor.player[2].name, "Kermit" );
-  StrCopy( stor.player[3].name, "Gonzo" );
-  StrCopy( stor.player[4].name, "Ms. Piggy" );
-  StrCopy( stor.player[5].name, "Animal" );
-  StrCopy( stor.player[6].name, "Rowlf" );
-  StrCopy( stor.player[7].name, "Robin" );
-  StrCopy( stor.player[8].name, "Statler" );
-  StrCopy( stor.player[9].name, "Waldorf" );
-  
-  for (x = 0; x < MaxPlayers; x++) {
-    stor.player[x].score = 0;
+  for( i = 0; i < MaxPlayers; i++ ) {
+    StrCopy( stor.player[i].name, PlayerDefNames[i] );
+    stor.player[i].score = 0;
   }
+
+  EnableControl( btn_Roll, true );
+  EnableControl( btn_Stay, true );
 }
 
 /* ResetCubes -- Resets all the cubes and draws them.
@@ -743,8 +770,7 @@ void NewGame()
     stor.cube[x].value = stor.cube[x].keep = false;
   }
 
-  for (x = 0; x < stor.numplayers ; x++ ) {
-    stor.player[x].computer  = false;
+  for (x = 0; x < stor.total ; x++ ) {
     stor.player[x].lost      = false;
     /* We don't need to set name */
     stor.player[x].score     = 0;
@@ -756,8 +782,14 @@ void NewGame()
     stor.player[x].suspend.scorethisroll	= 0;
   }
 
-  StayBit = false;
+  for (x = stor.numplayers ; x < stor.total; x++ ) {
+    StrCopy( stor.player[x].name,
+             ComputerDefNames[x - stor.numplayers] );
+  }
 
+  StayBit = false;
+  EnableControl( btn_Roll, true );
+  EnableControl( btn_Stay, true );
 }
 
 
@@ -767,4 +799,8 @@ void SetFlag( Int f, Boolean b ) {
   } else {
     stor.flags &= ~f;
   }
+}
+
+Boolean IsAI( Int player ) {
+  return (player >= stor.numplayers)?true:false;
 }

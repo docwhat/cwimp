@@ -179,11 +179,12 @@ static void EventLoop(void)
   EventType e;
 
   do {
-    EvtGetEvent(&e, evtWaitForever);
+    EvtGetEvent(&e, 10 * SysTicksPerSecond());
     if (! SysHandleEvent (&e))
       if (! MenuHandleEvent (NULL, &e, &err))
 	if (! ApplicationHandleEvent (&e))
 	  FrmDispatchEvent (&e);
+    GameEvents();
   } while (e.eType != appStopEvent);
 }
 

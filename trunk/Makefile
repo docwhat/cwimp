@@ -6,16 +6,19 @@ APPID	:= "CWmp"
 LANGUAGE = en
 URL 	:= "http://docwhat.gerf.org/cwimp/"
 
-SOURCES = $(TARGET).c  draw.c  game.c  lowlevel.c  statusmsg.c srand.c
-OBJECTS = $(patsubst %.c,objs/%.o, $(SOURCES))
+# mystart.c MUST go first
+SOURCES = mystart.c \
+	$(TARGET).c  srand.c game.c draw.c lowlevel.c  statusmsg.c \
+	ai.c 
+OBJECTS = $(shell echo $(patsubst %.c,objs/%.o, $(SOURCES)) | $(SED) 's!game.o!game.o $(CRT0)!')
 PREDEPENDS = $(TARGET)Rsc.h
 LIBS =
 
 CC = m68k-palmos-coff-gcc
 
-CFLAGS = -Wall -g -O2 -DDEBUG \
+CFLAGS = -Wall -O2 -DDEBUG \
 	-DERROR_CHECK_LEVEL=ERROR_CHECK_FULL \
-	-DLANG=$(LANGUAGE)
+	-DLANG=$(LANGUAGE) -nostartfiles
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
 #
 # Debug Rolling turns of 'rigged' rolling
@@ -24,11 +27,16 @@ CFLAGS = -Wall -g -O2 -DDEBUG \
 PILRC		:= pilrc
 OBJRES		:= m68k-palmos-coff-obj-res
 NM		:= m68k-palmos-coff-nm
+SED		:= sed
 BUILDPRC	:= build-prc
 PILOTXFER	:= pilot-xfer
 FIXVERSION	:= ./fixversion
 MKSTATUSMSG	:= ./mkstatusmsg
 DEPEND		:= ./depend.sh
+### This is System Dependent ###
+# Works for Debian, though.
+# See mystart.c for info
+CRT0		:= /usr/m68k-palmos-coff/lib/crt0.o
 
 VERSION=$(shell $(FIXVERSION) version)
 
@@ -70,7 +78,7 @@ $(STATUSMSGS): statusmsg.$(LANGUAGE).txt $(MKSTATUSMSG)
 
 objs/$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
 	@echo -- Compiling $@
-	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LIBS)
+	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $@ 
 
 clean:
 	rm -f objs/* *~ *.bak core $(TARGET)Rsc.h

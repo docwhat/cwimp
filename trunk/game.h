@@ -22,13 +22,14 @@
 #ifndef _GAME_H_
 #define _GAME_H_
 #include "resource.h"
+#include <Pilot.h>
 
 #define FlamingSun  3  // There isn't a 3 on the BlackDie...
 
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 9
+#define storVersion 10
 #define NumCubes    5  // Number of cubes
 #define MaxPlayers 10  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
@@ -43,6 +44,7 @@ struct Storage {
   Short   winscore;    /* The score that you must beat to start last licks */
   Short   numplayers;  /* The number of players [1-10]                     */
   Short   numcomputers;/* The number of computers [0-9]                    */
+  Short   total;       /* The total number of players in the game          */
   Short   tmpplayers;  /* Temporary number of players                      */
   Short   tmpcomputers;/* Temporary numebr of 'puters                      */
   Int     flags;       /* For flags, see below.                            */
@@ -68,7 +70,6 @@ struct Storage {
   } cube[NumCubes];
   /* Player array */
   struct {
-    Boolean computer;
     Boolean lost;
     Char    name[MaxName+1];
     Short   score;
@@ -93,6 +94,10 @@ struct Storage {
 #define flag_Suspend         (1<< 5)
 /* Preferences: */
 #define flag_NextPlayerPopUp (1<< 7)
+/* Specials */
+#define flag_PendingAI       (1<< 8)
+#define flag_CanStay         (1<< 9)
+
 
 extern struct Storage stor;
 
@@ -113,12 +118,14 @@ void TurnLogic(void);
 void SetStatus( UInt status );
 
 void NextPlayer(void);
-void ToggleKeep(Byte die);
+
+void GameEvents(void);
 void NewGame(void);
 void PlayerWon(void);
 void NobodyWon(void);
 void PlayerLost( Short player, CharPtr ptrString );
 
+Boolean IsAI(Int player);
 void SetFlag(Int f, Boolean b);
 
 #endif

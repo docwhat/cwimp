@@ -20,7 +20,7 @@ BEGIN
 		MENUITEM "Reset"	ID MenuItem_Reset	"R"
 		MENUITEM "Defaults"	ID MenuItem_Defaults
 		MENUITEM SEPARATOR
-		MENUITEM "Help"		ID MenuItem_Help	"H"
+		MENUITEM "How to Play"	ID MenuItem_Help	"H"
 		MENUITEM "About"	ID MenuItem_About	"A"
 		END
 	PULLDOWN "Options"
@@ -221,6 +221,17 @@ ERROR
 BEGIN
 	TITLE "OS Version"
 	MESSAGE "This program needs OS version 2.0 or greater to run\n"
+	BUTTONS "OK" 
+END
+
+
+ALERT ID alertResetting
+WARNING
+BEGIN
+	TITLE "Resetting Defaults"
+	MESSAGE "Due to a new version of CWimp, I'm " \
+                "resetting your preferences. All settings and "\
+                "and games are lost."
 	BUTTONS "OK" 
 END
 

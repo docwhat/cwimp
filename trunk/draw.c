@@ -155,7 +155,7 @@ void DrawState()
   x = 0;
   if ( stor.currplayer > -1 ) {
 	// If there is a game on, fill in the names and scores
-	for ( ; x < stor.numplayers ; x++ ) {
+	for ( ; x < stor.total ; x++ ) {
 	  StrPrintF( msg, "%d. %s", x+1, stor.player[x].name, NULL ); 
 	  SetFieldTextFromStr( fieldNamePlayer[x], msg );
 	  DrawPlayerScore( x );
@@ -261,7 +261,7 @@ void DrawCube(Byte die)
   } else {
 	DrawBitmap( bmpBlank, CubesLeft, y );  // Put up the blank tile
 #if 0
-	SysTaskDelay( 0.15*sysTicksPerSecond); // Delay for cinematic effect
+	SysTaskDelay( 0.15*SysTicksPerSecond()); // Delay for cinematic effect
 #endif
   }
 
@@ -298,6 +298,9 @@ void DrawTopStatusButton() {
  */    
 void DrawStayButton() {
   int x;
+  Boolean isai;
+
+  isai = IsAI( stor.currplayer );
 
   /* No game, no brainer */
   if( stor.currplayer < 0 ) {
@@ -305,21 +308,23 @@ void DrawStayButton() {
     return;
   }
 
+  if( isai ) SetStatus( DS_Thinking );
+
   if( stor.flash ) {
     ShowControl( btn_Stay, 0 );
-    SetStatus( DS_MustClearFlash );
+    if( !isai ) SetStatus( DS_MustClearFlash );
     return;
   }
 
   if( stor.YMNWTBYM ) {
     ShowControl( btn_Stay, 0 );
-    SetStatus( DS_YMNWTBYM );
+    if( !isai ) SetStatus( DS_YMNWTBYM );
     return;
   }
 
   if( stor.scorethisturn == 0 ) {
     ShowControl( btn_Stay, 0 );
-    SetStatus( 0 );
+    if( !isai ) SetStatus( 0 );
     return;
   }
     
@@ -340,21 +345,21 @@ void DrawStayButton() {
 
   if( stor.flags & flag_Eclipse ) {
     /* Are we eclipsed? */
-    for( x = 0; x < stor.numplayers; x++ ) {
+    for( x = 0; x < stor.total; x++ ) {
       if( x == stor.currplayer ) continue;
       if( stor.player[x].score == stor.currscore ) break;
     }
     
-    if( x != stor.numplayers ) {
+    if( x != stor.total ) {
       ShowControl( btn_Stay, 0 );
-      SetStatus( DS_Eclipse );
+      if( !isai ) SetStatus( DS_Eclipse );
       return;
     }
   }
 
   /* Otherwise, show it */
   ShowControl( btn_Stay, 1 );
-  SetStatus( 0 );
+  if( !isai ) SetStatus( 0 );
 }
 
 
@@ -416,8 +421,10 @@ void DialogNewGame() {
 	  stor.winscore = 300;
 	}
 
+        /* Set the number of players/AI */
 	stor.numplayers = stor.tmpplayers;
 	stor.numcomputers = stor.tmpcomputers;
+        stor.total = stor.numplayers + stor.numcomputers;
   }
 
   // Delete the form, we're not using it
@@ -579,11 +586,11 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
   Word hitButton;
   Char msg[(MaxName * 2) + 128];
   Word fieldname = 0;
-  
+
   switch ( frmname ) {
   case frmNextPlayer: 
     fieldname = fldNextPlayer;
-    if( (stor.numplayers + stor.numcomputers) > 1 ) {
+    if( stor.total > 1 ) {
       StrPrintF( msg, NextPlayerString,
 		 stor.player[p1].name,
 		 stor.player[p2].name,
@@ -594,7 +601,7 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
     break;
 
   case frmSuspend: 
-    if( (stor.numplayers + stor.numcomputers) == 1 ) {
+    if( stor.total == 1 ) {
       return;
     }
     fieldname = fldSuspend;
@@ -843,16 +850,20 @@ Boolean DialogGetNames() {
 
   // Get Controls
   if ( hitButton == btn_OK_frmGetNames ) {
-	
-	for( i=0 ; i<stor.tmpplayers ; i++ ) {
+      for( i=stor.tmpplayers + 1;
+           i < stor.tmpplayers + stor.tmpcomputers;
+           i++ ) {
+          StrPrintF( stor.player[i].name, "Robby%d", i );
+      }
+      for( i=0; i < stor.tmpplayers; i++ ) {
 	  oIdx = FrmGetObjectIndex( frm, fieldGetNamesPlayer[i]);
 	  vPtr = FrmGetObjectPtr( frm, oIdx );
 	  text = FldGetTextPtr( vPtr );
 	  StrCopy( stor.player[i].name, text );
-
-	}
-
-	retVal = true;
+          
+      }
+      
+      retVal = true;
   }
 
 
@@ -1054,10 +1065,16 @@ static VoidPtr GetObjectPtr (Word objID) {
 
 static void ShowControl(Word objID, Boolean enable) {
 
-  if ( enable ) {
-	CtlShowControl( GetObjectPtr(objID) );
-  } else { 
+  SetFlag( flag_CanStay, enable );
+
+  if ( !enable || IsAI( stor.currplayer ) ) {
 	CtlHideControl( GetObjectPtr(objID) );
+  } else { 
+	CtlShowControl( GetObjectPtr(objID) );
   }
 
+}
+
+void EnableControl(Word objID, Boolean enable) {
+  CtlSetEnabled( GetObjectPtr(objID), enable );
 }

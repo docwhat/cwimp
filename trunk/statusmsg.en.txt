@@ -30,6 +30,11 @@ CSTRING: NoneString
 None
 .
 
+DS_Thinking: Thinking...
+The AI is trying to think of what to do.  It's
+got a small brain.
+.
+
 DS_Eclipse: Eclipsed!
 With the Eclipse variation in effect, you cannot stay when your
 total score equals someone elses.
