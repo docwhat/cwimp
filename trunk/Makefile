@@ -75,7 +75,7 @@ ChangeLog:
 
 clean:
 	rm -f *.[oa] $(TARGET) *.bin *.grc *~ *.rcp core ChangeLog
-	rm -f statusmsg.c statusmsg.rcp
+	rm -f $(STATUSMSGS)
 
 veryclean: clean
 	rm -f $(TARGET).prc pilot.ram pilot.scratch \
