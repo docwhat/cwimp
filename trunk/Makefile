@@ -45,8 +45,8 @@ objs/%.o: %.c
 
 $(TARGET)Rsc.h: $(TARGET).rcp images
 	@echo -- Pilrc\'ing $*
-	$(PILRC) -q -L $(LANGUAGE) -H $(TARGET)Rsc.h $(TARGET).rcp objs/
 	@if [ ! -d objs ]; then mkdir objs ; fi
+	$(PILRC) -q -L $(LANGUAGE) -H $(TARGET)Rsc.h $(TARGET).rcp objs/
 
 
 $(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
