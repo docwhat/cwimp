@@ -92,7 +92,6 @@ int RollCube (void)
  */
 void Roll(void)
 {
-  // ToDo: Logic for whether player can roll
   Short x = 0;
 
   if( stor.currplayer < 0 ) {
@@ -176,18 +175,12 @@ void ScoreRoll() {
   if ( aCounting[ stor.cube[1].value ] == NumCubes ) {
     x = stor.cube[1].value;
     if ( x == 1 ) {
-      // ToDo:
-      // User Looses due to supernova
       PlayerLost( stor.currplayer, "SuperNova: You loose" );
       return;
     }
     if ( x == 6 ) {
-      // ToDo:
-      // Instant Winner
-      FrmCustomAlert( calertDEBUG,
-		      "You're an instant weiner!",
-		      "ToDo: add correct you win stuff",
-		      " ");
+      // ToDo: Say why player won
+      PlayerWon();
       return;
     }
     
@@ -352,8 +345,6 @@ void ScoreRoll() {
 void TurnLogic() {
   Short kept;
   Short x;
-  // ToDo: Update()
-
 
   DrawCurrScore();
 
@@ -497,7 +488,9 @@ void NextPlayer() {
   }
   
 }
- 
+
+// ToDo: Say why player won
+// ToDo: Don't hide dice/score with dialog box.
 void PlayerWon() {
   FrmCustomAlert( calertDEBUG,
 		  "Winner!",
