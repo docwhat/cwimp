@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 1999-2000 Christian Höltje
+    Copyright (C) 1999-2001 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -67,9 +67,8 @@ void DrawStayButton();
 void DialogNewGame();
 void DialogVariants();
 void DialogOK( Word frm, Short player1, Short player2 );
-Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo );
-Int DialogChooseThree( CharPtr fText, CharPtr bOne, CharPtr bTwo,
-		      CharPtr bThree );
+Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
+Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
 void DialogPreferences();
 Boolean DialogGetNames();
 void EnableControl(Word objID, Boolean enable);

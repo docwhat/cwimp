@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 1999-2000 Christian Höltje
+    Copyright (C) 1999-2001 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -37,13 +37,50 @@ void CheckAI(void)
 
 void AITurn(void)
 {
+#ifdef DEBUG
   FrmCustomAlert( calertDEBUG, "Pre-AITurn", " ", " " );
+#endif
 
-  if( stor.flags & flag_CanStay ) {
-    Stay();
-  } else {
+  /* If we have no choice... */
+  if( ! ( stor.flags & flag_CanStay ) ) {
     Roll();
+    return;
   }
 
+  /* This is where the AI should come into play */
+  Stay();
+
   return;
+}
+
+Int AIChooseTwo( Int c1, Int c2 )
+{
+  /* This doesn't matter much, unless it is a choice between 10 and 5 */
+  if( c2 == 1 )
+    return c2;
+
+  return c1;
+}
+
+Int AIChooseThree( Int c1, Int c2, Int c3 )
+{
+  Short x, count;
+
+  count = 0;
+  for( x = 0 ; x < NumCubes ; x++ ) {
+    if( stor.cube[x].keep )
+      count++;
+  }
+
+  if( c3 == 0 && count > 2 ) {
+    return c3;
+  }
+
+  /* If they both are scoring numbers, pick
+     the higher number! */
+  if( (c1 == 1 && c2 == 5) ||
+      (c1 == 5 && c2 == 1) )
+    return 1;
+
+  return c1;
 }

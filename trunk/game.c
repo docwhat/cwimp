@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 1999-2000 Christian Höltje
+    Copyright (C) 1999-2001 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -62,13 +62,8 @@ Char **ComputerDefNames = (CharPtr[]){
                              "Vger" };
 
 
-
-
 struct Storage stor;
 Boolean StayBit; // Normally false, unless player wants to stay
-
-static Char val2name[7][8] = { "Err", /* So I don't have to subtract 1 */
-			       "10", "two", "three", "four", "5", "six" };
 
 /* RollCube -- Returns a random number from 1 to 6 inclusive.
  * Args: None
@@ -279,14 +274,10 @@ void ScoreRoll() {
     // Do we have any pairs to go with our FS?
     if ( P2 ) {
       Int  die;
-      Int ret;
 
       DrawCurrScore(); /* So the player knows the score */
-      ret = DialogChooseTwo( PickFlashString, 
-			     val2name[P1],
-			     val2name[P2] );
-      if( ret == 1 ) die = P1;
-      else           die = P2;
+      die = DialogChooseTwo( PickFlashString, P1, P2 );
+      
       aCounting[die]++;
       BlackDieValue = die;
       stor.cube[0].value = die;
@@ -359,29 +350,21 @@ void ScoreRoll() {
   // if it wasn't used above (in P1 && P2)
   if ( FS && !stor.cube[0].keep ) {
     if ( stor.scorethisroll == 0 ) {
-      Int ret;
       Int die;
 
       DrawCurrScore(); /* Player has to know the score */
-      ret = DialogChooseTwo( PickScoreString, "10", "5" );
-
-      if( ret == 1 ) die = 1;
-      else die = 5;
+      die = DialogChooseTwo( PickScoreString, 1, 5 );
 
       aCounting[die]++;
       BlackDieValue = die;
       stor.cube[0].value = die;
     } else {
-      Int ret;
       Int die;
 
       DrawCurrScore(); /* Player has to know the score */
-      ret = DialogChooseThree( PickNonScoreString, "10", "5", NoneString );
+      die = DialogChooseThree( PickNonScoreString, 1, 5, 0 );
+      if( die == 0 ) die = 2;
 
-      if( ret == 1 ) die = 1;
-      else if( ret == 2 ) die = 5;
-      else die = 2;
-      
       if( die != 2 ) {
 	aCounting[die]++;
 	BlackDieValue = die;

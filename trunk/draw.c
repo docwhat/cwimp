@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 1999-2000 Christian Höltje
+    Copyright (C) 1999-2001 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,6 +29,7 @@
 #include "game.h"
 #include "statusmsg.h"
 #include "statusmsgstrings.h"
+#include "ai.h"
 
 #include "draw.h"
 
@@ -142,6 +143,9 @@ const UInt cbtnVal[10] = {
   cbtn_9
 };
 
+static Char **val2name = (CharPtr[]) { NoneString,
+                                       "10", "two", "three",
+                                       "four", "5", "six" };
 
 
 void DrawState()
@@ -694,9 +698,13 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
 }
 
 
-Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
+Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 ) {
   FormPtr prevForm, frm;
   Word hitButton;
+
+  if( IsAI( stor.currplayer ) ) {
+    return AIChooseTwo( c1, c2 );
+  }
   
   // Save previous form
   prevForm = FrmGetActiveForm();
@@ -708,8 +716,8 @@ Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
   FrmDrawForm(frm);
 
   // Fill it...
-  CtlSetLabel( GetObjectPtr(btnChooseTwo1), bOne );
-  CtlSetLabel( GetObjectPtr(btnChooseTwo2), bTwo );
+  CtlSetLabel( GetObjectPtr(btnChooseTwo1), val2name[c1] );
+  CtlSetLabel( GetObjectPtr(btnChooseTwo2), val2name[c2] );
   SetFieldTextFromStr( fldChooseTwo, fText );
 
   // Set the handler
@@ -725,16 +733,21 @@ Int DialogChooseTwo( CharPtr fText, CharPtr bOne, CharPtr bTwo ) {
     FrmSetActiveForm(prevForm);
   }
 
-  if( hitButton == btnChooseTwo1 ) return 1;
-  if( hitButton == btnChooseTwo2 ) return 2;
-  return ( -1 );
+  if( hitButton == btnChooseTwo1 ) return c1;
+  if( hitButton == btnChooseTwo2 ) return c2;
+  return c1;
 }
 
 
-Int DialogChooseThree( CharPtr fText,
-			CharPtr bOne, CharPtr bTwo, CharPtr bThree ) {
+Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 )
+{
+			
   FormPtr prevForm, frm;
   Word hitButton;
+
+  if( IsAI( stor.currplayer ) ) {
+    return AIChooseThree( c1, c2, c3 );
+  }
   
   // Save previous form
   prevForm = FrmGetActiveForm();
@@ -746,9 +759,9 @@ Int DialogChooseThree( CharPtr fText,
   FrmDrawForm(frm);
 
   // Fill it...
-  CtlSetLabel( GetObjectPtr(btnChooseThree1), bOne );
-  CtlSetLabel( GetObjectPtr(btnChooseThree2), bTwo );
-  CtlSetLabel( GetObjectPtr(btnChooseThree3), bThree );
+  CtlSetLabel( GetObjectPtr(btnChooseThree1), val2name[c1] );
+  CtlSetLabel( GetObjectPtr(btnChooseThree2), val2name[c2] );
+  CtlSetLabel( GetObjectPtr(btnChooseThree3), val2name[c3] );
   SetFieldTextFromStr( fldChooseThree, fText );
 
   // Set the handler
@@ -764,10 +777,10 @@ Int DialogChooseThree( CharPtr fText,
     FrmSetActiveForm(prevForm);
   }
 
-  if( hitButton == btnChooseThree1 ) return 1;
-  if( hitButton == btnChooseThree2 ) return 2;
-  if( hitButton == btnChooseThree3 ) return 3;
-  return ( -1 );
+  if( hitButton == btnChooseThree1 ) return c1;
+  if( hitButton == btnChooseThree2 ) return c2;
+  if( hitButton == btnChooseThree3 ) return c3;
+  return c1;
 }
 
 
