@@ -1,32 +1,32 @@
 # $Id$
 #
 
-STRING: LastLicksString
+CSTRING: LastLicksString
 Last Licks!
 .
 
-STRING: RollString
+CSTRING: RollString
 Roll
 .
 
-STRING: StartString
+CSTRING: StartString
 Start
 .
 
-STRING: PickScoreString
+CSTRING: PickScoreString
 Pick a scoring value for your Flaming Sun.
 .
 
-STRING: PickFlashString
+CSTRING: PickFlashString
 Pick which Flash you want to complete with your Flaming Sun.
 .
 
-STRING: PickNonScoreString
+CSTRING: PickNonScoreString
 Pick a value for your Flaming Sun.
 You can pick junk if you want to be able to roll it again.
 .
 
-STRING: NoneString
+CSTRING: NoneString
 None
 .
 
@@ -48,13 +48,13 @@ rolling at least one more time.
 .
 
 
-STRING: NextPlayerString
+CSTRING: NextPlayerString
 %s's turn is over.
 
 It is now %s's turn.
 .
 
-STRING: NextSoloPlayerString
+CSTRING: NextSoloPlayerString
 It's time for your next turn.
 .
 
@@ -74,6 +74,41 @@ old leader).
 The winner is the last person in the game, the last leader.
 .
 
+CSTRING: LostString
+%s has lost and is no longer in the game.
+.
+
+DS_Lost: %s has lost!
+You have lost and are no longer in this game.  Sorry!
+.
+
+
+CSTRING: LeaderString
+%s is the current Leader!
+Everyone still in the game gets one
+chance to beat you.
+.
+
+DS_Leader: %s is the leader!
+You are now the leader.
+
+Everyone gets one chance each to get in their
+Last Licks or a last roll to win.  If a player doesn't beat your score, then
+they lose and are permanently out of the game.  If they beat your score
+then they become the leader and everyone gets one chance to beat their score.
+.
+
+
+CSTRING: WinnerString
+%s has won!
+.
+
+DS_Winner: %s has won!
+You've won!  The universe is yours.
+
+Be careful with it, you should probably
+get insurance, it's rather valuable.
+.
 
 
 DS_NextPlayer: %s's Turn
@@ -100,7 +135,11 @@ Unfortunately, Wimping Out can clear your Flash.
 .
 
 
-GenericHelp: Play CWimp!
+###############
+### RCP Strings
+###############
+
+STRING: GenericHelp
 Welcome to CWimp!
 
 I am going to try to give you the basics of the game.  Don't worry too much
@@ -158,3 +197,54 @@ Ciao!\n
       DocWhat
 .
 
+
+STRING: HelpPreferences
+Here are a the descriptions of the preferences available to you:
+
+Next Player Dialog:
+Pops up a dialog every time it's a new player's turn.
+.
+
+STRING: statusClearFlashFirst
+Clear Flash First
+.
+
+STRING: HelpVariants
+ToDo: list and describe varients
+.
+
+STRING: HelpGetNames
+ToDo: HelpGetNames
+.
+
+STRING: HelpNewGame
+Select the number of human and computer players.
+
+Press OK when you're done or press Cancel if you've changed your mind.
+.
+
+STRING: HelpAbout
+# \231 is the TM character
+# \263 is the ^3 character
+This is free software, and you are welcome to redistribute it
+under certain conditions; See the COPYING file that should 
+have come with this program.
+
+
+More info and new versions can be gotten at\n
+http://docwhat.gerf.org/cwimp/
+
+Bugs may be submitted at
+http://gerf.org/cgi-bin/cwimp-bugs
+
+Original Artwork \251 2000 Christian H\366ltje
+
+Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.
+
+The default player names are based upon
+Jim Henson company's Muppets\231
+
+Mersenne Twister by Makoto Matsumoto and Takuji Nishimura,
+Accelerated by Shawn Cokus,
+16 bit version of the Twister by Troy D. Gillette
+.

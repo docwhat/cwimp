@@ -65,6 +65,7 @@ while (my $line = <IN>)
 {
     # Remove trailing newlines
     chomp $line;
+    next if ( $line =~ /^\#/ );
     
     if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
 	my $tag 	= $1;
@@ -72,25 +73,29 @@ while (my $line = <IN>)
 	$status =~ s/\"/\\\"/g;
 	my $result;
 
-	if( $tag =~ /STRING/ ) {
+	if( $tag =~ /^CSTRING/ ) {
 	    $result = \$Defines;
 	    $$result .= "#define $status \"";
-	} elsif( $tag =~ /DS_NextPlayer/ ) {
+	} elsif( $tag =~ /^STRING/ ) {
+	    $result = \$Strings;
+	    $$result .= "STRING ID $status \"";
+	} elsif( $status =~ /\%s/ ) {
 	    $DrawStatus .= "  case $tag:\n" . 
 		"\tStrPrintF( msg, \"$status\", " .
-		"stor.player[stor.currplayer].name );\n" .
+		"stor.player[stor.currplayer].name, NULL );\n" .
 		"\tSetFieldTextFromStr( statusLine, msg ); " . 
 		"break;\n";
 	    $result = \$Strings;
-	    $$result .= "STRING $tag \"";
+	    $$result .= "STRING ID $tag \"";
 	} else {
 	    $DrawStatus .= "  case $tag: SetFieldTextFromStr( " .
 		"statusLine, \"$status\" ); break;\n";
 	    $result = \$Strings;
-	    $$result .= "STRING $tag \"";
+	    $$result .= "STRING ID $tag \"";
 	}
 	while ( my $newline = <IN> ) {
 	    chomp $newline;
+	    next if ( $newline =~ /^\#/ );
 	    last if ( $newline =~ /^\./ );
 	    if( $newline =~ /^\s*$/ ) {
 		$$result =~ s/\s$//;
