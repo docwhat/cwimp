@@ -1,6 +1,10 @@
 # $Id$
 #
 
+STRING: LastLicksString
+Last Licks!
+.
+
 STRING: RollString
 Roll
 .
@@ -53,6 +57,24 @@ It is now %s's turn.
 STRING: NextSoloPlayerString
 It's time for your next turn.
 .
+
+
+TS_LastLicks: Last Licks!
+The game is in Last Licks.
+
+Someone has passed the winning score (set in 'New Game') and is the
+leader.  The current leader has an 'L' next to their name.
+
+Now, everyone gets to get in their Last Licks or last chance to win.
+Each player gets one more chance to score higher than the leader.  If
+they pass the leaders score, then *they* become the leader and everyone
+still in the game gets a chance to pass the new leader (including the
+old leader).
+
+The winner is the last person in the game, the last leader.
+.
+
+
 
 DS_NextPlayer: %s's Turn
 It is the next player's turn.

@@ -88,7 +88,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
 
     case ctlSelectEvent:
       switch(e->data.ctlSelect.controlID) {
-		
+
       case btn_Stay:
 	Stay();
 	break;
@@ -105,6 +105,11 @@ static Boolean MainFormHandleEvent (EventPtr e)
 	  Roll();
 	}
 	break;
+
+      case btnTopStatus:
+	FrmHelp( TS_LastLicks );
+	break;
+
       }
       handled = true;
       break;

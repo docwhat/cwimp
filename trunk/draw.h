@@ -60,6 +60,7 @@ void DrawState();
 void DrawCube(Byte die);
 void DrawPlayerScore(Byte player);
 void DrawKeepBit(Byte die);
+void DrawTopStatusButton();
 void DrawRollButton();
 void DrawStayButton();
 

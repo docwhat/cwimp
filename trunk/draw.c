@@ -176,6 +176,7 @@ void DrawState()
   DrawStayButton();
   DrawRollButton();
   DrawStatus();
+  DrawTopStatusButton();
 }
 
 
@@ -274,6 +275,23 @@ void DrawRollButton() {
     CtlSetLabel( GetObjectPtr(btn_Roll), RollString );
   }
 }
+
+void DrawTopStatusButton() {
+
+  if( stor.leader < 0 ) {
+      ShowControl( btnTopStatus, 0 );
+      return;
+  }
+
+  if( stor.leader >= 0 ) {
+    ShowControl( btnTopStatus, 1 );
+    CtlSetLabel( GetObjectPtr(btnTopStatus), LastLicksString );
+    return;
+  }
+
+}
+
+
     
 
 void DrawStayButton() {

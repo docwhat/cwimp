@@ -505,6 +505,7 @@ void NextPlayer() {
     SetStatus( DS_NextPlayer );
     /* Don't draw the state so you can see how the dice were left */
   }
+  DrawTopStatusButton();
   
 }
 
@@ -647,9 +648,14 @@ void NewGame()
 {
   Short x;
 
+  stor.flash = 0;
+  stor.YMNWTBYM = false;
+  stor.leader = -1;
+  stor.status = 0;
+  stor.nTrainWrecks = 0;
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
-  stor.YMNWTBYM = false;
+  stor.currplayer = 0;
 
   for (x = 0; x < NumCubes; x++) {
     stor.cube[x].value = stor.cube[x].keep = false;
@@ -658,13 +664,13 @@ void NewGame()
   for (x = 0; x < stor.numplayers ; x++ ) {
     stor.player[x].computer  = false;
     stor.player[x].lost      = false;
+    /* We don't need to set name */
     stor.player[x].score     = 0;
     stor.player[x].insurance = 0;
   }
 
-  stor.currplayer = 0;
-  stor.flash = 0;
   StayBit = false;
+
 }
 
 
