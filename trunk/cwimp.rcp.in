@@ -145,7 +145,7 @@ END
 ##
 ##
 ##
-FORM ID frmPreferences AT (CENTER@160/2 CENTER@160/2 110 46)
+FORM ID frmPreferences AT (CENTER@160/2 CENTER@160/2 110 60)
 MODAL
 HELPID HelpPreferences
 SAVEBEHIND
@@ -153,8 +153,10 @@ BEGIN
 	TITLE "Preferences"
 	CHECKBOX "Next Player Dialog" ID check_NextPlayerPopUp AT
 		 ( 4 14 AUTO AUTO )
+	CHECKBOX "Force Sound Off" ID check_ForceSoundOff AT
+		 ( 4 28 AUTO AUTO )
 
-	BUTTON "Done" ID AUTOID2 AT (4 46-15 AUTO AUTO)
+	BUTTON "Done" ID AUTOID2 AT (4 60-15 AUTO AUTO)
 END
 
 ##

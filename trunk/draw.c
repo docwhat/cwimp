@@ -227,7 +227,7 @@ void DrawKeepBit(Int die)
 
 static void InvertPlayer(Int player) {
   /* This is from namePlayerX in cwimp.rcp.in */
-  RectangleType r = { {36, 0}, {64, 10} };;
+  RectangleType r = { {40, 0}, {64, 10} };;
 
   r.topLeft.y = 52 + player * 10;
 
@@ -237,8 +237,8 @@ static void InvertPlayer(Int player) {
 static void CrossPlayer(Int player) {
   Int y;
   y = 52 + 6 + player * 10;
-  WinDrawLine( 36   , y,
-               36+64, y );
+  WinDrawLine( 40   , y,
+               40+64, y );
 }
 
 void DrawPlayerScore(Short player) {

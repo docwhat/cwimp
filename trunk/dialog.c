@@ -721,6 +721,9 @@ void DialogPreferences() {
   CtlSetValue( GetObjectPtr(check_NextPlayerPopUp ),
 			   GetFlag(flag_NextPlayerPopUp) );
 
+  CtlSetValue( GetObjectPtr(check_ForceSoundOff ),
+			   GetFlag(flag_NoSound) );
+
   // Set the handler
   // FrmSetEventHandler(frm, DialogNewGameHandleEvent);
 
@@ -729,6 +732,8 @@ void DialogPreferences() {
   // Get Controls
   SetFlag( flag_NextPlayerPopUp,
 		   CtlGetValue( GetObjectPtr(check_NextPlayerPopUp) ) );
+  SetFlag( flag_NoSound,
+		   CtlGetValue( GetObjectPtr(check_ForceSoundOff) ) );
 
   // Delete the form, we're not using it
   FrmDeleteForm(frm);

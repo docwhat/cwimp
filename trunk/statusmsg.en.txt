@@ -349,6 +349,10 @@ Here are a the descriptions of the preferences available to you:
 
 Next Player Dialog:
 Pops up a dialog every time it's a new player's turn.
+
+Force Sound Off
+Sound usually is set according to your PalmOS Preferences settings.
+You can toggle this to force the sound to be off.
 .
 
 STRING: statusClearFlashFirst
