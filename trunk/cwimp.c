@@ -19,7 +19,7 @@
 
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include "autogen.h"
 #include "statusmsg.h"
 #include "game.h"
@@ -150,7 +150,7 @@ static Boolean MainFormHandleEvent (EventPtr e)
 static Boolean ApplicationHandleEvent(EventPtr e)
 {
         FormPtr frm;
-        Word    formId;
+        UInt16	formId;
         Boolean handled = false;
 
         if (e->eType == frmLoadEvent) {
@@ -170,10 +170,10 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 }
 
 /* Get preferences, open (or create) app database */
-static Word StartApplication(void)
+static UInt16 StartApplication(void)
 {
-        DWord romversion;
-        Int err;
+        UInt32 romversion;
+        UInt16 err;
 
         err = FtrGet(sysFtrCreator, sysFtrNumROMVersion, &romversion);
 
@@ -200,15 +200,21 @@ static void StopApplication(void)
 /* The main event loop */
 static void EventLoop(void)
 {
-        Word err;
+        UInt16 err;
         EventType e;
+        static float timeout = .05;
 
         do {
-                if( EQIsEmpty() ) {
-                        EvtGetEvent(&e, .66 * SysTicksPerSecond());
+                if( EQIsEmpty() &&
+                    timeout < 600 &&
+                    !DrawFlashies() )
+                {
+                        timeout *= 2;
                 } else {
-                        EvtGetEvent(&e, .05 * SysTicksPerSecond());
+                        timeout = .05;
                 }
+
+                EvtGetEvent(&e, timeout * SysTicksPerSecond());
                 if (! SysHandleEvent (&e))
                         if (! MenuHandleEvent (NULL, &e, &err) )
                                 if (! ApplicationHandleEvent (&e) )
@@ -219,11 +225,11 @@ static void EventLoop(void)
 
 /* Main entry point; it is unlikely you will need to change this except to
    handle other launch command codes */
-DWord PilotMain(Word cmd, Ptr cmdPBP, Word launchFlags)
+UInt32 PilotMain(UInt16 cmd, MemPtr cmdPBP, UInt16 launchFlags)
 {
-        if (cmd == sysAppLaunchCmdNormalLaunch) {
-                Word err;
+        UInt16 err;
 
+        if (cmd == sysAppLaunchCmdNormalLaunch) {
 
                 err = StartApplication();
                 if (err) {

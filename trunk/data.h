@@ -27,7 +27,7 @@
 /* Make sure you change the storVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion  3
+#define storVersion  4
 #define NumCubes     5  // Number of cubes
 #define MaxPlayers   8  // Maximum Number of Players
 
@@ -49,35 +49,34 @@ typedef enum PlayerEnum {
         PlayerAI    = 2
 } PlayerType;
 
+typedef Int16	DieType;
+
 struct Storage {
-        Short   openingroll; 
-        Short   winscore;    
-//        Short   numplayers;
-//        Short   numcomputers;
-        Short   totalplayers;
-//        Short   tmpplayers;
-//        Short   tmpcomputers;
-        Int     flags;
+        Int16	openingroll; 
+        Int16	winscore;    
+        Int16	totalplayers;
+        Boolean	clearedscreen; /* Should the screen be cleared? */
+        Int32	flags;
 
         /* These are status and counters for during the game and
          * should be reset each time
          */
-        Short   flash;       /* Either 0 or the number of the current flash. */
+        Int16	flash;       /* Either 0 or the number of the current flash. */
         Boolean YMNWTBYM;    /* You May Not Want To, But You Must            */
-        Short   leader;      /* -1 if no-one has passed the winscore, or the *
+        Int16	leader;      /* -1 if no-one has passed the winscore, or the *
                               * number of the player                         */
-        Int     status;      /* Used for picking messages out of statusmsg.c */
-        Short   nTrainWrecks;/* Count for nTrainWrecks rule                  */
-        Short   nSuspend;    /* Count for Suspend rule                       */
-        Short   suspendcount;/* Current number of flash tries for suspend    */
-        Short   currscore;
-        Short   scorethisturn;
-        Short   scorethisroll;
-        Short   currplayer;
+        Int16	status;      /* Used for picking messages out of statusmsg.c */
+        Int16	nTrainWrecks;/* Count for nTrainWrecks rule                  */
+        Int16	nSuspend;    /* Count for Suspend rule                       */
+        Int16	suspendcount;/* Current number of flash tries for suspend    */
+        Int16	currscore;
+        Int16	scorethisturn;
+        Int16	scorethisroll;
+        Int16	currplayer;
         /* Dice array */
         struct {
-                Short  value;
-                Short  keep;
+                DieType	value;
+                Int16	keep;
         } cube[NumCubes];
         /* Player array */
         struct {
@@ -85,15 +84,15 @@ struct Storage {
                 Boolean lost;
                 Char    hname[PLAYERMaxName+1];
                 Char    aname[PLAYERMaxName+1];
-                Short   score;
+                Int16  score;
                 struct {
-                        Short   flash;
-                        Int     status;
-                        Short   currscore;
-                        Short   scorethisturn;
-                        Short   scorethisroll;
+                        Int16  flash;
+                        Int16  status;
+                        Int16  currscore;
+                        Int16  scorethisturn;
+                        Int16  scorethisroll;
                 } suspend;
-                Short   TWcount;
+                Int16  TWcount;
         } player[MaxPlayers];
 };
 
@@ -116,23 +115,25 @@ struct Storage {
 extern struct Storage pref;
 extern Boolean StayBit;
 extern Boolean FreezeBit;
-extern UInt SoundAmp;
+extern UInt16 SoundAmp;
 
 
 void		ResetCubes(void);
+void		EndGame(void);
 void		NewGame(void);
 
 Boolean		isCurrLeader(void);
 Boolean		isGameOn(void);
-Boolean		isLostPlayer(Short player);
+Boolean		isCleared(void);
+Boolean		isLostPlayer(Int16 player);
 
-inline PlayerType GetPlayerType(Short player);
-inline Short	GetCurrPlayer(void);
-Short		GetNextPlayer(void);
-Char*		GetName( Short player );
-Boolean 	IsAI( Int player );
-void		SetFlag( Int f, Boolean b );
-inline Int	GetFlag( Int flag );
+PlayerType 	GetPlayerType(Int16 player);
+UInt16		GetCurrPlayer(void);
+UInt16		GetNextPlayer(void);
+Char*		GetName(Int16 player);
+Boolean 	IsAI(Int16 player);
+void		SetFlag(Int32 flag, Boolean b);
+Boolean		GetFlag(Int32 flag);
 
 void		LoadPrefs(void);
 void		SavePrefs(void);

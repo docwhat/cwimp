@@ -21,12 +21,12 @@
 #ifndef _DIALOG_H_
 #define _DIALOG_H_
 
-void DialogNewGame();
-void DialogVariants();
-void DialogOK( Word frm, Short player1, Short player2 );
-Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 );
-Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 );
-void DialogPreferences();
+void	DialogNewGame();
+void	DialogVariants();
+void	DialogOK(UInt16 frm, UInt16 player1, UInt16 player2);
+DieType	DialogChooseTwo(Char *fText, DieType c1, DieType c2 );
+DieType	DialogChooseThree(Char *fText, DieType c1, DieType c2, DieType c3);
+void	DialogPreferences();
 Boolean DialogGetNames();
 
 #endif

@@ -19,10 +19,13 @@
 
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include <SysEvtMgr.h>
 
+#include "data.h"
+#include "drawcon.h"
 #include "autogen.h"
+
 #include "cwimp.h"
 #include "lowlevel.h"
 #include "game.h"
@@ -30,36 +33,15 @@
 #include "statusmsgstrings.h"
 #include "queue.h"
 #include "dialog.h"
-#include "data.h"
 
-#include "drawcon.h"
 #include "draw.h"
 
 
 /* To return the ID of a given die */
-static inline UInt getDieID( UInt die )
+static inline UInt16 getDieID( UInt16 die )
 {
         return idDie0 + die;
 }
-
-const UInt bmpWCube[7] = {
-        bmpWhite,
-        bmp10w,  
-        bmp2w,     
-        bmp3w,   
-        bmp4w,   
-        bmp5w,  
-        bmp6w
-};   
-const UInt bmpBCube[7] = {
-        bmpBlack,
-        bmp10b,
-        bmp2b,     
-        bmpfsb,   
-        bmp4b,   
-        bmp5b,  
-        bmp6b
-};   
 
 /*
  * This function is based on the DrawIntro and DrawBlinds
@@ -69,10 +51,10 @@ const UInt bmpBCube[7] = {
  */
 void
 DrawIntro () {
-        VoidHand Title_Handle;
+        MemHandle Title_Handle;
         BitmapPtr Title;
         char text[40];
-        SWord penx, peny;
+        UInt16 penx, peny;
         Boolean bstate;
 
         /* If a game is on, don't do the splash */
@@ -129,7 +111,7 @@ DrawIntro () {
 
 void DrawState()
 {
-        Short x;
+        Int16 x;
 
 #ifdef DEBUG
         EQStatus(0);
@@ -151,22 +133,22 @@ void DrawState()
                 DrawKeepBit(x);
         }
 
-        DrawStayButton();
         DrawRollButton();
+        DrawStayButton();
         DrawStatus();
         DrawTopStatusButton();
 }
 
 void ClearKeepBits(void)
 {
-        Byte x;
+        UInt8 x;
         for( x = 0; x < NumCubes ; x++ ) {
                 SetFieldTextFromStr( getDieID( x ),
                                      BlankSymbol);
         }
 }
 
-void DrawKeepBit(Int die)
+void DrawKeepBit(DieType die)
 {
   
         if ( pref.YMNWTBYM ||
@@ -179,22 +161,22 @@ void DrawKeepBit(Int die)
         }
 }
 
-static inline Int getPLAYERy(Int player)
+static inline UInt8 getPLAYERy(UInt8 player)
 {
         return PLAYERTLy + player * PLAYEREXy;
 }
 
-static void CrossPlayer(Int player) {
-        Int y;
+static void CrossPlayer(UInt8 player) {
+        Int16 y;
         y = getPLAYERy(player) + 6;
         WinDrawLine( PLAYERTLx-3,           y,
                      PLAYERTLx+3+PLAYEREXx, y );
 }
 
-static void LeadPlayer(Int player) {
-        VoidHand bmpHandle;
+static void LeadPlayer(UInt8 player) {
+        MemHandle bmpHandle;
         BitmapPtr bmpP;
-        Int y = getPLAYERy(player);
+        Int16 y = getPLAYERy(player);
 
         bmpHandle = DmGet1Resource('Tbmp', bmpLeaderIcon);
   
@@ -205,15 +187,15 @@ static void LeadPlayer(Int player) {
         MemHandleUnlock( bmpHandle );
 }
 
-static void InvertPlayer(Int player) {
+static void InvertPlayer(UInt8 player) {
         RectangleType r = { {SYMBOLx, getPLAYERy(player)},
                             {155 - SYMBOLx, PLAYEREXy} };
 
         WinInvertRectangle( &r, 0 );
 }
 
-void DrawPlayer(Int player) {
-        Int y;
+void DrawPlayer(UInt8 player) {
+        Int16 y;
         Char msg[PLAYERMaxName];
         Char *name;
         RectangleType r = { {SYMBOLx, getPLAYERy(player)},
@@ -221,8 +203,8 @@ void DrawPlayer(Int player) {
 
         WinEraseRectangle( &r, 0 );
 
-        // Check for a game
-        if( !isGameOn() )
+        // Check if screen is supposed to be cleared.
+        if( isCleared() )
         {
                 return;
         }
@@ -252,7 +234,7 @@ void DrawPlayer(Int player) {
         }
 
 
-        if( player == pref.currplayer )
+        if( player == GetCurrPlayer() )
         {
                 InvertPlayer(player);
                 return;
@@ -268,7 +250,7 @@ void DrawPlayer(Int player) {
 }
 
 void DrawPlayers() {
-        Int x;
+        UInt8 x;
 
         for( x = 0 ; x < MaxPlayers ; x++ )
         {
@@ -295,10 +277,10 @@ void DrawCurrScore()
 
 }
 
-static void GreyCube(Int die)
+static void GreyCube(DieType die)
 {
-        Int i;
-        Int yoff, xoff;
+        Int16 i;
+        Int16 yoff, xoff;
         yoff = CUBETLy + (CUBESize + CUBESpace) * die;
         xoff = CUBETLx;
 
@@ -312,9 +294,9 @@ static void GreyCube(Int die)
 
 }
 
-void CrossCube(Int die)
+void CrossCube(DieType die)
 {
-        Int yoff, xoff;
+        Int16 yoff, xoff;
   
         yoff = CUBETLy + (CUBESize + CUBESpace) * die;
         xoff = CUBETLx;
@@ -352,18 +334,19 @@ void CrossCube(Int die)
 
 }
 
-void DrawCube(Int die)
+void DrawCube(DieType die)
 {
-        Int y;
-        Int tmpID;
+        Int16 y;
+        UInt16 tmpID;
 
         y = CUBETLy + (CUBESize + CUBESpace) * die;
   
         if ( die == 0 ) { 
-                tmpID = bmpBCube[ abs(pref.cube[die].value) ];
+                tmpID = bmpBlack;
         } else {
-                tmpID = bmpWCube[ abs(pref.cube[die].value) ];
+                tmpID = bmpWhite;
         }
+        tmpID += abs(pref.cube[die].value);
 
         DrawBitmap( tmpID, CUBETLx, y );
 
@@ -373,7 +356,7 @@ void DrawCube(Int die)
 
 }
 
-void EraseCube(Int die) {
+void EraseCube(DieType die) {
         RectangleType r = { {CUBETLx, 0}, {CUBESize, CUBESize} };;
 
         r.topLeft.y = CUBETLy + (CUBESize + CUBESpace) * die;
@@ -382,7 +365,7 @@ void EraseCube(Int die) {
         PlaySound( SND_ERASE_CUBE );
 }
 
-void DrawBlackCube(Int die)
+void DrawBlackCube(DieType die)
 {
 
         DrawBitmap( bmpBlack,
@@ -392,7 +375,7 @@ void DrawBlackCube(Int die)
         PlaySound( SND_DRAW_CUBE );
 }
 
-void DrawWhiteCube(Int die)
+void DrawWhiteCube(DieType die)
 {
 
         DrawBitmap( bmpWhite,
@@ -403,22 +386,21 @@ void DrawWhiteCube(Int die)
 }
 
 void DrawRollButton() {
-        if( pref.currplayer < 0 ) {
-                ShowControl( btn_Roll, 1 );
-                CtlSetLabel( GetObjectPtr(btn_Roll), StartString );
-        } else {
-                if( IsAI( pref.currplayer ) ) {
+        if( isGameOn() ) {
+                if( IsAI( GetCurrPlayer() ) ) {
                         ShowControl( btn_Roll, 0 );
                 } else {
                         ShowControl( btn_Roll, 1 );
                         CtlSetLabel( GetObjectPtr(btn_Roll), RollString );
                 }
+        } else {
+                ShowControl( btn_Roll, 1 );
+                CtlSetLabel( GetObjectPtr(btn_Roll), StartString );
         }
 }
 
 void DrawTopStatusButton() {
-
-        if( pref.leader < 0 ) {
+        if( !isGameOn() || pref.leader < 0 ) {
                 ShowControl( btnTopStatus, 0 );
                 return;
         }
@@ -428,8 +410,56 @@ void DrawTopStatusButton() {
                 CtlSetLabel( GetObjectPtr(btnTopStatus), LastLicksString );
                 return;
         }
-
 }
+
+void DrawStatus()
+{
+        if( !isGameOn() ) {
+                ClearFieldText( statusLine );
+                return;
+        }
+
+        statusmsgDrawStatus();
+}
+
+Boolean DrawFlashies()
+{
+        static Int16 flashcount = 0;
+        static Boolean evenodd = false;
+        Boolean didflash = false;
+        UInt8 x;
+
+        if( ++flashcount > 12 )
+        {
+                evenodd = !evenodd;
+                flashcount = 0;
+        }
+
+        /* Flash Futtless Flashes */
+        if( isGameOn() &&
+            pref.flash &&
+            pref.scorethisroll == 0 )
+        {
+                didflash = true;
+                for( x = 0; x < NumCubes ; x++ )
+                {
+                        if( !pref.cube[x].keep &&
+                            pref.cube[x].value == pref.flash )
+                        {
+                                if( evenodd )
+                                {
+                                        CrossCube(x);
+                                } else {
+                                        DrawCube(x);
+                                }
+                        }
+                }
+        }
+
+        return didflash;
+}
+
+
 
 
 /*
@@ -439,10 +469,10 @@ void DrawStayButton() {
         int x;
         /* By default: Show stay button, and set status to nothing */
         Boolean stay = true;
-        Int status = 0;
+        UInt16 status = 0;
 
         /* No game, no brainer */
-        if( pref.currplayer < 0 ) {
+        if( !isGameOn() ) {
                 stay = false;
                 goto end;
         }
@@ -471,7 +501,7 @@ void DrawStayButton() {
                 goto end;
         }
     
-        if( pref.player[pref.currplayer].score == 0 &&
+        if( pref.player[GetCurrPlayer()].score == 0 &&
             pref.scorethisturn < pref.openingroll )
         {
                 status = DS_OpeningRoll;
@@ -490,7 +520,7 @@ void DrawStayButton() {
         if( GetFlag( flag_Eclipse ) ) {
                 /* Are we eclipsed? */
                 for( x = 0; x < pref.totalplayers; x++ ) {
-                        if( x == pref.currplayer ) continue;
+                        if( x == GetCurrPlayer() ) continue;
                         if( pref.player[x].score == pref.currscore ) break;
                 }
     
@@ -510,7 +540,7 @@ end:
 }
 
 
-void PlaySound(Int type) {
+void PlaySound(DieType type) {
         SndCommandType          sndCmd;
 
         if ( GetFlag( flag_NoSound ) ) return;
@@ -533,25 +563,25 @@ void PlaySound(Int type) {
         case SND_ERASE_CUBE:
                 sndCmd.param2 = 1;
                 sndCmd.param1 = 261.62;
-                SndDoCmd( 0, &sndCmd, 0/*noWait*/ );
                 break;
         case SND_DRAW_CUBE:
                 sndCmd.param2 = 1;
                 sndCmd.param1 = 493.88;
-                SndDoCmd( 0, &sndCmd, 0/*noWait*/ );
                 break;
+        case SND_TOGGLE_TYPE:
+                sndCmd.param2 = 1;
+                sndCmd.param1 = 440;
         default:
                 sndCmd.param1 = 440;
-                SndDoCmd( 0, &sndCmd, 0/*noWait*/ );
                 break;
         }
             
-
+        SndDoCmd( 0, &sndCmd, 0/*noWait*/ );
 }
 
-void ShowControl(Word objID, Boolean enable) {
+void ShowControl(UInt16 objID, Boolean enable) {
 
-        if ( !enable || IsAI( pref.currplayer ) ) {
+        if ( !enable || IsAI( GetCurrPlayer() ) ) {
                 CtlHideControl( GetObjectPtr(objID) );
         } else { 
                 CtlShowControl( GetObjectPtr(objID) );
@@ -559,7 +589,7 @@ void ShowControl(Word objID, Boolean enable) {
   
 }
 
-void ShowButtons(Int show) {
+void ShowButtons(DieType show) {
         ShowControl(btn_Roll, (Boolean)show);
         if( show && GetFlag(flag_CanStay) ) {
                 ShowControl(btn_Stay, true);
@@ -568,10 +598,10 @@ void ShowButtons(Int show) {
         }
 }
 
-void DrawUserType(Short index, PlayerType type)
+void DrawUserType(UInt16 index, PlayerType type)
 {
-        Short x = NewGameUser;
-        Short y = NewGameTop + (12 * index);
+        Int16 x = NewGameUser;
+        Int16 y = NewGameTop + (12 * index);
         RectangleType r = { {x-1, y-1},
                             {11, 11} };
 
@@ -599,7 +629,7 @@ void DrawUserType(Short index, PlayerType type)
 }
 
 #ifdef DEBUG
-void EQStatus(Int x)
+void EQStatus(UInt16 x)
 {
         WinInvertLine( 0 + x*3, 159,
                        1 + x*3, 159);

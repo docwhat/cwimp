@@ -45,6 +45,22 @@
 #define fldNGname6	9016
 #define fldNGname7	9017
 
+#define bmpWhite	9020
+#define bmp10w		9021
+#define bmp2w		9022
+#define bmp3w		9023
+#define bmp4w		9024
+#define bmp5w		9025
+#define bmp6w		9026
+
+#define bmpBlack	9030
+#define bmp10b		9031
+#define bmp2b		9032
+#define bmpfsb		9033
+#define bmp4b		9034
+#define bmp5b		9035
+#define bmp6b		9036
+
 /* PLAYER
  * Coodinates and extents for drawing the player names and scores
  * TL means TopLeft

@@ -19,7 +19,7 @@
 
 */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 #include "lowlevel.h"
 
 /* DrawBitmap -- Places a bitmap at a specified location
@@ -29,12 +29,17 @@
  *     int   formY     -- Y location on the form
  * Returns: None
  */
-void DrawBitmap (Word BitmapID, int formX, int formY)
+void DrawBitmap (UInt16 BitmapID, UInt16 formX, UInt16 formY)
 {
-  VoidHand resourceHandle;
+  MemHandle resourceHandle;
   BitmapPtr bitmapPntr;
 
   resourceHandle = DmGetResource(bitmapRsc, BitmapID);
+  if( resourceHandle == NULL )
+  {
+          ErrDisplay( "DrawBitmap: resourceHandle == NULL" );
+          return;
+  }
   bitmapPntr = MemHandleLock(resourceHandle);
   WinDrawBitmap(bitmapPntr, formX, formY);
   MemPtrUnlock(bitmapPntr);
@@ -49,9 +54,9 @@ void DrawBitmap (Word BitmapID, int formX, int formY)
  * Returns:
  *     FieldPtr          -- Ptr to the field set.
  */
-FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP)
+FieldPtr SetFieldTextFromStr(UInt16 fieldID, Char *strP)
 {
-  VoidHand txtH;
+  MemHandle txtH;
   
   txtH = MemHandleNew(StrLen(strP) + 1);
   if(!txtH) return NULL;
@@ -73,39 +78,47 @@ FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP)
  * Returns:
  *     FieldPtr          -- Ptr to the field set.
  */
-FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH)
+FieldPtr SetFieldTextFromHandle(UInt16 fieldID, MemHandle txtH)
 {
-  Handle   oldTxtH;
-  FormPtr  frm = FrmGetActiveForm();
-  FieldPtr fldP;
+        MemHandle	oldTxtH;
+        FormPtr		frm = FrmGetActiveForm();
+        FieldPtr	fldP;
 
-  fldP = FrmGetObjectPtr(frm, FrmGetObjectIndex(frm, fieldID));
-  ErrNonFatalDisplayIf(fldP == NULL, "missing field");
-  oldTxtH = FldGetTextHandle(fldP);
+        fldP = FrmGetObjectPtr(frm, FrmGetObjectIndex(frm, fieldID));
+        ErrNonFatalDisplayIf(fldP == NULL, "missing field");
+        oldTxtH = FldGetTextHandle(fldP);
+        
+        FldSetTextHandle(fldP, txtH);
+        // FldEraseField( fldP );
+        FldDrawField(fldP);
+        
+        if (oldTxtH)
+        {
+                MemHandleFree(oldTxtH);
+        }
 
-  FldSetTextHandle(fldP, (Handle) txtH);
-  // FldEraseField( fldP );
-  FldDrawField(fldP);
-
-  if (oldTxtH)
-    MemHandleFree((VoidHand) oldTxtH);
-
-  return fldP;
+        return fldP;
 }
 
 
-VoidPtr GetObjectPtr (Word objID) {
-  FormPtr frm;
-  
-  frm = FrmGetActiveForm();
-  
-  return (FrmGetObjectPtr (frm, FrmGetObjectIndex (frm, objID)));
+void* GetObjectPtr (UInt16 objID)
+{
+        FormPtr frm;
+        
+        frm = FrmGetActiveForm();
+        
+        return (FrmGetObjectPtr (frm, FrmGetObjectIndex (frm, objID)));
 }
 
-
-
-void ClearFieldText(Word fieldID)
+void SetFocus(UInt16 objID)
 {
-  SetFieldTextFromHandle(fieldID,NULL);
+        FormPtr frm = FrmGetActiveForm();
+
+        FrmSetFocus( frm, FrmGetObjectIndex( frm, objID ) );
+}
+
+void ClearFieldText(UInt16 fieldID)
+{
+        SetFieldTextFromHandle(fieldID,NULL);
 }
 

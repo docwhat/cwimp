@@ -16,6 +16,7 @@ shift
 
 $CC -MM $* > $TMPFILE || die
 
-sed -e 's@^\(.*\)\.o:@deps/\1.d objs/\1.o:@' $TMPFILE || die
+#sed -e 's@^\(.*\)\.o:@deps/\1.d objs/\1.o:@' $TMPFILE || die
+sed -e 's@^\(.*\)\.o:@objs/\1.o:@' $TMPFILE || die
 
 rm -f $TMPFILE

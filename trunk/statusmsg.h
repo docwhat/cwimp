@@ -19,5 +19,5 @@
 
  */
 
-extern void DrawStatus();
+extern void statusmsgDrawStatus();
 extern void DialogStatus();

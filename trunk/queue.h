@@ -21,11 +21,12 @@
 #ifndef _QUEUE_H_
 #define _QUEUE_H_
 
-#include <Pilot.h>
+#include <PalmOS.h>
+#include "data.h"
 
 struct EQueueStruct {
-  void (*func)(Int);
-  Int data;
+  void (*func)(DieType);
+  DieType data;
   struct EQueueStruct *next;
 };
 
@@ -34,12 +35,12 @@ typedef EQ* EQPtr;
 
 extern EQPtr EQueue;
 
-void EQInit(void);
-void EQAdd(void (*func)(Int), Int data);
+void	EQInit(void);
+void	EQAdd(void (*func)(DieType), DieType data);
 Boolean EQRunNext(void);
 Boolean EQIsEmpty(void);
-void EQDrain(void);
-void EQReset(void);
-void EQNOP(Int x);
+void	EQDrain(void);
+void	EQReset(void);
+void	EQNOP(DieType x);
 
 #endif

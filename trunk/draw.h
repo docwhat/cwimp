@@ -35,28 +35,32 @@ void DrawIntro();
 void DrawCurrScore();
 void DrawState();
 
-void DrawCube(Int die);
-void EraseCube(Int die);
-void DrawBlackCube(Int die);
-void DrawWhiteCube(Int die);
-void CrossCube(Int die);
+void DrawCube(DieType die);
+void EraseCube(DieType die);
+void DrawBlackCube(DieType die);
+void DrawWhiteCube(DieType die);
+void CrossCube(DieType die);
 
 void DrawPlayers(void);
-void DrawPlayer(Int player);
+void DrawPlayer(UInt8 player);
 void ClearKeepBits(void);
-void DrawKeepBit(Int die);
+void DrawKeepBit(DieType die);
 void DrawTopStatusButton();
+void DrawStatus();
+
+Boolean DrawFlashies();
+
 void DrawRollButton();
 void DrawStayButton();
 
-void PlaySound(Int type);
+void PlaySound(DieType type);
 
-void ShowControl(Word objID, Boolean enable);
-void ShowButtons(Int show);
-void DrawUserType(Short index, PlayerType type);
+void ShowControl(UInt16 objID, Boolean enable);
+void ShowButtons(DieType show);
+void DrawUserType(UInt16 index, PlayerType type);
 
 #ifdef DEBUG
-void EQStatus(Int x);
+void EQStatus(UInt16 x);
 #endif
 
 #endif

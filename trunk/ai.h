@@ -21,9 +21,9 @@
 #ifndef _AI_H_
 #define _AI_H_
 
-void CheckAI(void);
-void AITurn(void);
-Int AIChooseTwo( Int c1, Int c2 );
-Int AIChooseThree( Int c1, Int c2, Int c3 );
+void	CheckAI(void);
+void	AITurn(void);
+DieType	AIChooseTwo( DieType c1, DieType c2 );
+DieType	AIChooseThree( DieType c1, DieType c2, DieType c3 );
 
 #endif

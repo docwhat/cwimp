@@ -43,13 +43,13 @@ my $Defines = "#ifndef _VARIOUS_STRINGS_H_\n" .
 
 #    "#include <System/SysAll.h>\n" . 
 #    "#include <UI/UIAll.h>\n" .
-my $DrawStatus = "#include <Pilot.h>\n" . 
+my $DrawStatus = "#include <PalmOS.h>\n" . 
     "#include \"autogen.h\"\n" .
     "#include \"game.h\"\n" .
     "#include \"data.h\"\n" .
     "#include \"statusmsg.h\"\n" .
     "#include \"lowlevel.h\"\n\n"  .
-    "void DrawStatus() {\n" .
+    "void statusmsgDrawStatus() {\n" .
     "  Char msg[PLAYERMaxName+1];\n\n" .
     "  switch ( pref.status ) {\n";
 

@@ -22,11 +22,12 @@
 #ifndef _LOWLEVEL_H_
 #define _LOWLEVEL_H_
 
-void     DrawBitmap (Word BitmapID, int formX, int formY);
-FieldPtr SetFieldTextFromStr(Word fieldID, CharPtr strP);
-FieldPtr SetFieldTextFromHandle(Word fieldID, VoidHand txtH);
+void     DrawBitmap (UInt16 BitmapID, UInt16 formX, UInt16 formY);
+FieldPtr SetFieldTextFromStr(UInt16 fieldID, Char *strP);
+FieldPtr SetFieldTextFromHandle(UInt16 fieldID, MemHandle txtH);
 
-VoidPtr GetObjectPtr (Word objID);
-void     ClearFieldText(Word fieldID);
+void*	GetObjectPtr(UInt16 objID);
+void	SetFocus(UInt16 objID);
+void	ClearFieldText(UInt16 fieldID);
 
 #endif

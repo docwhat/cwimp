@@ -19,7 +19,7 @@
 
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 
 #include "cwimp.h"
 #include "data.h"
@@ -28,7 +28,7 @@
 struct Storage pref;
 Boolean StayBit; // Normally false, unless player wants to stay.
 Boolean FreezeBit; // Freeze animations, etc. till this is done.
-UInt SoundAmp; // Set according to sound preferences.
+UInt16 SoundAmp; // Set according to sound preferences.
 
 /* ResetCubes -- Resets all the cubes and draws them.
  * Args:    None    
@@ -36,35 +36,42 @@ UInt SoundAmp; // Set according to sound preferences.
  */
 void ResetCubes(void)
 {
-  Short x = 0;
+        Int16 x = 0;
 
-  FreezeBit = true;
-  EQReset();
+        FreezeBit = true;
+        EQReset();
 
-  for (x = 0; x < NumCubes; x++) {
-    pref.cube[x].value = pref.cube[x].keep = 0;
-  }
+        for (x = 0; x < NumCubes; x++) {
+                pref.cube[x].value = pref.cube[x].keep = 0;
+        }
 
-  pref.scorethisturn = 0;
-  pref.scorethisroll = 0;
-  pref.currscore = 0;
+        pref.scorethisturn = 0;
+        pref.scorethisroll = 0;
+        pref.currscore = 0;
 
-  pref.currplayer = -1; // No Game Running
+        pref.clearedscreen = true;
 
-  pref.flash = 0;
-  pref.YMNWTBYM = false;
+        pref.flash = 0;
+        pref.YMNWTBYM = false;
 
-  pref.leader = -1;
-  /* DO NOT use SetStatus() here.  It calls draw    *
-   * functions which don't work upon initialization */
-  pref.status = 0;
+        pref.leader = -1;
+        /* DO NOT use SetStatus() here.  It calls draw    *
+         * functions which don't work upon initialization */
+        pref.status = 0;
 
-  StayBit = false;
+        StayBit = false;
+
+        EndGame();
 }			
+
+void EndGame(void)
+{
+        pref.currplayer = -1; // No Game Running
+}
 
 void NewGame(void)
 {
-        Short x;
+        Int16 x;
 
         pref.flash = 0;
         pref.YMNWTBYM = false;
@@ -74,6 +81,7 @@ void NewGame(void)
         pref.scorethisturn = 0;
         pref.scorethisroll = 0;
         pref.suspendcount = 0;
+        pref.clearedscreen = false;
 
         for (x = 0; x < NumCubes; x++) {
                 pref.cube[x].value = 0;
@@ -81,10 +89,14 @@ void NewGame(void)
         }
 
         pref.currplayer = -1;
-        for (x = 0; x < pref.totalplayers ; x++ )
+        for (x = 0; x < MaxPlayers ; x++ )
         {
-                if( pref.currplayer < 0 &&
-                    pref.player[x].type == PlayerNone )
+                if( pref.player[x].type == PlayerNone )
+                {
+                        continue;
+                }
+
+                if( pref.currplayer < 0 )
                 {
                         pref.currplayer = x;
                 }
@@ -115,14 +127,19 @@ Boolean isCurrLeader(void)
 
 Boolean isGameOn(void)
 {
-        if( pref.currplayer >= 0 )
+        if( pref.currplayer >= 0 && !pref.clearedscreen )
         {
                 return true;
         }
         return false;
 }
 
-Boolean isLostPlayer(Short player)
+inline Boolean isCleared(void)
+{
+        return pref.clearedscreen;
+}
+
+Boolean isLostPlayer(Int16 player)
 {
         if( pref.player[player].lost )
         {
@@ -131,19 +148,19 @@ Boolean isLostPlayer(Short player)
         return false;
 }
 
-inline PlayerType GetPlayerType(Short player)
+inline PlayerType GetPlayerType(Int16 player)
 {
         return pref.player[player].type;
 }
 
-inline Short GetCurrPlayer(void)
+inline UInt16 GetCurrPlayer(void)
 {
         return pref.currplayer;
 }
 
-Short GetNextPlayer(void)
+UInt16 GetNextPlayer(void)
 {
-        Short p = pref.currplayer + 1;
+        Int16 p = pref.currplayer + 1;
         
         do
         {
@@ -169,7 +186,7 @@ Short GetNextPlayer(void)
         return(-1);
 }
 
-Char *GetName( Short player )
+Char *GetName( Int16 player )
 {
         switch ( pref.player[player].type )
         {
@@ -189,25 +206,27 @@ Char *GetName( Short player )
 }
 
 inline
-Int GetFlag( Int flag ) {
-  return (pref.flags & flag);
+Boolean GetFlag( Int32 flag ) {
+        Int32 x;
+        x = pref.flags & flag;
+        return (pref.flags & flag) > 0;
 }  
 
-void SetFlag( Int f, Boolean b ) {
-  if( b ) {
-    pref.flags |= f;
-  } else {
-    pref.flags &= ~f;
-  }
+void SetFlag( Int32 flag, Boolean b ) {
+        if( b ) {
+                pref.flags |= flag;
+        } else {
+                pref.flags &= ~flag;
+        }
 }
 
-Boolean IsAI( Int player ) {
+Boolean IsAI( Int16 player ) {
         return pref.player[player].type == PlayerAI;
 }
 
 void LoadPrefs()
 {
-  Word x,size;
+  UInt16 x, size;
 
   /* Initialize EventQueue */
   EQInit();
@@ -235,11 +254,12 @@ void SavePrefs()
 /* Defaults() -- Resets the game to default status
  */
 void Defaults(void) {
-        Word i;
+        UInt16 i;
   
         /* These only get set if the storage structures have changed */
         pref.openingroll = DEFAULT_OPENINGROLL;
         pref.totalplayers = 1;
+        pref.clearedscreen = true;
         pref.nTrainWrecks = DEFAULT_nTRAINWRECKS;
         pref.nSuspend = DEFAULT_nSUSPEND;
         pref.winscore = DEFAULT_WINSCORE;
@@ -249,6 +269,7 @@ void Defaults(void) {
         for( i = 0; i < MaxPlayers; i++ ) {
                 //StrCopy( pref.player[i].name, PlayerDefNames[i] );
                 pref.player[i].score = 0;
+                pref.player[i].type = PlayerNone;
         }
 
         pref.player[0].type = PlayerHuman;

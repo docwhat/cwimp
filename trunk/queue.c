@@ -27,11 +27,13 @@ EQPtr EQueue;
 
 static 
 EQPtr
-newEvent(void (*func)(Int), Int data) {
+newEvent(void (*func)(DieType), DieType data) {
   EQPtr new;
 
   new = MemPtrNew(sizeof(EQ));
+
   ErrNonFatalDisplayIf(new == NULL, "Queue:new failed to get memory");
+
   new->next = NULL;
   new->func = func;
   new->data = data;
@@ -44,7 +46,7 @@ void EQInit(void) {
   EQueue = newEvent(NULL,0);
 }
   
-void EQAdd(void (*func)(Int),Int data) {
+void EQAdd(void (*func)(DieType),DieType data) {
   EQPtr ptr;
   
   ptr = EQueue;
@@ -57,8 +59,8 @@ void EQAdd(void (*func)(Int),Int data) {
 
 Boolean EQRunNext(void) {
   EQPtr ptr;
-  void (*func)(Int);
-  Int data;
+  void (*func)(DieType);
+  DieType data;
 
   ptr = EQueue->next;
 
@@ -109,7 +111,7 @@ Boolean EQIsEmpty(void)
 }
 
 
-void EQNOP(Int x)
+void EQNOP(DieType x)
 {
   /* Does Nothing! */
   return;

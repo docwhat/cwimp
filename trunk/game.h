@@ -23,6 +23,7 @@
 #define _GAME_H_
 
 #include "drawcon.h"
+#include "data.h"
 
 #define FlamingSun  3  // There isn't a 3 on the BlackDie...
 
@@ -32,18 +33,18 @@ void CountCube(void);
 
 void Roll(void);
 void Stay(void);
-void AddScore(Short points);
-void ScoreRoll(Int nop); /* nop is junk */
-void TurnLogic(Int nop); /* nop is junk */
+void AddScore(Int16 points);
+void ScoreRoll(DieType nop); /* nop is junk */
+void TurnLogic(DieType nop); /* nop is junk */
 
-void SetStatus( Int status );
+void SetStatus(DieType status );
 
-void NextPlayer(Int nop); /* nop is junk */
+void NextPlayer(DieType nop); /* nop is junk */
 
 void GameEvents(void);
 void NewGame(void);
 void PlayerWon(void);
 void NobodyWon(void);
-void PlayerLost( Short player, CharPtr ptrString );
+void PlayerLost(Int16 player, Char *ptrString );
 
 #endif

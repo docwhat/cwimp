@@ -30,7 +30,7 @@ DFLAGS = -g -DDEBUG \
 #-nostartfiles 
 CFLAGS = -Wall -O2 $(DFLAGS)\
 	-DLANG=$(LANGUAGE) \
-	-DVERSION='"$(VERSION)"' -palmos2
+	-DVERSION='"$(VERSION)"' -palmos3.5
 # ERROR_CHECK_LEVEL sets the level to ERROR_CHECK_FULL or PARTIAL or 0
 #
 # Debug Rolling turns of 'rigged' rolling
@@ -53,33 +53,40 @@ VERSION=$(shell $(FIXVERSION) version)
 
 all: $(TARGET).$(LANGUAGE).prc
 
-deps/%.d: $(PREDEPENDS) $(DEPEND) %.c
+release:
+	$(MAKE) LANGUAGE=en DFLAGS="" prc
+
+# %.c
+deps/%.d: $(PREDEPENDS) $(DEPEND)
 	@echo -- Making dependency info for $*.c
 	@if [ ! -d deps ]; then mkdir deps ; fi
-	$(DEPEND) $(CC) $(CFLAGS) $*.c > $@ || rm -f $@
+	@$(DEPEND) $(CC) $(CFLAGS) $*.c > $@ || rm -f $@
 
 objs/%.o: %.c
 	@echo -- Compiling $*.c
-	$(CC) $(CFLAGS) -c -o objs/$*.o $*.c
+	@$(CC) $(CFLAGS) -c -o objs/$*.o $*.c
 
 autogen.h: $(TARGET).rcp images
 	@echo -- Pilrc\'ing $*
 	@if [ ! -d objs ]; then mkdir objs ; fi
-	$(PILRC) -q -L $(LANGUAGE) -H autogen.h $(TARGET).rcp objs/
+	@$(PILRC) -q -L $(LANGUAGE) -H autogen.h $(TARGET).rcp objs/
 
 
 $(TARGET).rcp: $(TARGET).rcp.in version $(FIXVERSION) statusmsg.rcp
 	@echo -- Fixing version and building $@
-	$(FIXVERSION) $<
+	@$(FIXVERSION) $<
+
+prc: $(TARGET).$(LANGUAGE).prc
 
 $(TARGET).$(LANGUAGE).prc: autogen.h objs/code0000.cwimp.grc
 	@echo -- Building $@
-	cd objs && \
+	@cd objs && \
 	$(BUILDPRC) ../$(TARGET).$(LANGUAGE).prc $(APPNAME) $(APPID) *.grc *.bin
+	@echo -n 'built size:' `ls -s $@`
 
 objs/%.grc: objs/$(TARGET)
 	@echo -- Converting objects $*
-	cd objs && \
+	@cd objs && \
 	$(OBJRES) $(TARGET)
 
 STATUSMSGS:= statusmsgstrings.h statusmsg.c statusmsg.rcp
@@ -89,7 +96,7 @@ $(STATUSMSGS): statusmsg.$(LANGUAGE).txt $(MKSTATUSMSG)
 
 objs/$(TARGET): autogen.h $(OBJECTS)
 	@echo -- Compiling $@
-	$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $@ 
+	@$(CC) $(CFLAGS) $(LIBS) $(OBJECTS) -o $@ 
 
 clean:
 	rm -f objs/* *~ *.bak core autogen.h
@@ -110,19 +117,18 @@ ChangeLog:
 
 zip: srczip binzip
 
-srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip .info.$(TARGET).$(VERSION).src: veryclean ChangeLog
+srczip $(TARGET).$(VERSION).$(LANGUAGE).src.zip:
+	$(MAKE) veryclean ChangeLog
 	-rm -f $(TARGET).*.src.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).src.zip \
 		cwimp \
 		-x cwimp/CVS/\* -x \*.d
 	mv ../$(TARGET).$(VERSION).src.zip .
-#	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).src
-#	echo -e "\nCWimp Source\nVersion $(VERSION)" > \
-#	.info.$(TARGET).$(VERSION).$(LANGUAGE).src
 
-binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LANGUAGE).bin:
-	$(MAKE) $(TARGET).$(LANGUAGE).prc ChangeLog
+binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip:
+	$(MAKE) ChangeLog
+	$(MAKE) release
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).$(LANGUAGE).bin.zip \
@@ -130,9 +136,6 @@ binzip $(TARGET).$(VERSION).$(LANGUAGE).bin.zip .info.$(TARGET).$(VERSION).$(LAN
 		cwimp/ChangeLog \
 		cwimp/README
 	mv ../$(TARGET).$(VERSION).$(LANGUAGE).bin.zip .
-	rm -f .info.$(TARGET).$(VERSION).$(LANGUAGE).bin
-#	echo -e "\nCWimp\nVersion $(VERSION)" > \
-#	.info.$(TARGET).$(VERSION).$(LANGUAGE).bin
 
 
 TAGS: $(SOURCES) $(wildcard *.h)
@@ -142,7 +145,7 @@ archive: zip
 	scp $(TARGET).*.zip .info.$(TARGET)* gerf.org:web/files/palm/cwimp/
 
 
-install: $(TARGET).$(LANGUAGE).prc
+install:
 	$(PILOTXFER) $(TARGET).$(LANGUAGE).prc
 
 setver:
@@ -151,7 +154,7 @@ setver:
 	cvs tag `tail -n 1 version | sed 's/[ \.]/\-/g'`
 
 .PHONY: depend clean veryclean zip archive floppy srczip binzip bin-res \
-	setver
+	setver prc
 
 # Include the dependency info
 include $(patsubst %.c,deps/%.d, $(SOURCES))

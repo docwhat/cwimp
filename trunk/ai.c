@@ -19,7 +19,7 @@
 
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 
 #include "autogen.h"
 #include "game.h"
@@ -29,7 +29,7 @@
 void CheckAI(void)
 {
   Boolean isai;
-  isai = IsAI( pref.currplayer );
+  isai = IsAI( GetCurrPlayer() );
 
   SetFlag( flag_PendingAI, isai );
   if( isai ) SetStatus( DS_Thinking );
@@ -50,7 +50,7 @@ void AITurn(void)
   return;
 }
 
-Int AIChooseTwo( Int c1, Int c2 )
+DieType AIChooseTwo( DieType c1, DieType c2 )
 {
   /* This doesn't matter much, unless it is a choice between 10 and 5 */
   if( c2 == 1 )
@@ -59,9 +59,9 @@ Int AIChooseTwo( Int c1, Int c2 )
   return c1;
 }
 
-Int AIChooseThree( Int c1, Int c2, Int c3 )
+DieType AIChooseThree( DieType c1, DieType c2, DieType c3 )
 {
-  Short x, count;
+  DieType x, count;
 
   count = 0;
   for( x = 0 ; x < NumCubes ; x++ ) {

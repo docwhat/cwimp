@@ -19,14 +19,13 @@
 
  */
 
-#include <Pilot.h>
+#include <PalmOS.h>
 /* #include <SysEvtMgr.h> */
 
 #include "autogen.h"
 #include "cwimp.h"
 #include "lowlevel.h"
 #include "game.h"
-#include "statusmsg.h"
 #include "statusmsgstrings.h"
 #include "draw.h"
 #include "data.h"
@@ -34,7 +33,7 @@
 
 #include "dialog.h"
 
-static Char **val2name = (CharPtr[]) { NoneString,
+static Char **val2name = (Char*[]) { NoneString,
                                        TenString,
                                        TwoString,
                                        ThreeString,
@@ -52,19 +51,19 @@ struct {
  ***** Local Functions
  *****
  */
-static void ToggleCheck( Word objID, Int flag )
+static void ToggleCheck( UInt16 objID, UInt32 flag )
 {
         CtlSetValue( GetObjectPtr( objID ),
                      !GetFlag(flag) );
         SetFlag( flag, !GetFlag(flag) );
 }
 
-static void NewGameToggleType( Short );
+static void NewGameToggleType( Int16 );
 
-static Short NewGamePlayerCount()
+static Int16 NewGamePlayerCount(void)
 {
-        Short x;
-        Short count = 0;
+        Int16 x;
+        Int16 count = 0;
         
         for( x = 0; x < MaxPlayers; x++ )
         {
@@ -82,6 +81,7 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
         Boolean handled = false;
         Char tmpString[5];
         FormPtr frm;
+        UInt8 p;
     
         switch (e->eType) {
         case frmOpenEvent:
@@ -96,9 +96,13 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
                     e->screenY > NewGameTop &&
                     e->screenY < (NewGameTop + 12 * MaxPlayers) )
                 {
-                        Int p;
-                        p = (Int) ( ( e->screenY - NewGameTop ) / 12 );
+                        p = (UInt8) ( ( e->screenY - NewGameTop ) / 12 );
                         NewGameToggleType( p );
+                        if( tmppref[p].type != PlayerNone )
+                        {
+                                SetFocus( fldNGname0 + p );
+                        }
+                        handled = true;
                 }
                 break;
 
@@ -108,6 +112,7 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 		
                 case btn_Variants_frmNewGame:
                         DialogVariants();
+                        handled = true;
                         break;
                         
                 case btn_OK_frmNewGame:
@@ -120,6 +125,7 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 
                         StrIToA( tmpString, DEFAULT_OPENINGROLL );
                         SetFieldTextFromStr( fld_openingroll, tmpString );
+                        handled = true;
                         break;
                 }
                 break;
@@ -146,7 +152,7 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
                 break;
 
         case ctlSelectEvent:
-                if( pref.currplayer >= 0 ) {
+                if( isGameOn() ) {
                         /* The player *cannot* continue a
                            game once they alter variants */
                         ResetCubes(); 
@@ -188,7 +194,7 @@ static Boolean DialogVariantsHandleEvent (EventPtr e)
 }
 
 
-static void NewGameSetPlayerName( Int field, Short player)
+static void NewGameSetPlayerName( UInt16 field, Int16 player)
 {
         if( tmppref[player].type == PlayerNone )
         {
@@ -206,10 +212,10 @@ static void NewGameSetPlayerName( Int field, Short player)
         return;
 }
 
-static void NewGameGetPlayerName( Int field, Short player)
+static void NewGameGetPlayerName( UInt16 field, Int16 player)
 {
         FormPtr frm = FrmGetActiveForm();
-        CharPtr buff;
+        Char *buff;
 
         if( tmppref[player].type == PlayerNone )
         {
@@ -235,7 +241,7 @@ static void NewGameGetPlayerName( Int field, Short player)
 }
 
 
-static void NewGameToggleType( Short p )
+static void NewGameToggleType( Int16 p )
 {
         NewGameGetPlayerName( fldNGname0 + p, p );
         tmppref[p].type = (tmppref[p].type + 1) % 3;
@@ -255,12 +261,12 @@ static void NewGameToggleType( Short p )
 
 void DialogNewGame() {
         FormPtr prevForm, frm;
-        Word hitButton;
+        UInt16 hitButton;
         Char tmpString[5];
-        CharPtr text;
-        Word  fldIndex;
-        Int x;
-  
+        Char *text;
+        UInt16 x;
+        UInt16 num;
+                
         // Save previous form
         prevForm = FrmGetActiveForm();
         FrmSetFocus( prevForm, noFocus );
@@ -298,9 +304,7 @@ void DialogNewGame() {
         StrIToA( tmpString, pref.openingroll );
         SetFieldTextFromStr( fld_openingroll, tmpString );
 
-        // Set the focus to this field so the user can just start typing.
-        fldIndex =  FrmGetObjectIndex( frm, fldNGname0 );
-        FrmSetFocus( frm, fldIndex );
+        SetFocus( fld_openingroll );
 
         // Set the handler
         FrmSetEventHandler(frm, DialogNewGameHandleEvent);
@@ -310,23 +314,23 @@ void DialogNewGame() {
         FrmSetFocus( frm, noFocus );
 
         if ( hitButton == btn_OK_frmNewGame ) {
-                Int num;
-    
+
+                /* Get the score needed to win */
                 pref.winscore = DEFAULT_WINSCORE;
-                text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
+                text = FldGetTextPtr( GetObjectPtr( fld_winscore ) );
                 if ( text != NULL ) {
                         num = StrAToI( text );
                         if( num <= 9999 && num >= 50 ) {
                                 pref.winscore = num;
                         }
                 }
-    
+
+                /* Get the score needed to open game */
                 pref.openingroll = DEFAULT_OPENINGROLL;
-                fldIndex =  FrmGetObjectIndex(frm, fld_openingroll);
-                text = FldGetTextPtr( FrmGetObjectPtr (frm, fldIndex) );
+                text = FldGetTextPtr( GetObjectPtr( fld_openingroll ) );
                 if ( text != NULL ) {
                         num = StrAToI( text );
-                        if( num < pref.winscore && num > 0 ) {
+                        if( num <= pref.winscore && num >= 0 ) {
                                 pref.openingroll = num;
                         }
                 }
@@ -348,6 +352,12 @@ void DialogNewGame() {
                         {
                                 pref.totalplayers++;
                         }
+
+                }
+
+                if( pref.totalplayers > 0 )
+                {
+                        NewGame();
                 }
         }
 
@@ -359,11 +369,6 @@ void DialogNewGame() {
                 FrmSetActiveForm(prevForm);
         }
 
-
-        if ( hitButton == btn_OK_frmNewGame ) {
-                NewGame();
-        }
-
         DrawState();
 }
 
@@ -371,10 +376,10 @@ void DialogNewGame() {
 
 void DialogVariants() {
         FormPtr prevForm, frm;
-        Word hitButton;
-        Word fldIndex;
+        UInt16 hitButton;
+        UInt16 fldIndex;
         Char tmpString[3];
-        CharPtr text;
+        Char* text;
   
         // Save previous form
         prevForm = FrmGetActiveForm();
@@ -439,11 +444,11 @@ void DialogVariants() {
 }
 
 
-void DialogOK ( Word frmname, Short p1, Short p2 ) {
+void DialogOK ( UInt16 frmname, UInt16 p1, UInt16 p2 ) {
         FormPtr prevForm, frm;
-        Word hitButton;
+        UInt16 hitButton;
         Char msg[(PLAYERMaxName * 2) + 128];
-        Word fieldname = 0;
+        UInt16 fieldname = 0;
 
         switch ( frmname ) {
         case frmNextPlayer: 
@@ -552,11 +557,11 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
 }
 
 
-Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 ) {
+DieType DialogChooseTwo( Char* fText, DieType c1, DieType c2 ) {
         FormPtr prevForm, frm;
-        Word hitButton;
+        UInt16 hitButton;
 
-        if( IsAI( pref.currplayer ) ) {
+        if( IsAI( GetCurrPlayer() ) ) {
                 return AIChooseTwo( c1, c2 );
         }
   
@@ -593,13 +598,13 @@ Int DialogChooseTwo( CharPtr fText, Int c1, Int c2 ) {
 }
 
 
-Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 )
+DieType DialogChooseThree( Char* fText, DieType c1, DieType c2, DieType c3 )
 {
 			
         FormPtr prevForm, frm;
-        Word hitButton;
+        UInt16 hitButton;
 
-        if( IsAI( pref.currplayer ) ) {
+        if( IsAI( GetCurrPlayer() ) ) {
                 return AIChooseThree( c1, c2, c3 );
         }
   
@@ -640,7 +645,7 @@ Int DialogChooseThree( CharPtr fText, Int c1, Int c2, Int c3 )
 
 void DialogPreferences() {
         FormPtr prevForm, frm;
-        Word hitButton;
+        UInt16 hitButton;
   
         // Save previous form
         prevForm = FrmGetActiveForm();

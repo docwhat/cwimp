@@ -22,7 +22,7 @@
 #ifndef _LOWLEVEL_H_
 #define _LOWLEVEL_H_
 
-void sgenrand(unsigned short seed);
-unsigned short genrand(void);
+void	seedMT(UInt32 seed);
+UInt32	randomMT(void);
 
 #endif
