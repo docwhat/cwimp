@@ -28,7 +28,7 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 8
+#define storVersion 9
 #define NumCubes    5  // Number of cubes
 #define MaxPlayers 10  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */

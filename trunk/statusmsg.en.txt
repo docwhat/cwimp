@@ -285,9 +285,6 @@ Sampler, worth 50 points.
 FullHouse:\n
 ToDo
 
-Insurance Points:\n
-ToDo
-
 Suspend:\n
 If you take more than (n) rolls to clear a Flash, your turn will be suspended
 and your turn will be ended.  Upon it being your turn again, then your
