@@ -910,17 +910,18 @@ static void SetPlayers( Short num ) {
   ControlPtr cPtr;
   Word oIdx;
 
+  /* Bounds checking */
   if( num > MaxPlayers || num < 1 ) {
     ErrNonFatalDisplayIf( true, "SetPlayers: Out of Bounds");
     return;
   }
 
+  /* If it's set, we're done. */
   if( stor.tmpplayers == num ) {
     return;
   }
 
   frm = FrmGetActiveForm();
-
 
   /* Unset the old one */
   oIdx = FrmGetObjectIndex( frm, pbtnVal[stor.tmpplayers - 1] );
@@ -946,17 +947,18 @@ static void SetComputers( Short num ) {
   ControlPtr cPtr;
   Word oIdx;
 
+  /* Bounds checking */
   if( num > (MaxPlayers - 1) || num < 0 ) {
     ErrNonFatalDisplayIf( true, "SetComputers: Out of Bounds");
     return;
   }
 
+  /* If it's set, we're done. */
   if( stor.tmpcomputers == num ) {
     return;
   }
 
   frm = FrmGetActiveForm();
-
 
   /* Unset the old one */
   oIdx = FrmGetObjectIndex( frm, cbtnVal[stor.tmpcomputers] );
@@ -1006,39 +1008,27 @@ static Boolean DialogNewGameHandleEvent (EventPtr e)
 	    }
 	    break;
 
-#if 0
-	  case cbtn_0: SetComputers( 0 ); break;
-	  case cbtn_1: SetComputers( 1 ); break;
-	  case cbtn_2: SetComputers( 2 ); break;
-	  case cbtn_3: SetComputers( 3 ); break;
-	  case cbtn_4: SetComputers( 4 ); break;
-	  case cbtn_5: SetComputers( 5 ); break;
-	  case cbtn_6: SetComputers( 6 ); break;
-	  case cbtn_7: SetComputers( 7 ); break;
-	  case cbtn_8: SetComputers( 8 ); break;
-	  case cbtn_9: SetComputers( 9 ); break;
-#else
-	  case cbtn_0: 
-	  case cbtn_1: 
-	  case cbtn_2: 
-	  case cbtn_3: 
-	  case cbtn_4: 
-	  case cbtn_5: 
-	  case cbtn_6: 
-	  case cbtn_7: 
-	  case cbtn_8: 
-	  case cbtn_9: SetComputers( 0 ); break;
-#endif
-	  case pbtn_1: SetPlayers( 1 ); break;
-	  case pbtn_2: SetPlayers( 2 ); break;
-	  case pbtn_3: SetPlayers( 3 ); break;
-	  case pbtn_4: SetPlayers( 4 ); break;
-	  case pbtn_5: SetPlayers( 5 ); break;
-	  case pbtn_6: SetPlayers( 6 ); break;
-	  case pbtn_7: SetPlayers( 7 ); break;
-	  case pbtn_8: SetPlayers( 8 ); break;
-	  case pbtn_9: SetPlayers( 9 ); break;
-	  case pbtn_10: SetPlayers( 10 ); break;
+	  case cbtn_0:  SetComputers( 0 ); break;
+	  case cbtn_1:  SetComputers( 1 ); break;
+	  case cbtn_2:  SetComputers( 2 ); break;
+	  case cbtn_3:  SetComputers( 3 ); break;
+	  case cbtn_4:  SetComputers( 4 ); break;
+	  case cbtn_5:  SetComputers( 5 ); break;
+	  case cbtn_6:  SetComputers( 6 ); break;
+	  case cbtn_7:  SetComputers( 7 ); break;
+	  case cbtn_8:  SetComputers( 8 ); break;
+	  case cbtn_9:  SetComputers( 9 ); break;
+
+	  case pbtn_1:  SetPlayers( 1 );   break;
+	  case pbtn_2:  SetPlayers( 2 );   break;
+	  case pbtn_3:  SetPlayers( 3 );   break;
+	  case pbtn_4:  SetPlayers( 4 );   break;
+	  case pbtn_5:  SetPlayers( 5 );   break;
+	  case pbtn_6:  SetPlayers( 6 );   break;
+	  case pbtn_7:  SetPlayers( 7 );   break;
+	  case pbtn_8:  SetPlayers( 8 );   break;
+	  case pbtn_9:  SetPlayers( 9 );   break;
+	  case pbtn_10: SetPlayers( 10 );  break;
 
 	  }
 	  break;
