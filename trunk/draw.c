@@ -196,19 +196,25 @@ void DrawPlayerScore(Byte player) {
   StrIToA( msg, stor.player[player].score );
   SetFieldTextFromStr( fieldScorePlayer[player], msg );
 
-#if 0
   if ( stor.player[player].lost ) {
     SetFieldTextFromStr( fieldMarkPlayer[player], OutSymbol );
+    return;
   }
-  else
-#endif
- if ( player == stor.currplayer ) {
+
+  if ( player == stor.currplayer ) {
     SetFieldTextFromStr( fieldMarkPlayer[player], CurrSymbol );
-  } else {
-    ClearFieldText( fieldMarkPlayer[player] );
-    // SetFieldTextFromStr( fieldMarkPlayer[player], BlankSymbol );
+    return;
   }
+
+  if ( player == stor.leader ) {
+    SetFieldTextFromStr( fieldMarkPlayer[player], LeadSymbol );
+    return;
   }
+
+  ClearFieldText( fieldMarkPlayer[player] );
+  // SetFieldTextFromStr( fieldMarkPlayer[player], BlankSymbol );
+
+}
 
 
 void DrawCurrScore()
@@ -261,16 +267,32 @@ void DrawCube(Byte die)
 
 void DrawStayButton() {
 
-  if ( stor.flash ||
-	   stor.YMNWTBYM ||
-	   ( stor.player[stor.currplayer].score == 0 &&
-		 stor.scorethisturn < stor.openingroll ) ||
-	   stor.scorethisturn == 0
-	   ) {
-	ShowControl( btn_Stay, 0 );
-  } else {
-	ShowControl( btn_Stay, 1 );
-  }
+  if( stor.flash ||
+      stor.YMNWTBYM ||
+      stor.scorethisturn == 0 )
+    {
+      ShowControl( btn_Stay, 0 );
+      return;
+    }
+    
+  if( stor.player[stor.currplayer].score == 0 &&
+      stor.scorethisturn < stor.openingroll )
+    {
+      ShowControl( btn_Stay, 0 );
+      return;
+    }
+
+  /* If we aren't winning in last licks */
+  if( stor.leader >= 0 &&
+      stor.player[stor.leader].score >
+      ( stor.player[stor.currplayer].score + stor.scorethisturn ) )
+    {
+      ShowControl( btn_Stay, 0 );
+      return;
+    }      
+
+  /* Otherwise, show it */
+  ShowControl( btn_Stay, 1 );
 }
 
 

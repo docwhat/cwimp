@@ -220,6 +220,8 @@ void ScoreRoll() {
     // Do we have any pairs to go with our FS?
     if ( P2 ) {
       Int ret, die;
+      /* ToDo: Use a form that does *not* cover the dice and
+       *       the this roll/turn scores */
       ret = FrmCustomAlert( calertWhichFlash,
 			    val2name[P1 - 1],
 			    val2name[P2 - 1],
@@ -301,6 +303,8 @@ void ScoreRoll() {
       Int ret;
       Int die = 1;
       ret = FrmCustomAlert( calertPickScoreFS, " ", " ", " " );
+      /* ToDo: Use a form that does *not* cover the dice and
+       *       the this roll/turn scores */
 
       if( ret == 0 ) die = 5;
       // else defaults to 1 (aka '10')
@@ -312,6 +316,8 @@ void ScoreRoll() {
       Int ret;
       Int die = 2;
       ret = FrmCustomAlert( calertPickFS, " ", " ", " " );
+      /* ToDo: Use a form that does *not* cover the dice and
+       *       the this roll/turn scores */
 
       if( ret == 0 ) die = 5;
       else if( ret == 1 ) die = 1;
@@ -361,7 +367,42 @@ void TurnLogic() {
     if ( StayBit ) {
       stor.player[stor.currplayer].score += stor.scorethisturn;
     }
+    
+    if( stor.leader == stor.currplayer ) {
+      /* We've looped and we're back at the leader */
+      PlayerWon();
+      return;
+    }
 
+    /* Last Licks Stuff */
+    if( ! stor.player[stor.currplayer].lost &&
+	( stor.player[stor.currplayer].score > stor.winscore ||
+	  stor.leader >= 0 ) ) {
+      if( stor.leader < 0 ) {
+	/* Hasn't been set, this guy is it */
+	stor.leader = stor.currplayer;
+	FrmCustomAlert( calertDEBUG,
+			stor.player[stor.currplayer].name,
+			"has passed the win score, Last Licks",
+			"ToDo" );
+      } else {
+	/* We're in LastLicks already */
+	/* There is a leader, did we beat 'em */
+	if( stor.player[stor.currplayer].score >
+	    stor.player[stor.leader].score ) {
+	  stor.leader = stor.currplayer;
+	  FrmCustomAlert( calertDEBUG,
+			  "You're the leader!",
+			  stor.player[stor.currplayer].name,
+			  "ToDo" );
+	} else {
+	  /* Well, we didn't beat the leader... */
+	  PlayerLost( stor.currplayer, "Didn't beat the leader" );
+	}
+
+      } /* If(stor.leader < 0) ... */
+    } /* End Last Licks Stuff */
+  
     NextPlayer();
     return;
   }
@@ -395,22 +436,17 @@ void TurnLogic() {
 
 void NextPlayer() {
   Int x;
-#ifdef DEBUG
-  Int dd = 0;
-#endif
 
   x = stor.currplayer;
 
   while(1) {
     stor.currplayer = (stor.currplayer + 1) % stor.numplayers;
-    if ( x == stor.currplayer ) { // We've looped around
-      if ( stor.numplayers > 1 ) { // In case someone's solo
-	// Only one guy hasn't lost
-	//HaveWinner();
-	FrmCustomAlert( calertDEBUG,
-			"We have a weiner, I mean a winner!",
-			"No, I'm not telling you who.",
-			"ToDo: Do this correctly." );
+    if ( x == stor.currplayer ) {
+      /* We've looped around or there is only one player */
+      if ( stor.numplayers > 1 ) {
+	/* If there is more than one player, then this guy won */
+	PlayerWon();
+	return;
       }
       break;
     }
@@ -419,39 +455,58 @@ void NextPlayer() {
       break;
     }
 #ifdef DEBUG
-    ErrNonFatalDisplayIf( ++dd > (MaxPlayers + 4),
-                          "NextPlayer: Had to rely on dd loop check!" );
+    {
+      Int dd = 0;
+      ErrNonFatalDisplayIf( ++dd > (MaxPlayers + 4),
+			    "NextPlayer: Had to rely on dd loop check!" );
+    }
 #endif
   }
-  
+
   DrawPlayerScore( x );
   DrawPlayerScore( stor.currplayer );
-
+  
   // Clear scores
   stor.scorethisroll = stor.scorethisturn = 0;
-  if ( StayBit == true ) {
-    StayBit = false;
-    DrawStayButton();
-  }
-
+  StayBit = false;
+  DrawStayButton();
+  
   // Clear cubes
   for( x = 0 ; x < NumCubes ; x++ ) {
     stor.cube[x].keep = false;
     stor.cube[x].value = 0;
   }
 
-  stor.status = DS_NextPlayer; // Bypass StatusLine();
-
+  if( stor.currplayer == stor.leader ) {
+	PlayerWon();
+	return;
+  }
+  
   if ( stor.flags & flag_NextPlayerPopUp ) {
+    /* ToDo: Use a form that does *not* cover the dice and
+     *       the this roll/turn scores */
+    /* ToDo: The form needs an 'i' pointing to the DS_NextPlayer
+     * FrmHelp string, too */
     FrmCustomAlert( calertNEXTPLAYER,
 		    stor.player[stor.currplayer].name,
 		    " ", " ");
     DrawState();
   } else {
-    DrawStatus();
+    SetStatus( DS_NextPlayer );
+    /* Don't draw the state so you can see how the dice were left */
   }
-
+  
 }
+ 
+void PlayerWon() {
+  FrmCustomAlert( calertDEBUG,
+		  "Winner!",
+		  stor.player[stor.currplayer].name,
+		  "ToDo: Winner()" );
+  ResetCubes();
+  return;
+}
+
 
 void PlayerLost( Short player, CharPtr ptrString )
 {
@@ -468,21 +523,16 @@ void PlayerLost( Short player, CharPtr ptrString )
 
 void LoadCubes() {
   Word x,size;
-  Char msg[MaxName+1];
 
   size = sizeof(stor);
 
   x = PrefGetAppPreferences( CREATOR, 0, &stor, &size, true);
   if( (x == noPreferenceFound) || 
       (stor.version != storVersion) ) {
+    /* This totally resets the whole game. */
+    Defaults();
     ResetCubes();
-
-    // Clear player names and scores.
-    for (x = 0; x < MaxPlayers; x++) {
-      StrPrintF( msg, "Wimpy %d", x+1 );
-      StrCopy( stor.player[x].name, msg );
-      stor.player[x].score = 0;
-    }
+    
   }
 
 }
@@ -491,6 +541,35 @@ void SaveCubes() {
   PrefSetAppPreferences( CREATOR, 0, 1, &stor, sizeof(stor), true );
 }
 
+/* Defaults() -- Resets the game to default status
+ */
+void Defaults(void) {
+  Word x;
+  
+  /* These only get set if the storage structures have changed */
+  stor.version = storVersion;
+  stor.openingroll = 35;
+  stor.numplayers = 1;
+  stor.numcomputers = 0;
+  stor.winscore = 300;
+  stor.flags = 0;
+  
+  // Clear player names and scores.
+  StrCopy( stor.player[0].name, "Scooter" );
+  StrCopy( stor.player[1].name, "Fozzie" );
+  StrCopy( stor.player[2].name, "Kermit" );
+  StrCopy( stor.player[3].name, "Gonzo" );
+  StrCopy( stor.player[4].name, "Ms. Piggy" );
+  StrCopy( stor.player[5].name, "Animal" );
+  StrCopy( stor.player[6].name, "Rowlf" );
+  StrCopy( stor.player[7].name, "Robin" );
+  StrCopy( stor.player[8].name, "Statler" );
+  StrCopy( stor.player[9].name, "Waldorf" );
+  
+  for (x = 0; x < MaxPlayers; x++) {
+    stor.player[x].score = 0;
+  }
+}
 
 /* ResetCubes -- Resets all the cubes and draws them.
  * Args:    None    
@@ -500,7 +579,10 @@ void ResetCubes(void)
 {
   Short x = 0;
 
-  stor.version = storVersion;
+  if ( stor.version != storVersion ) {
+    /* These only get set if the storage structures have changed */
+    Defaults();
+  }
 
   for (x = 0; x < NumCubes; x++) {
     stor.cube[x].value = stor.cube[x].keep = 0;
@@ -508,35 +590,47 @@ void ResetCubes(void)
 
   stor.scorethisturn = 0;
   stor.scorethisroll = 0;
-  // We don't need to zero numcomputers and numplayers, we
-  // can save the info for next time.
 
   stor.currplayer = -1; // No Game Running
 
   stor.flash = 0;
-  stor.flags = 0;
   StayBit = false;
   stor.YMNWTBYM = false;
-  stor.openingroll = 35;
-  stor.winscore = 300;
+
+  stor.leader = -1;
+  /* DO NOT use SetStatus() here.  It calls draw    *
+   * functions which don't work upon initialization */
   stor.status = 0;
 }			
 
-void StatusLine( ) {
+void StatusLine( )
+{
 
-  stor.status = -1;
-  
-  if ( stor.YMNWTBYM ) {
-    stor.status = DS_YMNWTBYM;
-  } 
-  else if ( stor.flash ) {
-    stor.status = DS_MustClearFlash;
+  if( stor.YMNWTBYM && stor.flash ) {
+    SetStatus( DS_YMNWTFlash );
+    return;
   }
-  	
-  DrawStatus();
+
+  if ( stor.YMNWTBYM ) {
+    SetStatus( DS_YMNWTBYM );
+    return;
+  } 
+
+  if ( stor.flash ) {
+    SetStatus( DS_MustClearFlash );
+    return;
+  }
+
+  // Make it blank.
+  SetStatus( 0 );
 }
 
+void SetStatus( UInt status )
+{
+  stor.status = status;
+  DrawStatus();
 
+}
 
 void NewGame()
 {

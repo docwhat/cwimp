@@ -2,12 +2,12 @@
 #
 
 DS_MustClearFlash: Must Clear Flash
-In a previous turn you rolled a flash
+In a previous turn you rolled a Flash
 (a three of a kind).
 
-In order to clear this flash and continue with your turn, all the dice
-of your next roll must be different from the flash.  If any dice match
-the flash, then that roll doesn't count and you will have to roll again.
+In order to clear this Flash and continue with your turn, all the dice
+of your next roll must be different from the Flash.  If any dice match
+the Flash, then that roll doesn't count and you will have to roll again.
 .
 
 
@@ -19,13 +19,26 @@ rolling at least one more time.
 .
 
 
-DS_NextPlayer: Next Player's Turn
+DS_NextPlayer: %s's Turn
 It is the next player's turn.
 
 The new player has used no dice for scoring. No points have been scored for
 this turn yet.
 
 You can't 'stay' without rolling once.
+.
+
+
+DS_YMNWTFlash: Clear Flash & YMNWTBYM
+You just got a Flash (a three of a kind).
+In addition, you scored with all your dice, giving you a
+'You May Not Want To But You Must' reroll of all the dice.
+
+Now you get to roll with all five dice to clear your Flash.
+You clear a Flash by rolling all symbols that were *not* in your
+Flash.
+
+Unfortunately, Wimping Out can clear your Flash.
 .
 
 
@@ -51,7 +64,6 @@ Each time you score on a dice it is put aside (marked with a dot) and
 cannot be rolled on again until you have scored on all dice.
 If you score with all your dice (ie, there are dots next to all of them)
 then 'You May Not Want To, But You Must' roll the dice again.
-
 
 If you roll three of a kind, it is called a 'Flash'.  You must score a flash
 if you have three of a kind.  That means if you get two symbols and a Flaming

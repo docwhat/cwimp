@@ -43,7 +43,8 @@ my $DrawStatus = "#include <Pilot.h>\n" .
     "#include \"game.h\"\n" .
     "#include \"statusmsg.h\"\n" .
     "#include \"lowlevel.h\"\n\n"  .
-    "void DrawStatus() {\n\n" .
+    "void DrawStatus() {\n" .
+    "  Char msg[MaxName+1];\n\n" .
     "  switch ( stor.status ) {\n";
 
 my $DialogStatus = "void DialogStatus() {\n" .
@@ -64,7 +65,17 @@ while (my $line = <IN>)
     if( $line =~ /^([^\#:]+):\s*(\S.*)$/ ) {
 	my $tag 	= $1;
 	my $status	= $2;
-	$DrawStatus .= "  case $tag: SetFieldTextFromStr( statusLine, \"$status\" ); break;\n";
+	$status =~ s/\"/\\\"/g;
+	if( $tag =~ /DS_NextPlayer/ ) {
+	    $DrawStatus .= "  case $tag:\n" . 
+		"\tStrPrintF( msg, \"$status\", " .
+		"stor.player[stor.currplayer].name );\n" .
+		"\tSetFieldTextFromStr( statusLine, msg ); " . 
+		"break;\n";
+	} else {
+	    $DrawStatus .= "  case $tag: SetFieldTextFromStr( " .
+		"statusLine, \"$status\" ); break;\n";
+	}
 	$Strings .= "STRING $tag \"";
 	while ( my $newline = <IN> ) {
 	    chomp $newline;

@@ -28,7 +28,7 @@
 /* Make sure you change the prefVersion if you change the
  * pref struct or any defines needed within it.
  */
-#define storVersion 4
+#define storVersion 5
 #define NumCubes    5  // Number of cubes
 #define MaxPlayers 10  // Maximum Number of Players
 /* Make sure that MaxName matches the MAXCHARS from the .rcp file */
@@ -36,29 +36,39 @@
 
 
 struct Storage {
+
+  /* These can stay the same if version doesn't change */
   Short   version;
-  struct {
-	Short  value, keep;
-  } cube[NumCubes];
+  Short   openingroll; /* This value must be beat to get in the game.      */
+  Short   winscore;    /* The score that you must beat to start last licks */
+  Short   numplayers;  /* The number of players [1-10]                     */
+  Short   numcomputers;/* The number of computers [0-9]                    */
+  Int     flags;       /* For flags, see below.                            */
+
+  /* These are status and counters for during the game and                 *
+   * should be reset each time                                             */
+  Short   flash;       /* Either 0 or the number of the current flash.     */
+  Boolean YMNWTBYM;    /* You May Not Want To, But You Must                */
+  Short   leader;      /* -1 if no-one has passed the winscore, or the     *
+			* number of the player                             */
+  Int     status;      /* Used for picking messages out of statusmsg.c     */
+  Int     nTrainWrecks;/* Count for nTrainWrecks rule                      */
   Short   scorethisturn;
   Short   scorethisroll;
-  Short   numplayers;
-  Short   numcomputers;
   Short   currplayer;
+  /* Dice array */
   struct {
-	Boolean computer;
-	Boolean lost;
-	Char   name[MaxName+1];
-	Short  score;
-	Short  insurance;
+    Short  value;
+    Short  keep;
+  } cube[NumCubes];
+  /* Player array */
+  struct {
+    Boolean computer;
+    Boolean lost;
+    Char   name[MaxName+1];
+    Short  score;
+    Short  insurance;
   } player[MaxPlayers];
-  Short   flash;       // Either 0 or the number of the current flash.
-  Boolean YMNWTBYM;    // You May Not Want To, But You Must
-  Short   openingroll; // This value must be beat to get in the game.
-  Short   winscore;    // The score that you must beat to start last licks
-  Int     status;      // Used for picking messages out of statusmsg.c
-  Int     nTrainWrecks;// Count for nTrainWrecks rule
-  Int     flags;
 };
 
 /*** Flags: */
@@ -77,22 +87,25 @@ extern struct Storage stor;
 
 extern Boolean StayBit; // Normally false, unless player wants to stay
 
-void LoadCubes();
-void SaveCubes();
+void LoadCubes(void);
+void SaveCubes(void);
 void CountCube(void);
+void Defaults(void);
 void ResetCubes(void);
 
 void Roll(void);
 void Stay(void);
 void AddScore(Short points);
-void ScoreRoll();
-void TurnLogic();
+void ScoreRoll(void);
+void TurnLogic(void);
 
-void StatusLine( );
+void StatusLine(void);
+void SetStatus( UInt status );
 
-void NextPlayer();
+void NextPlayer(void);
 void ToggleKeep(Byte die);
-void NewGame();
+void NewGame(void);
+void PlayerWon(void);
 void PlayerLost( Short player, CharPtr ptrString );
 
 void SetFlag(Int f, Boolean b);

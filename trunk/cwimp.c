@@ -35,76 +35,82 @@ static Boolean MainFormHandleEvent (EventPtr e)
 
     switch (e->eType) {
     case frmOpenEvent:
-	  frm = FrmGetActiveForm();
-	  FrmDrawForm(frm);
-	  DrawState();  // Draw those dice!
-	  handled = true;
-	  break;
+      frm = FrmGetActiveForm();
+      FrmDrawForm(frm);
+      DrawState();  // Draw those dice!
+      handled = true;
+      break;
 
     case menuEvent:
-	  MenuEraseStatus(NULL);
+      MenuEraseStatus(NULL);
 
-	  switch(e->data.menu.itemID) {
-	  case MenuItem_Help:
-		FrmHelp( GenericHelp );
-		break;
+      switch(e->data.menu.itemID) {
+      case MenuItem_Help:
+	FrmHelp( GenericHelp );
+	break;
 
-	  case MenuItem_About:
-		FrmAlert(About_Info);
-		break;
+      case MenuItem_About:
+	FrmAlert(About_Info);
+	break;
 
-	  case MenuItem_New:
-		DialogNewGame();
-		break;
+      case MenuItem_New:
+	DialogNewGame();
+	break;
 
-	  case MenuItem_Reset:
-		ResetCubes();
-		DrawState();
-		break;
+      case MenuItem_Reset:
+	ResetCubes();
+	DrawState();
+	break;
 
-	  case MenuItem_Variants:
-		if ( stor.currplayer < 0 ) {
-		  DialogVarients();
-		} else {
-		  FrmHelp( HelpVariants );
-		}
-		break;
+      case MenuItem_Defaults:
+	Defaults();
+	ResetCubes();
+	DrawState();
+	break;
 
-	  case MenuItem_Preferences:
-		DialogPreferences();
-		break;
+      case MenuItem_Variants:
+	if ( stor.currplayer < 0 ) {
+	  DialogVarients();
+	} else {
+	  FrmHelp( HelpVariants );
+	}
+	break;
+
+      case MenuItem_Preferences:
+	DialogPreferences();
+	break;
 
 
-	  }
+      }
 
-	  handled = true;
-	  break;
+      handled = true;
+      break;
 
     case ctlSelectEvent:
-	  switch(e->data.ctlSelect.controlID) {
+      switch(e->data.ctlSelect.controlID) {
 		
-	  case btn_Stay:
-		Stay();
-		break;
+      case btn_Stay:
+	Stay();
+	break;
 
-	  case btn_Info:
-		//FrmAlert(About_Info);
-		DialogStatus();
-		break;
+      case btn_Info:
+	//FrmAlert(About_Info);
+	DialogStatus();
+	break;
 		
-	  case btn_Roll:
-		if ( stor.currplayer < 0 ) {
-		  DialogNewGame();
-		} else {
-		  Roll();
-		}
-		break;
-	  }
-	  handled = true;
-	  break;
+      case btn_Roll:
+	if ( stor.currplayer < 0 ) {
+	  DialogNewGame();
+	} else {
+	  Roll();
+	}
+	break;
+      }
+      handled = true;
+      break;
 
     default:
-	  break;
+      break;
     }
 
   CALLBACK_EPILOGUE
@@ -119,16 +125,16 @@ static Boolean ApplicationHandleEvent(EventPtr e)
   Boolean handled = false;
 
   if (e->eType == frmLoadEvent) {
-	formId = e->data.frmLoad.formID;
-	frm = FrmInitForm(formId);
-	FrmSetActiveForm(frm);
+    formId = e->data.frmLoad.formID;
+    frm = FrmInitForm(formId);
+    FrmSetActiveForm(frm);
 
-	switch(formId) {
-	case MainForm:
-	  FrmSetEventHandler(frm, MainFormHandleEvent);
-	  break;
-	}
-	handled = true;
+    switch(formId) {
+    case MainForm:
+      FrmSetEventHandler(frm, MainFormHandleEvent);
+      break;
+    }
+    handled = true;
   }
 
   return handled;
@@ -138,7 +144,6 @@ static Boolean ApplicationHandleEvent(EventPtr e)
 static Word StartApplication(void)
 {
   FrmGotoForm(MainForm);
-//  ResetCubes(); // Eventually, we'll try to recover them from preferences
   LoadCubes();
   return 0;
 }
@@ -158,11 +163,11 @@ static void EventLoop(void)
   EventType e;
 
   do {
-	EvtGetEvent(&e, evtWaitForever);
-	if (! SysHandleEvent (&e))
-	  if (! MenuHandleEvent (NULL, &e, &err))
-		if (! ApplicationHandleEvent (&e))
-		  FrmDispatchEvent (&e);
+    EvtGetEvent(&e, evtWaitForever);
+    if (! SysHandleEvent (&e))
+      if (! MenuHandleEvent (NULL, &e, &err))
+	if (! ApplicationHandleEvent (&e))
+	  FrmDispatchEvent (&e);
   } while (e.eType != appStopEvent);
 }
 
@@ -174,15 +179,15 @@ DWord PilotMain(Word cmd, Ptr cmdPBP, Word launchFlags)
     Word err;
 
 
-	err = StartApplication();
-	if (err) return err;
+    err = StartApplication();
+    if (err) return err;
 	
-	EventLoop();
-	StopApplication();
+    EventLoop();
+    StopApplication();
 	
   } else {
-	return sysErrParamErr;
+    return sysErrParamErr;
   }
 
-return 0;
+  return 0;
 }

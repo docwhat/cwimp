@@ -26,9 +26,11 @@
 // Symbol Font3
 #define BlankSymbol "\22" 
 #define CheckSymbol "\20"
-#define CurrSymbol  "\3"
-#define OutSymbol   "\4"
+#define CurrSymbol  "<"
+#define OutSymbol   "x"
+#define LeadSymbol  "L"
 // 20 - dot
+// 22 - Empty
 // 23 - diamond
 // 26 - check
 //  3 - left double arrow

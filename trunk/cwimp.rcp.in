@@ -32,7 +32,7 @@ FIXVER: LOOP 0 9
     FIELD ID scorePlayer$LOOP AT (110 PREVTOP      39 12)
 			      NONEDITABLE FONT 0 MAXCHARS 5
     FIELD ID markPlayer$LOOP  AT (145 PREVTOP      15 12)
-			      NONEDITABLE FONT 3 MAXCHARS 2
+			      NONEDITABLE FONT 1 MAXCHARS 2
 FIXVER: LOOP END
 
     FIELD ID kdie0     AT (23 25             10 8) NONEDITABLE FONT 3 MAXCHARS 2
@@ -177,7 +177,9 @@ STRING ID HelpNewGame "Select the number of human and computer players.\n" \
 STRING ID HelpAbout
 # \231 is the TM character
 # \263 is the ^3 character
-	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n\n" \
+	"Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.\n" \
+	"The default player names are based upon "\
+	"Jim Henson company's Muppets\231\n\n"\
 	"This is free software, and you are welcome to redistribute it "\
 	"under certain conditions; See the COPYING file that should "\
 	"have come with this program.\n\n"\
@@ -289,16 +291,17 @@ MENU ID Main_Menu
 BEGIN
 	PULLDOWN "Game"
 		BEGIN
-		MENUITEM "New"   ID MenuItem_New   "N"
-		MENUITEM "Reset" ID MenuItem_Reset "R"
+		MENUITEM "New"		ID MenuItem_New		"N"
+		MENUITEM "Reset"	ID MenuItem_Reset	"R"
+		MENUITEM "Defaults"	ID MenuItem_Defaults
 		MENUITEM SEPARATOR
-		MENUITEM "Help"  ID MenuItem_Help  "H"
-		MENUITEM "About" ID MenuItem_About "A"
+		MENUITEM "Help"		ID MenuItem_Help	"H"
+		MENUITEM "About"	ID MenuItem_About	"A"
 		END
 	PULLDOWN "Options"
 		BEGIN
-		MENUITEM "Variants" ID MenuItem_Variants       "V"
-		MENUITEM "Preferences" ID MenuItem_Preferences "P"
+		MENUITEM "Variants"	ID MenuItem_Variants	"V"
+		MENUITEM "Preferences"	ID MenuItem_Preferences	"P"
 		END
 END
 
