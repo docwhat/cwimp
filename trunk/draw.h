@@ -59,6 +59,9 @@ void DrawCurrScore();
 void DrawState();
 
 void DrawCube(Int die);
+#if 0
+void InvertCube(Int die);
+#endif
 void DrawBlackCube(Int die);
 void DrawWhiteCube(Int die);
 void CrossCube(Int die);

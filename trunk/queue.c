@@ -73,6 +73,22 @@ Boolean EQRunNext(void) {
   return true;
 }
 
+void EQReset(void)
+{
+  EQPtr ptr;
+  EQPtr next;
+
+  if( EQIsEmpty() ) return;
+
+  ptr = EQueue->next;
+
+  while( ptr->next != NULL ) {
+    next = ptr->next;
+    MemPtrFree( ptr );
+    ptr = next;
+  }
+
+}
 
 Boolean EQIsEmpty(void)
 {

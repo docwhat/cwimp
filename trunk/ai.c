@@ -34,8 +34,6 @@ void CheckAI(void)
 
 void AITurn(void)
 {
-  SetStatus( DS_Thinking );
-
   /* If we have no choice... */
   if( ! ( stor.flags & flag_CanStay ) ) {
     Roll();

@@ -89,17 +89,17 @@ struct Storage {
 
 /*** Flags: */
 /* Variants: */
-#define flag_Bump            (1<< 0)
-#define flag_Eclipse         (1<< 1)
-#define flag_Sampler         (1<< 2)
-#define flag_nTW             (1<< 3)
-#define flag_Suspend         (1<< 4)
+#define flag_Bump            (1<<  0)
+#define flag_Eclipse         (1<<  1)
+#define flag_Sampler         (1<<  2)
+#define flag_nTW             (1<<  3)
+#define flag_Suspend         (1<<  4)
 /* Preferences: */
-#define flag_NextPlayerPopUp (1<< 7)
+#define flag_NextPlayerPopUp (1<<  7)
 /* Specials */
-#define flag_PendingAI       (1<< 8)
-#define flag_CanStay         (1<< 9)
-
+#define flag_PendingAI       (1<<  8)
+#define flag_CanStay         (1<<  9)
+#define flag_FreightTrain    (1<< 10)
 
 extern struct Storage stor;
 

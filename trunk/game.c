@@ -77,14 +77,14 @@ Boolean FreezeBit; // Freeze animations, etc. till this is done.
 int RollCube (void)
 {
   static int n = 1;
-  static q = 2;
+  static q = 4;
 
   switch( n++ ) {
   case 1: return q;
   case 2: return q;
   case 3: return q;
-  case 4: return q;
-  default: n=1; q+=2; if( q > 6 ) q = 2;
+  case 4: return q+2;
+  default: n=1; if( q > 6 ) q = 2;
     return q; break;
   }
 
@@ -230,7 +230,7 @@ void ScoreRoll(Int x) {
     }
   }
 
-  /**  Freigth Train  **/
+  /**  Freight Train  **/
   // If a value in our counting array is equal to NumCubes,
   // then we have a freight train. Which cube we use doesn't
   // matter, if all are the same.
@@ -248,7 +248,7 @@ void ScoreRoll(Int x) {
     
     AddScore( x * 100 );
     stor.YMNWTBYM = true;
-    stor.status = DS_FreightTrain;
+    SetFlag( flag_FreightTrain, true );
     for ( x = 0 ; x < NumCubes ; x++ ) 
       stor.cube[x].keep = true;
   } else {
@@ -492,8 +492,8 @@ void TurnLogic(Int x) {
 	      stor.leader = -1;
 	    }
 	    DrawPlayerScore( x );
-
-	    /* There can be only one ... */
+	
+    /* There can be only one ... */
 	    x = stor.total;
 	  }
 	}
@@ -605,13 +605,13 @@ void NextPlayer(Int x) {
       DialogOK( frmNextPlayer, prevplayer, stor.currplayer );
     } else {
       if( !StayBit ) {
-	EQAdd( SetStatus, DS_TurnOver );
+	EQAdd( SetStatus, DS_Wimpout );
 	EQAdd( EQNOP, 0 );
 	EQAdd( EQNOP, 0 );
 	EQAdd( EQNOP, 0 );
 	EQAdd( EQNOP, 0 );
 	EQAdd( EQNOP, 0 );
-        EQAdd( SetStatus, DS_NextPlayer );
+        //EQAdd( SetStatus, DS_NextPlayer );
 	//SysTaskDelay( 1 * SysTicksPerSecond() );
       }
       EQAdd( SetStatus, DS_NextPlayer );
@@ -637,6 +637,9 @@ void NextPlayer(Int x) {
 
 void GameEvents(void)
 {
+  static evenodd = 0;
+  evenodd = !evenodd;
+
   /* We do *nothing* when we're frozen. */
   if( FreezeBit ) return;
 
@@ -654,7 +657,8 @@ void GameEvents(void)
     for( x = 0; x < NumCubes ; x++ ) {
       if( !stor.cube[x].keep &&
           stor.cube[x].value == stor.flash ) {
-        CrossCube(x);
+        EQAdd( CrossCube, x );
+        EQAdd( DrawCube, x );
       }
     }
   }
@@ -759,6 +763,9 @@ void ResetCubes(void)
 {
   Short x = 0;
 
+  FreezeBit = true;
+  EQReset();
+
   for (x = 0; x < NumCubes; x++) {
     stor.cube[x].value = stor.cube[x].keep = 0;
   }
@@ -778,7 +785,6 @@ void ResetCubes(void)
   stor.status = 0;
 
   StayBit = false;
-  FreezeBit = false;
 }			
 
 void SetStatus( Int status )

@@ -253,8 +253,8 @@ they lose and are permanently out of the game.  If they beat your score
 then they become the leader and everyone gets one chance to beat their score.
 .
 
-DS_TurnOver: *Turn Over*
-It's just a dramatic pause, but you must be fast with a stylus!
+DS_Wimpout: * WIMPOUT *
+You have Wimped out, scoring no points in a roll.
 .
 
 

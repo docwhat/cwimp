@@ -353,15 +353,65 @@ static void GreyCube(Int die)
 void CrossCube(Int die)
 {
   Int yoff, xoff;
+  
   yoff = CubesTop + (CubeSize + CubeShift) * die;
   xoff = CubesLeft;
 
-  WinInvertLine(  2 +xoff,  2 +yoff,
-                 17 +xoff, 17 +yoff);
+  if( die == 0 ) {
+    WinEraseLine( 3  +xoff, 4  +yoff,
+                  15 +xoff, 16 +yoff);
+    WinEraseLine( 3  +xoff, 3  +yoff,
+                  16 +xoff, 16 +yoff);
+    WinEraseLine( 4  +xoff, 3  +yoff,
+                  16 +xoff, 15 +yoff);
+  
+    WinEraseLine( 3  +xoff, 15 +yoff,
+                  15 +xoff, 3  +yoff);
+    WinEraseLine( 3  +xoff, 16 +yoff,
+                  16 +xoff, 3  +yoff);
+    WinEraseLine( 4  +xoff, 16 +yoff,
+                  16 +xoff, 4  +yoff);
+  } else {
 
-  WinInvertLine(  2 +xoff, 17 +yoff,
-                 17 +xoff,  2 +yoff);
+    WinDrawLine( 3  +xoff, 4  +yoff,
+                 15 +xoff, 16 +yoff);
+    WinDrawLine( 3  +xoff, 3  +yoff,
+                 16 +xoff, 16 +yoff);
+    WinDrawLine( 4  +xoff, 3  +yoff,
+                 16 +xoff, 15 +yoff);
+  
+    WinDrawLine( 3  +xoff, 15 +yoff,
+                 15 +xoff, 3  +yoff);
+    WinDrawLine( 3  +xoff, 16 +yoff,
+                 16 +xoff, 3  +yoff);
+    WinDrawLine( 4  +xoff, 16 +yoff,
+                 16 +xoff, 4  +yoff);
+  }
+
 }
+
+#if 0
+void InvertCube(Int die)
+{
+  Int y;
+  Int tmpID;
+
+  y = CubesTop + (CubeSize + CubeShift) * die;
+  
+  if ( die != 0 ) { 
+    tmpID = bmpBCube[ abs(stor.cube[die].value) ];
+  } else {
+    tmpID = bmpWCube[ abs(stor.cube[die].value) ];
+  }
+
+  DrawBitmap( tmpID, CubesLeft, y );
+
+  if( stor.cube[die].value < 0 ) {
+    GreyCube(die);
+  }
+
+}
+#endif
 
 void DrawCube(Int die)
 {
@@ -447,8 +497,9 @@ void DrawStayButton() {
     goto end;
   }
 
-  if( stor.status == DS_FreightTrain && stor.scorethisroll != 0 ) {
-    status = stor.status;
+  if( stor.flags & flag_FreightTrain ) {
+    SetFlag( flag_FreightTrain, false );
+    status = DS_FreightTrain;
     stay = false;
     goto end;
   }
@@ -519,6 +570,8 @@ void DialogNewGame() {
   
   // Save previous form
   prevForm = FrmGetActiveForm();
+  FrmSetFocus( prevForm, noFocus );
+
   // Init new form
   frm = FrmInitForm( frmNewGame );
 
@@ -567,6 +620,8 @@ void DialogNewGame() {
   FrmSetEventHandler(frm, DialogNewGameHandleEvent);
 
   hitButton = FrmDoDialog(frm);
+
+  FrmSetFocus( frm, noFocus );
 
   if ( hitButton == btn_OK_frmNewGame ) {
     Int num;
@@ -688,6 +743,8 @@ void DialogVariants() {
   
   // Save previous form
   prevForm = FrmGetActiveForm();
+  FrmSetFocus( prevForm, noFocus );
+
   // Init new form
   frm = FrmInitForm( frmVariants );
 
@@ -717,6 +774,8 @@ void DialogVariants() {
   FrmSetEventHandler(frm, DialogVariantsHandleEvent);
 
   hitButton = FrmDoDialog(frm);
+
+  FrmSetFocus( frm, noFocus );
 
   // Get Controls
   text = FldGetTextPtr( FrmGetObjectPtr( frm, fldIndex ) );
@@ -1039,6 +1098,7 @@ Boolean DialogGetNames() {
       retVal = true;
   }
 
+  FrmSetFocus( frm, noFocus );
 
   // Delete the form, we're not using it
   FrmDeleteForm(frm);
