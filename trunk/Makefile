@@ -70,15 +70,14 @@ objs/$(TARGET): $(TARGET)Rsc.h $(OBJECTS)
 	$(CC) $(CFLAGS) $(OBJECTS) -o $@ $(LIBS)
 
 clean:
-	rm -f objs/* *~ *.bak core
+	rm -f objs/* *~ *.bak core $(TARGET)Rsc.h
 	rm -f $(STATUSMSGS)
 
 veryclean: clean
 	rm -f ChangeLog $(TARGET).prc TAGS
 
 spotless: veryclean
-	rm -rf deps objs
-	rm -f $(TARGET)Rsc.h $(TARGET).*.zip $(TARGET.)*.zip.dsc
+	rm -rf deps objs $(TARGET).*.zip $(TARGET.)*.zip.dsc
 
 ChangeLog:
 	cvs2cl
@@ -94,12 +93,13 @@ $(TARGET).$(VERSION).src.zip srczip $(TARGET).$(VERSION).src.zip.dsc: veryclean 
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).src.zip \
 		cwimp \
-		-x cwimp/CVS/\* -x cwimp/\*.d
+		-x cwimp/CVS/\* -x \*.d
 	mv ../$(TARGET).$(VERSION).src.zip .
 	echo "(<a href=\"$(URL)\">$(TARGET)</A> source, version $(VERSION))" > \
 	$(TARGET).$(VERSION).src.zip.dsc
 
-$(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc: $(TARGET).prc ChangeLog
+$(TARGET).$(VERSION).bin.zip binzip $(TARGET).$(VERSION).bin.zip.dsc:
+	$(MAKE) $(TARGET).prc ChangeLog
 	-rm -f $(TARGET).*.bin.zip
 	cd .. && \
 	zip -r $(TARGET).$(VERSION).bin.zip \
