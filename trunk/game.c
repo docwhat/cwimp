@@ -1,7 +1,7 @@
 /* $Id$
 
     CWimp - Dice game for the palm handhelds.
-    Copyright (C) 2000 Christian Höltje
+    Copyright (C) 1999-2000 Christian Höltje
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -278,6 +278,22 @@ void ScoreRoll() {
   
   // Clean Up Score
 
+  // This is run twice (see below...)
+  // Interate through the cubes...
+  for( x = 0 ; x < NumCubes ; x++ ) {
+    // If the cube isn't kept
+    if ( !stor.cube[x].keep ) {
+      if ( stor.cube[x].value == 1 ) {
+	stor.cube[x].keep = true;
+	AddScore(10);
+      }
+      if ( stor.cube[x].value == 5 ) {
+	stor.cube[x].keep = true;
+	AddScore(5);
+      }
+    }
+  }
+
   // Fill in the Black Die's Flaming Sun
   // if it wasn't used above (in P1 && P2)
   if ( FS && !stor.cube[0].keep ) {
@@ -298,17 +314,20 @@ void ScoreRoll() {
       ret = FrmCustomAlert( calertPickFS, " ", " ", " " );
 
       if( ret == 0 ) die = 5;
-      if( ret == 1 ) die = 1;
-      // else defaults to 2
-
-      aCounting[die]++;
-      BlackDieValue = die;
-      stor.cube[0].value = die;
+      else if( ret == 1 ) die = 1;
+      
+      if( die != 2 ) {
+	aCounting[die]++;
+	BlackDieValue = die;
+	stor.cube[0].value = die;
+      }
     }
   }
 
 
+  // Interate through the cubes...
   for( x = 0 ; x < NumCubes ; x++ ) {
+    // If the cube isn't kept
     if ( !stor.cube[x].keep ) {
       if ( stor.cube[x].value == 1 ) {
 	stor.cube[x].keep = true;
