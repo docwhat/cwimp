@@ -1,0 +1,545 @@
+# $Id$
+#
+
+DEFINE: IntroForPalmString
+for the Palm%c
+.
+
+DEFINE: IntroVersionString
+version: %s
+.
+
+DEFINE: IntroTapHereString
+Tap to Continue
+.
+
+###
+### Number Strings.
+###   For use as dice values.
+###   The scoring values are written as numerals,
+###   and are here only for completeness.
+###   The rest should be words.
+###
+# Should be a numeral
+DEFINE: TenString
+10
+.
+
+DEFINE: TwoString
+two
+.
+
+DEFINE: ThreeString
+three
+.
+
+DEFINE: FourString
+four
+.
+
+# Should be a numeral
+DEFINE: FiveString
+5
+.
+
+DEFINE: SixString
+six
+.
+
+# This should be small
+DEFINE: NotApplicableString
+-N/A-
+.
+
+CSTRING: LastLicksString
+Last Licks!
+.
+
+CSTRING: RollString
+Roll
+.
+
+CSTRING: StartString
+Start
+.
+
+CSTRING: PickScoreString
+Pick a scoring value for your Flaming Sun.
+.
+
+CSTRING: PickFlashString
+Pick which Flash you want to complete with your Flaming Sun.
+.
+
+CSTRING: PickNonScoreString
+Pick a value for your Flaming Sun.
+You can pick none if you want to be able to roll it again.
+.
+
+CSTRING: NoneString
+None
+.
+
+CSTRING: SuperNovaString
+SuperNova: You loose
+.
+
+CSTRING: TooManyTWString
+Too many Train Wrecks
+.
+
+CSTRING: LostToLeaderString
+Didn't beat the leader
+.
+
+DS_Thinking: Thinking...
+The AI is trying to think of what to do.  It's
+got a small brain.
+.
+
+DS_Eclipse: Eclipsed!
+With the Eclipse variation in effect, you cannot stay when your
+total score equals someone elses.
+.
+
+DS_OpeningRoll: Opening Roll
+Before you can 'stay' and start saving your points from one turn
+to the next, your score for this turn must be
+greater or equal to the Opening Roll value (as set when you
+started a new game).
+
+If you don't score more than this in a turn, then you get zero
+points for the turn and it becomes the next player's turn.
+
+By default you must score in one turn 35 points or more before
+you can 'stay'.
+.
+
+DS_MustClearFlash: Futtless Rule
+The Futtless Rule states that you must clear all Flashes must
+be cleared.
+
+In a previous turn you, rolled a Flash or three of a kind.
+
+In order to clear this Flash and continue with your turn,
+none of the dice may be the same as your Flash.
+If any dice match the Flash, then that
+roll doesn't count and you will have to roll again.
+.
+
+DS_FreightTrain: Freight Train
+If all five dice are the same, then you have scored a Freight Train
+and your score is 100 times the type of die you rolled!  You
+must roll again as according to You May Not Want To But You Must.
+
+If you rolled all sixes, then you'd instantly win.  If you roll all 10s,
+then you'd go SuperNova and loose!
+.
+
+DS_YMNWTBYM: Y.M.N.W.T.B.Y.M.
+You May Not Want To But You Must:
+
+You have scored with all the dice and are not allowed to 'stay' without
+rolling at least one more time.
+.
+
+
+CSTRING: NextPlayerString
+%s's turn is over.
+
+It is now %s's turn.
+.
+
+CSTRING: NextSoloPlayerString
+It's time for your next turn.
+.
+
+
+TS_LastLicks: Last Licks!
+The game is in Last Licks.
+
+Someone has passed the winning score (set in 'New Game') and is the
+leader.  The current leader has an 'L' next to their name.
+
+Now, everyone gets to get in their Last Licks or last chance to win.
+Each player gets one more chance to score higher than the leader.  If
+they pass the leaders score, then *they* become the leader and everyone
+still in the game gets a chance to pass the new leader (including the
+old leader).
+
+The winner is the last person in the game, the last leader.
+.
+
+CSTRING: LostString
+%s has lost and is no longer in the game.
+.
+
+DS_Lost: %s has lost!
+You have lost and are no longer in this game.  Sorry!
+.
+
+
+CSTRING: BumpString
+%s was bumped by %s from %d to %d.
+.
+
+DS_Bump: Bump!
+Playing with the Variation Bump, one player has landed on another player's
+score, swapping scores.
+.
+
+
+CSTRING: SamplerString
+%s got a Cosmic Sampler for 50 points. Yummy!
+.
+
+DS_Sampler: Sampler!
+Playing with the Variation Cosmic Sampler, if you get one scoring die
+(5 or 10) and one of each of the four other non-scoring dice, you get 50
+extra points.
+.
+
+
+CSTRING: SuspendString
+%s's turn has been suspended
+
+It is now %s's turn.
+
+.
+
+DS_Suspend: Suspended!
+Your turn has been suspended because you took more that the allowed
+number of rolls to clear a flash.  When it becomes your turn again,
+you will pick up where you left off, trying to clear your flash.
+Your turn score will remain as it was.
+.
+
+
+CSTRING: TrainWreckString
+%s has had %d Train Wreck(s) (of %d max).
+.
+
+DS_TrainWreck: Train Wreck!
+If the rule (n)TrainWreck is enabled, then a player may only roll
+n Train Wrecks during a game or the player looses.
+
+A Train Wreck is when all 5 dice are rolled, but no points are scored
+(a wimpout).
+.
+
+
+CSTRING: NobodyWonString
+Everyone has lost.  Game over.
+.
+
+DS_NobodyWon: Nobody Won!
+Apparently, everyone lost.  There is nobody left to play. So, nobody won
+and I'm now lonely.
+.
+
+
+CSTRING: LeaderString
+%s is the current Leader!
+Everyone still in the game gets one
+chance to beat you.
+.
+
+DS_Leader: %s is the leader!
+You are now the leader.
+
+Everyone gets one chance each to get in their
+Last Licks or a last roll to win.  If a player doesn't beat your score, then
+they lose and are permanently out of the game.  If they beat your score
+then they become the leader and everyone gets one chance to beat their score.
+.
+
+DS_Wimpout: * WIMPOUT *
+You have Wimped out, scoring no points in a roll.
+.
+
+
+CSTRING: WinnerString
+%s has won!
+.
+
+DS_Winner: %s has won!
+You've won!  The universe is yours.
+
+Be careful with it, you should probably
+get insurance, it's rather valuable.
+.
+
+
+DS_NextPlayer: %s's Turn
+It is the next player's turn.
+The previous player lost their turn or decided to 'stay'.
+
+The new player has used no dice for scoring. No points have been scored for
+this turn yet.
+
+You can't 'stay' without rolling once.
+.
+
+
+###############
+### RCP Strings
+###############
+
+STRING: GenericHelp
+Welcome to CWimp!
+
+I am going to try to give you the basics of the game.  Don't worry too much
+if I miss something, as help will be available via the 'i' at anytime.
+
+First of all, CWimp is a dice game.  The white dice all have the symbols
+for 2, 3, 4, 6, '5' and '10'.  '5' and '10' are the only directly scoring
+dice.  Each is worth 5 and 10 points respectively.
+
+The black die has the same symbols, but the 3 is replaced with a Flaming Sun
+or wildcard.  You can score it like any other symbol that you choose.  How ever
+there are rules that can prevent you from controlling that.
+
+During one turn, you can roll as often as you like as long as you don't
+'Wimp Out' (or score nothing) on a roll.  If you 'Stay' (when you are able),
+then your score is added to your total and the next person goes.
+
+Each time you score on a dice it is put aside (marked with a dot) and
+cannot be rolled on again until you have scored on all dice.
+If you score with all your dice (ie, there are dots next to all of them)
+then 'You May Not Want To, But You Must' roll the dice again.
+
+If you roll three of a kind, it is called a 'Flash'.  You must score a flash
+if you have three of a kind.  That means if you get two symbols and a Flaming
+Sun, you must take the flash. A Flash scores 10 times the symbol or score
+value. A Flash of 3s is worth 30 and a Flash of '10's is worth 100 points!
+
+You must clear a Flash before you can continue the game.  To clear a Flash,
+you roll your non-scoring dice, as if in a normal turn, but you get no
+points for that roll (and must roll again) if any of the dice match the
+Flash.  Wimping out is a legit way of clearing a flash, however.
+
+A Freight Train is like a Flash, but with 5 dice.  A Freight Train scores
+100 times the symbol!  The exception is if you roll a '10' Freight Train,
+in which case you've gone Super Nova and lost.  The other exception is if
+you roll all 6s, in which case, you won!  Note: You can't roll all 3s, as
+the Flaming sun is on the '3' side of the black die.
+
+Upon starting the game, you must score more than opening roll (which defaults
+to 35 points, see 'Variants') before you can 'stay'.
+
+To win the game, a player must pass the Winning Score (see 'New Game').
+Once someone has passed the winning score, then all the other players
+get in Last Licks, one more turn with a chance to pass the leader.
+
+If someone passes the leader, then Last Licks starts again with the
+players who haven't already gotten in their Last Licks (and have not
+passed the leader).
+
+In addition to the straight forward way to play the game, you can play
+Variants that add a different flavour to the game.  See the Variants
+menu under 'Options'.
+
+Ciao!\n
+      DocWhat
+.
+
+
+STRING: HelpPreferences
+Here are a the descriptions of the preferences available to you:
+
+Next Player Dialog:
+Pops up a dialog every time it's a new player's turn.
+.
+
+STRING: statusClearFlashFirst
+Clear Flash First
+.
+
+STRING: HelpVariants
+Variants are rules that let you play CWimp in new ways.  These
+are optional rules, and don't need to be used if you don't want.
+
+Bump:\n
+In this variant, if you score the same as another player, then you will
+switch scores with that player (you getting the new, higher score and that
+person getting your old score).
+
+Eclipse:\n
+You cannot 'stay' if your score equals another's score.
+
+Cosmic Sampler:\n
+If you get one scoring die (a 5 or 10) and four dice with each of
+the non-scoring symbols (2, 3, 4, and 6) then you score a Cosmic
+Sampler, worth 50 points.
+
+Suspend:\n
+If you take more than (n) rolls to clear a Flash, your turn will be suspended
+and your turn will be ended.  Upon it being your turn again, then your
+previous turn will be restored, including score.
+
+(n)TrainWrecks:\n
+If a player gets (n) Train Wrecks, then that play is out of the game.  If
+everyone looses, then the game is over.  A Train Wreck is when all 5 dice are
+rolled, but with no score (a wimpout on 5 dice).
+.
+
+STRING: HelpGetNames
+On this screen, you can pick the names of all the human players.
+Edit the default names to your satisfaction, then press 'OK'.
+.
+
+STRING: HelpNewGame
+Here, you may select the number of human and computer players,
+the winning score and minimum opening roll.
+
+The winning score is the amount needed to win the game.
+
+The opening roll is the minimum amount needed to start 
+scoring points in the game.
+
+The Default button will allow you to reset the number of players,
+the winning score and the opening roll.
+
+The Variants button will allow you to select any variants you might
+want to play with.
+.
+
+STRING: HelpAbout
+# \231 is the TM character
+# \263 is the ^3 character
+This is free software, and you are welcome to redistribute it
+under certain conditions; See the COPYING file that should 
+have come with this program.
+
+
+More info and new versions can be gotten at\n
+http://docwhat.gerf.org/cwimp/
+
+Bugs may be submitted at
+http://gerf.org/cgi-bin/cwimp-bugs
+
+Original Artwork \251 2000 Christian H\366ltje
+
+Based on the game Cosmic Wimpout\231\nby C\263 inc. and Zonk.
+
+The default player names are based upon
+Jim Henson company's Muppets\231
+
+Mersenne Twister by Makoto Matsumoto and Takuji Nishimura,
+Accelerated by Shawn Cokus,
+16 bit version of the Twister by Troy D. Gillette
+.
+
+END
+
+TRANSLATION "en"
+BEGIN
+
+# Menu Items: Main_Menu
+"Game" = "Game"
+# Item:
+"New" = "New"
+"N" = "N"
+# Item:
+"Reset" = "Reset"
+"R" = "R"
+# Item:
+"Defaults" = "Defaults"
+# Item:
+"Help" = "Help"
+"H" = "H"
+# Item:
+"About" = "About"
+"A" = "A"
+"Options" = "Options"
+# Item:
+"Variants" = "Variants"
+"V" = "V"
+# Item:
+"Preferences" = "Preferences"
+"P" = "P"
+
+# Form: MainForm
+" CWimp " = " CWimp "
+"Roll" = "Roll"
+"Turn" = "Turn"
+"Total" = "Total"
+"Player" = "Player"
+"Stay" = "Stay"
+
+# Form: frmNewGame
+"New Game" = "New Game"
+"How many human players?" = "How many human players?"
+"How many computer players?" = "How many computer players?"
+"Winning Score:" = "Winning Score:"
+"Opening Roll:" = "Opening Roll:"
+"Default" = "Default"
+"OK" = "OK"
+"Cancel" = "Cancel"
+
+# Form: frmVariants
+"Variations" = "Variations"
+"Bump" = "Bump"
+"Eclipse" = "Eclipse"
+"Cosmic Sampler" = "Cosmic Sampler"
+"(n)Suspend" = "(n)Suspend"
+"n = " = "n = "
+"(n)Train Wrecks" = "(n)Train Wrecks"
+"Done" = "Done"
+
+# Form: frmPreferences
+"Next Player Dialog" = "Next Player Dialog"
+
+# Form: frmGetNames
+"Player Names" = "Player Names"
+"Back" = "Back"
+"CWimp\n" = "CWimp\n"
+"\251 1999-$YEAR\n" = "\251 1999-$YEAR\n"
+"Steve Schwartz\nChristian H\366ltje\n\n" = "Steve Schwartz\nChristian H\366ltje\n\n"
+"Please press the 'i' for more info\n" = "Please press the 'i' for more info\n"
+"Debug Info" = "Debug Info"
+
+# Form: frmNextPlayer
+"Next Player" = "Next Player"
+
+# Form: frmChooseTwo
+"Choose" = "Choose"
+
+# Form: frmChooseThree
+
+# Form: frmHelpText
+"Help and Hints" = "Help and Hints"
+
+# Form: frmLost
+"You Lost!" = "You Lost!"
+"Rats!" = "Rats!"
+
+# Form: frmLeader
+"You're the Leader!" = "You're the Leader!"
+"Cool!" = "Cool!"
+
+# Form: frmTrainWreck
+"TrainWreck!" = "TrainWreck!"
+"Ow!" = "Ow!"
+
+# Form: frmNobodyWon
+"Nobody Won!" = "Nobody Won!"
+"Oh." = "Oh."
+
+# Form: frmWinner
+"You've Won!" = "You've Won!"
+"Yea!" = "Yea!"
+
+# Form: frmBump
+"Bumped!" = "Bumped!"
+"Hah" = "Hah"
+
+# Form: frmSampler
+"Sampler!" = "Sampler!"
+
+# Form: frmSuspend
+"Suspended!" = "Suspended!"
+"oh." = "oh."
+"Game Status Info" = "Game Status Info"
+
+END
