@@ -654,6 +654,9 @@ void LoadCubes() {
 
   size = sizeof(stor);
 
+  /* Purge old preferences if they exist */
+  PrefSetAppPreferences( OLDCREATOR, 0, 0, NULL, 0, true );
+
   x = PrefGetAppPreferences( CREATOR, 0, &stor, &size, true);
   if( (x == noPreferenceFound) || 
       (stor.version != storVersion) ) {

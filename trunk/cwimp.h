@@ -24,6 +24,7 @@
 
 #include "resource.h"
 
-#define CREATOR  0x43575353 // `CWSS`
+#define OLDCREATOR  0x43575353 // `CWSS`
+#define CREATOR     0x43576D70 // 'CWmp'
 
 #endif

@@ -424,7 +424,7 @@ BITMAP ID bmp4b		"images/cube4b.bmp"	COMPRESS
 BITMAP ID bmp5b		"images/cube5b.bmp"	COMPRESS
 BITMAP ID bmp6b		"images/cube6b.bmp"	COMPRESS
 
-APPLICATIONICONNAME 1000 "CWimp"
+APPLICATIONICONNAME ID 1000 "CWimp"
 ICON "images/cwimp.bmp"
 SMALLICON "images/cwimp-small.bmp"
 VERSION "$VERSION"
