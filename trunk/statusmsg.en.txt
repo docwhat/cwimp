@@ -98,6 +98,17 @@ score, swapping scores.
 .
 
 
+CSTRING: SamplerString
+%s got a Cosmic Sampler for 50 points. Yummy!
+.
+
+DS_Sampler: Sampler!
+Playing with the Variation Cosmic Sampler, if you get one scoring die
+(5 or 10) and one of each of the four other non-scoring dice, you get 50
+extra points.
+.
+
+
 CSTRING: TrainWreckString
 %s has had %d Train Wreck(s) (of %d max).
 .
@@ -252,7 +263,9 @@ Eclipse:\n
 You cannot 'stay' if your score equals another's score.
 
 Cosmic Sampler:\n
-ToDo
+If you get one scoring die (a 5 or 10) and four dice with each of
+the non-scoring symbols (2, 3, 4, and 6) then you score a Cosmic
+Sampler, worth 50 points.
 
 FullHouse:\n
 ToDo

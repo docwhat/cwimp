@@ -33,7 +33,7 @@ all: $(TARGET).prc
 deps/%.d: $(PREDEPENDS) $(DEPEND) %.c
 	@echo -- Making dependency info for $*.c
 	@if [ ! -d deps ]; then mkdir deps ; fi
-	$(DEPEND) $(CC) $(CFLAGS)  $*.c > $@
+	$(DEPEND) $(CC) $(CFLAGS) $*.c > $@ || rm -f $@
 
 objs/%.o: %.c
 	@echo -- Compiling $*.c

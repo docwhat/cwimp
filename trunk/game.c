@@ -57,20 +57,18 @@ void ToggleKeep(Byte die)
  * Returns:
  *     int   -- Number from 1 to 6 inclusive
  */
-// ToDo: Clean up and make sure numbers are fairly random
-#ifdef DEBUGROLL
+#ifndef DEBUGROLL
 #warning The game is unplayable with DEBUG on
 int RollCube (void)
 {
   static int n = 1;
 
   switch( n++ ) {
-  case 1: return 1;
+  case 1: return 2;
   case 2: return 4;
-  case 3: return 5;
-  case 4: return 5;
-  case 5: return 2;
-  default: n=1; break;
+  case 3: return 3;
+  case 4: return 6;
+  default: n=1; return 5; break;
   }
 
   return n;
@@ -134,15 +132,14 @@ void AddScore(Short points) {
 }
 
 void ScoreRoll() {
-  Short aCounting[7], P1, P2;
-  Short BlackDieValue;
+  Short aCounting[7];
+  Short P1 = 0;
+  Short P2 = 0;
+  Short BlackDieValue = 0;
   Short x;
-  Boolean bool;
   Boolean FS;
 
   // Init vars
-  BlackDieValue = 0;
-  P1 = P2 = 0;
   stor.scorethisroll = 0;
   // FS will only be true if die 0 isn't kept
   // and it's value is FlamingSun
@@ -352,10 +349,11 @@ void ScoreRoll() {
 
   /* nTrainWreck rule */
   if( stor.flags & flag_nTW  ) {
-    bool = true;
+    Boolean bool = true;
     for( x = 0 ; x < NumCubes ; x++ ) {
       if ( stor.cube[x].keep ) {
 	bool = false; // Whups, not a trainwreck
+	break;
       }
     }
     if( bool && stor.scorethisroll == 0 ) {
@@ -367,6 +365,32 @@ void ScoreRoll() {
     }
   }
 
+  /* Cosmic Sampler Variant */
+  /* This can't happen if we have a Flaming Sun or no score */
+  if( (stor.flags & flag_Sampler) &&
+      (stor.scorethisroll > 0) &&
+      (BlackDieValue == 0) ) {
+    Short list[5] = { 0, 0, 0, 0, 0 };
+    Boolean bool = true;
+
+    for( x = 0 ; x < NumCubes ; x++ ) {
+      if( (stor.cube[x].value == 5) ||
+	  (stor.cube[x].value == 1) ) {
+	list[5-2]++;
+      } else {
+	list[stor.cube[x].value-2]++;
+      }
+    }
+
+    for( x = 0 ; x < 5 ; x++ ) {
+      if( list[x] != 1 ) { bool = false;  break; }
+    }
+
+    if( bool ) {
+      AddScore( 50 );
+      DialogOK( frmSampler, stor.currplayer, -1 );
+    }
+  }
 }
 
 

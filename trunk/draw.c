@@ -621,6 +621,12 @@ void DialogOK ( Word frmname, Short p1, Short p2 ) {
 	       NULL );
     break;
 
+  case frmSampler:
+    fieldname = fldSampler;
+    StrPrintF( msg, SamplerString, stor.player[p1].name, NULL );
+    break;
+
+
   case frmTrainWreck:
     fieldname = fldTrainWreck;
     StrPrintF( msg, TrainWreckString,

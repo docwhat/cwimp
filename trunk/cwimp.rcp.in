@@ -310,6 +310,19 @@ BEGIN
 END
 
 
+FORM ID frmSampler AT (35 CENTER@160/2 120 85)
+MODAL
+SAVEBEHIND
+HELPID DS_Sampler
+BEGIN
+    TITLE "Sampler!"
+    FORMBITMAP AT (2 20) BITMAP bmpSampler
+    FIELD ID fldSampler AT (36 12 84 63) NONEDITABLE FONT 0 MULTIPLELINES
+
+    BUTTON "Cool!" ID AUTOID7 AT (3 70 AUTO AUTO)
+END
+
+
 
 ##
 ##
@@ -332,6 +345,7 @@ BITMAP ID bmpWinner	"images/winner.bmp"	COMPRESS
 BITMAP ID bmpTrainWreck	"images/trainwreck.bmp"	COMPRESS
 BITMAP ID bmpNobodyWon	"images/nobodywon.bmp"	COMPRESS
 BITMAP ID bmpBump	"images/bump.bmp"	COMPRESS
+BITMAP ID bmpSampler	"images/sampler.bmp"	COMPRESS
 
 BITMAP ID bmpBlank	"images/cubeblank.bmp"	COMPRESS
 
