@@ -652,7 +652,7 @@ void NextPlayer(Int x) {
 
 void GameEvents(void)
 {
-  static evenodd = 0;
+  static Boolean evenodd = 0;
   evenodd = !evenodd;
 
   /* We do *nothing* when we're frozen. */
