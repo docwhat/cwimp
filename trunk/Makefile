@@ -1,8 +1,8 @@
-## Makefile for Cosmic Wimpout
+## Makefile for CWimp
 
 TARGET = cwimp
-APPNAME = "Cosmic Wimpout"
-APPID = "CWSS"
+APPNAME = "CWimp"
+APPID = "CWmp"
 LANGUAGE = en
 URL = "http://docwhat.gerf.org/cwimp/"
 
@@ -10,8 +10,10 @@ SOURCES = cwimp.c  draw.c  game.c  lowlevel.c  statusmsg.c
 OBJECTS = $(TARGET).o lowlevel.o game.o draw.o statusmsg.o
 LIBS =
 GRESOURCES = code0001.$(TARGET).grc code0000.$(TARGET).grc \
-	data0000.$(TARGET).grc *.bin pref0000.$(TARGET).grc \
+	data0000.$(TARGET).grc pref0000.$(TARGET).grc \
 	 rloc0000.$(TARGET).grc
+
+#	data0000.$(TARGET).grc *.bin pref0000.$(TARGET).grc \
 
 CC = m68k-palmos-coff-gcc
 
@@ -28,7 +30,7 @@ FIXVERSION = ./fixversion
 
 VERSION=$(shell $(FIXVERSION) version)
 
-all: $(TARGET).prc
+all: $(TARGET).rcp $(TARGET).prc
 
 .S.o:
 	$(CC) $(TARGETFLAGS) -c $<
@@ -37,27 +39,27 @@ all: $(TARGET).prc
 	$(CC) $(CSFLAGS) $<
 
 %.d: %.c
-	$(SHELL) -ec '$(CC) -DDEPENDENCY -MM $(CFLAGS) $< \
+	@$(SHELL) -ec '$(CC) -DDEPENDENCY -MM $(CFLAGS) $< \
 		| sed '\''s/\($*\)\.o[ :]*/\1.o $@ : /g'\'' > $@; \
 		[ -s $@ ] || rm -f $@'
 
 #	perl -pi -e 's/resource.h/resource.h $(TARGET)Rsc.h/g' $@
 
-%.rcp: %.rcp.in version
+%.rcp: %.rcp.in version $(FIXVERSION)
 	rm -f $@ $(TARGET)Rsc.h
 	$(FIXVERSION) $<
 
-$(TARGET).prc: $(GRESOURCES)
-	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) $^
+$(TARGET).prc: $(GRESOURCES) tver0001.bin Makefile
+	$(BUILDPRC) $(TARGET).prc $(APPNAME) $(APPID) $(GRESOURCES) *.bin
 
 %.grc: $(TARGET)
 	$(OBJRES) $^
 
-*.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
+tver0001.bin $(TARGET)Rsc.h: $(TARGET).rcp $(TARGET).bmp
 	@echo $(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp .
 	@$(PILRC) -H $(TARGET)Rsc.h $(TARGET).rcp . > /dev/null
 
-$(TARGET): $(TARGET)Rsc.h *.bin $(OBJECTS) 
+$(TARGET): $(TARGET)Rsc.h $(OBJECTS) 
 	$(CC) $(CFLAGS) $(OBJECTS) -o $(TARGET) $(LIBS)
 	@echo "** Unresolved Symbols for $(TARGET)"
 	@! $(NM) -u $(TARGET) | grep .
