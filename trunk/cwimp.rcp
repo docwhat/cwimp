@@ -1,0 +1,286 @@
+
+FORM ID MainForm AT (0 0 160 160)
+	NOFRAME
+    NOSAVEBEHIND
+    USABLE
+    MENUID Main_Menu
+
+    BEGIN
+
+	TITLE " Cosmic Wimpout "
+
+    LABEL "This Roll" ID AUTOID AT (36  17)  FONT 1
+    FIELD ID scoreRoll AT (PREVLEFT+4  PREVBOTTOM-2 50 11) NONEDITABLE FONT 0 MAXCHARS 5
+    LABEL "This Turn" ID AUTOID AT (106 17)  FONT 1
+    FIELD ID scoreTurn AT (PREVLEFT+4  PREVBOTTOM-2 50 11) NONEDITABLE FONT 0 MAXCHARS 5
+
+    LABEL "Player" ID AUTOID AT (36  40) FONT 1
+    LABEL "Total"  ID AUTOID AT (106 40) FONT 1
+    FIELD ID namePlayer0  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer0 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer0  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer1  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer1 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer1  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer2  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer2 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer2  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer3  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer3 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer3  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer4  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer4 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer4  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer5  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer5 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer5  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer6  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer6 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer6  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer7  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer7 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer7  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer8  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer8 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer8  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID namePlayer9  AT (40  PREVBOTTOM-2 60 11) NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer9 AT (110 PREVTOP      39 11) NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer9  AT (145 PREVTOP      15 11) NONEDITABLE FONT 3 MAXCHARS 2
+
+    FIELD ID kdie0 AT (23 26             10 8) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID kdie1 AT (23 PREVBOTTOM+15  10 8) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID kdie2 AT (23 PREVBOTTOM+15  10 8) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID kdie3 AT (23 PREVBOTTOM+15  10 8) NONEDITABLE FONT 3 MAXCHARS 2
+    FIELD ID kdie4 AT (23 PREVBOTTOM+15  10 8) NONEDITABLE FONT 3 MAXCHARS 2
+
+    BUTTON "Roll" ID btn_Roll AT (3            147 24  11) LEFTANCHOR FRAME FONT 0
+    BUTTON "Stay" ID btn_Stay AT (PREVRIGHT+4  147 26  11) LEFTANCHOR FRAME FONT 0
+    FIELD       ID statusLine AT (PREVRIGHT+3  147 91  11) NONEDITABLE FONT 0 MAXCHARS 20
+    BUTTON "\12"  ID btn_Info AT (151          147  9  11) NOFRAME FONT 3
+
+
+   END
+
+FORM ID frmNewGame AT (2 30 156 128)
+MODAL
+HELPID HelpNewGame
+SAVEBEHIND
+BEGIN
+    TITLE "New Game"
+    LABEL "How many human players?" ID AUTOID AT (5 20) FONT 1
+    PUSHBUTTON  "1"  ID pbtn_01 AT (4           PREVBOTTOM+2 AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "2"  ID pbtn_02 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "3"  ID pbtn_03 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "4"  ID pbtn_04 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "5"  ID pbtn_05 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "6"  ID pbtn_06 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "7"  ID pbtn_07 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "8"  ID pbtn_08 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "9"  ID pbtn_09 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+    PUSHBUTTON  "10" ID pbtn_10 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 1
+
+    LABEL "How many computer players?" ID AUTOID AT (5 PREVBOTTOM+8) FONT 1
+    PUSHBUTTON  "0"  ID cbtn_00 AT (4           PREVBOTTOM+2 AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "1"  ID cbtn_01 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "2"  ID cbtn_02 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "3"  ID cbtn_03 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "4"  ID cbtn_04 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "5"  ID cbtn_05 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "6"  ID cbtn_06 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "7"  ID cbtn_07 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "8"  ID cbtn_08 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+    PUSHBUTTON  "9"  ID cbtn_09 AT (PREVRIGHT+2 PREVTOP    AUTO AUTO) FONT 1 GROUP 2
+
+	LABEL "Winning Score:" ID AUTOID AT (15 PREVBOTTOM+8) FONT 1 
+	FIELD ID fld_winscore AT (PREVRIGHT+5 PREVTOP 20 12) UNDERLINED MAXCHARS 4 NUMERIC
+
+    BUTTON "OK"     ID btn_OK_frmNewGame AT (5 PREVBOTTOM+8 AUTO 12) LEFTANCHOR FRAME FONT 1
+    BUTTON "Cancel" ID btn_Cancel_frmNewGame AT (PREVRIGHT+8 PREVTOP AUTO 12) LEFTANCHOR FRAME FONT 0
+    BUTTON "Variants" ID btn_Variants_frmNewGame AT (PREVRIGHT+11 PREVTOP AUTO 12) LEFTANCHOR FRAME FONT 0
+END
+
+
+FORM ID frmVariants AT (2 32 156 126)
+MODAL
+HELPID HelpVariants
+SAVEBEHIND
+BEGIN
+    TITLE "Variations"
+	CHECKBOX "Bump"             ID check_Bump      AT ( 5 15 AUTO AUTO )
+	CHECKBOX "Eclipse"          ID check_Eclipse   AT ( 5 PREVBOTTOM AUTO AUTO ) 
+	CHECKBOX "Cosmic Sampler"   ID check_Sampler   AT ( 5 PREVBOTTOM AUTO AUTO ) 
+	CHECKBOX "(n)Train Wrecks"  ID check_nTW       AT ( 5 PREVBOTTOM AUTO AUTO ) 
+	CHECKBOX "Full House"       ID check_FullHouse AT ( 5 PREVBOTTOM AUTO AUTO ) 
+	CHECKBOX "Suspend"          ID check_Suspend   AT ( 5 PREVBOTTOM AUTO AUTO ) 
+	CHECKBOX "Insurance Points" ID check_Insurance AT ( 5 PREVBOTTOM AUTO AUTO ) 
+    BUTTON "Done" ID AUTOID AT (5 PREVBOTTOM+8 AUTO AUTO)
+END
+
+
+FORM ID frmPreferences AT (30 100 128 58)
+MODAL
+HELPID HelpPreferences
+SAVEBEHIND
+BEGIN
+	TITLE "Preferences"
+	CHECKBOX "Next Player Popup Dialog" ID check_NextPlayerPopUp AT ( 5 15 AUTO AUTO )
+	BUTTON "Done" ID AUTOID AT (5 PREVBOTTOM+8 AUTO AUTO)
+END
+
+FORM ID frmGetNames AT (2 2 156 156)
+MODAL
+HELPID HelpGetNames
+SAVEBEHIND
+BEGIN
+	TITLE "Set Player Names"
+	LABEL "Set the Player's Names" ID AUTOID AT (15 15) FONT 1
+	LABEL "1:" ID GnameL0  AT (10 PREVBOTTOM)
+    FIELD ID GnameP0       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "2:" ID GnameL1  AT (10 PREVBOTTOM)
+    FIELD ID GnameP1       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "3:" ID GnameL2  AT (10 PREVBOTTOM)
+    FIELD ID GnameP2       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "4:" ID GnameL3  AT (10 PREVBOTTOM)
+    FIELD ID GnameP3       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "5:" ID GnameL4  AT (10 PREVBOTTOM)
+    FIELD ID GnameP4       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "6:" ID GnameL5  AT (10 PREVBOTTOM)
+    FIELD ID GnameP5       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "7:" ID GnameL6  AT (10 PREVBOTTOM)
+    FIELD ID GnameP6       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "8:" ID GnameL7  AT (10 PREVBOTTOM)
+    FIELD ID GnameP7       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "9:" ID GnameL8  AT (10 PREVBOTTOM)
+    FIELD ID GnameP8       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+	LABEL "10:" ID GnameL9 AT (10 PREVBOTTOM)
+    FIELD ID GnameP9       AT (30 PREVTOP 110 11) UNDERLINED MAXCHARS 32 AUTOSHIFT
+    BUTTON "OK"   ID btn_OK_frmGetNames AT (5 PREVBOTTOM+5 AUTO 12)  FRAME FONT 1
+    BUTTON "Back" ID AUTOID             AT (PREVRIGHT+8 PREVTOP AUTO 12) FRAME FONT 0
+	GRAFFITISTATEINDICATOR AT (140 PREVTOP)
+END
+
+
+ALERT ID About_Info
+HELPID HelpAbout
+INFORMATION
+BEGIN
+	TITLE "About"
+	MESSAGE "CWRoller\n" \
+	"$Revision$\n" \
+	"$State$\n" \
+	"\n" \
+	"Steve Schwartz\nChristian H\366ltje\n" \
+	" \251 1998\n\n\n" \
+	"Based on the game Cosmic Wimpout\231\nby C\263 inc."
+	BUTTONS "Done" 
+END
+
+STRING ID statusClearFlashFirst "Clear Flash First"
+
+STRING ID HelpVariants "ToDo: list and describe varients\n"
+
+STRING ID HelpPreferences "ToDo: preference help\n"
+
+STRING ID HelpGetNames "ToDo: HelpGetNames\n"
+
+STRING ID HelpNewGame "Select the number of human and computer players.\n" \
+	"\n" \
+	"Press OK when you're done or press Cancel if you've changed your mind.\n"
+
+STRING ID HelpAbout "This is just a test string\n" \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people." \
+	"just to bother people."
+
+ALERT ID calertDEBUG
+WARNING
+BEGIN
+	TITLE "Debug Info"
+	MESSAGE "1: ^1\n" \
+	        "2: ^2\n" \
+			"3: ^3\n"
+	BUTTONS "Done" 
+END
+
+ALERT ID calertSTATUS
+INFORMATION
+BEGIN
+	TITLE "Game Status Info"
+	MESSAGE "^1"
+	BUTTONS "Done"
+END
+
+
+ALERT ID calertNEXTPLAYER
+INFORMATION
+BEGIN
+	TITLE "Next Player's Turn"
+	MESSAGE "It's ^1's turn."
+	BUTTONS "Okay"
+END
+
+BITMAP ID bmpBlank "cubeblank.bmp" COMPRESS
+
+BITMAP ID bmp10w   "cube10w.bmp"   COMPRESS
+BITMAP ID bmp2w    "cube2w.bmp"    COMPRESS
+BITMAP ID bmp3w    "cube3w.bmp"    COMPRESS
+BITMAP ID bmp4w    "cube4w.bmp"    COMPRESS
+BITMAP ID bmp5w    "cube5w.bmp"    COMPRESS
+BITMAP ID bmp6w    "cube6w.bmp"    COMPRESS
+
+BITMAP ID bmp10b   "cube10b.bmp"   COMPRESS
+BITMAP ID bmp2b    "cube2b.bmp"    COMPRESS
+BITMAP ID bmpfsb   "cubefs.bmp"    COMPRESS
+BITMAP ID bmp4b    "cube4b.bmp"    COMPRESS
+BITMAP ID bmp5b    "cube5b.bmp"    COMPRESS
+BITMAP ID bmp6b    "cube6b.bmp"    COMPRESS
+
+MENU ID Main_Menu
+	BEGIN
+	PULLDOWN "Game"
+		BEGIN
+		MENUITEM "New"   ID MenuItem_New   "N"
+		MENUITEM "Reset" ID MenuItem_Reset "R"
+		MENUITEM SEPARATOR
+		MENUITEM "About" ID MenuItem_About "A"
+		END
+	PULLDOWN "Options"
+		BEGIN
+		MENUITEM "Variants" ID MenuItem_Variants       "V"
+		MENUITEM "Preferences" ID MenuItem_Preferences "P"
+		END
+END
+
+APPLICATIONICONNAME 1000 "Wimpout"
+ICON "cwroller.bmp"
+VERSION 1 "$Revision$"
+
