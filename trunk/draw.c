@@ -260,7 +260,7 @@ static void LeadPlayer(Int player) {
 
 void DrawPlayerScore(Short player) {
   Char msg[MaxName];
-  static evenodd = 0;
+  static Boolean evenodd = 0;
   evenodd = !evenodd;
 
   StrIToA( msg, stor.player[player].score );
