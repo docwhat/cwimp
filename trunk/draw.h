@@ -23,6 +23,21 @@
 
 #include "game.h"
 
+
+// Symbol Font3
+#define BlankSymbol "\22" 
+#define CheckSymbol "\20"
+#define CurrSymbol  "<"
+#define OutSymbol   "x"
+#define LeadSymbol  "L"
+// 20 - dot
+// 22 - Empty
+// 23 - diamond
+// 26 - check
+//  3 - left double arrow
+//  4 - right double arrow
+//  7 - down arrow
+
 #define CubesLeft   2  // Start Drawing Cubes from here
 #define CubesTop   19  // From the top, remember that the tab is about 15
 #define CubeShift   2  // Space between Cubes

@@ -185,7 +185,7 @@ void DrawState()
 	  DrawPlayerScore( x );
 	}
   }
-  // Clears the rest if the fields
+  /* Clears the rest if the fields  */
   for ( ; x < MaxPlayers ; x++ ) {
 	ClearFieldText( fieldNamePlayer[x] );
 	ClearFieldText( fieldScorePlayer[x] );
@@ -202,7 +202,6 @@ void DrawState()
   DrawStatus();
   DrawTopStatusButton();
 }
-
 
 void ClearKeepBits(void)
 {
@@ -226,6 +225,22 @@ void DrawKeepBit(Int die)
   }
 }
 
+static void InvertPlayer(Int player) {
+  /* This is from namePlayerX in cwimp.rcp.in */
+  RectangleType r = { {40, 0}, {60, 10} };;
+
+  r.topLeft.y = 54 + player * 10;
+
+  WinInvertRectangle( &r, 0 );
+}
+
+static void CrossPlayer(Int player) {
+  Int y;
+  y = 54 + 6 + player * 10;
+  WinDrawLine( 40   , y,
+               40+60, y );
+}
+
 void DrawPlayerScore(Short player) {
   Char msg[MaxName];
 
@@ -233,12 +248,12 @@ void DrawPlayerScore(Short player) {
   SetFieldTextFromStr( fieldScorePlayer[player], msg );
 
   if ( stor.player[player].lost ) {
-    SetFieldTextFromStr( fieldMarkPlayer[player], OutSymbol );
+    CrossPlayer(player);
     return;
   }
 
   if ( player == stor.currplayer ) {
-    SetFieldTextFromStr( fieldMarkPlayer[player], CurrSymbol );
+    InvertPlayer(player);
     return;
   }
 

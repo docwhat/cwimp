@@ -23,20 +23,6 @@
 
 #include "game.h"
 
-// Symbol Font3
-#define BlankSymbol "\22" 
-#define CheckSymbol "\20"
-#define CurrSymbol  "<"
-#define OutSymbol   "x"
-#define LeadSymbol  "L"
-// 20 - dot
-// 22 - Empty
-// 23 - diamond
-// 26 - check
-//  3 - left double arrow
-//  4 - right double arrow
-//  7 - down arrow
-
 void DialogNewGame();
 void DialogVariants();
 void DialogOK( Word frm, Short player1, Short player2 );

@@ -56,7 +56,13 @@ FORM ID MainForm AT (0 0 160 160)
 
 #
 # This loops so I don't have to keep writing this by hand.
-FIXVER: LOOP 0 9
+    FIELD ID namePlayer0      AT (40  54 60 12)
+			      NONEDITABLE FONT 0 MAXCHARS 32
+    FIELD ID scorePlayer0     AT (110 PREVTOP      39 12)
+			      NONEDITABLE FONT 0 MAXCHARS 5
+    FIELD ID markPlayer0      AT (145 PREVTOP      15 12)
+			      NONEDITABLE FONT 1 MAXCHARS 2
+FIXVER: LOOP 1 9
     FIELD ID namePlayer$LOOP  AT (40  PREVBOTTOM-2 60 12)
 			      NONEDITABLE FONT 0 MAXCHARS 32
     FIELD ID scorePlayer$LOOP AT (110 PREVTOP      39 12)
