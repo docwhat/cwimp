@@ -161,7 +161,7 @@ It's time for your next turn.
 .
 
 CSTRING: WimpoutSoloString
-You justu WIMPED OUT!
+You just WIMPED OUT!
 .
 
 
