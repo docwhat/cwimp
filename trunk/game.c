@@ -710,6 +710,9 @@ void PlayerLost( Short player, CharPtr ptrString )
 void LoadCubes() {
   Word x,size;
 
+  /* Initialize EventQueue */
+  EQInit();
+
   size = sizeof(stor);
 
   /* Purge old preferences if they exist */
@@ -723,8 +726,6 @@ void LoadCubes() {
     ResetCubes();
   }
 
-  /* Initialize EventQueue */
-  EQInit();
 }
 
 void SaveCubes() {
