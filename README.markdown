@@ -7,6 +7,7 @@ This is really really old stuff.  I'm putting it here in case someone wants to u
 
 ## Summary
 
+![screenshot](https://github.com/docwhat/cwimp/raw/master/screenshot.gif "Screen shot")
 This is a version of Cosmic Wimpout for Palm OS (versions 2 and up, tested only on version 3.x). Cosmic Wimpout is very similar to the game Zonk This game uses the Cosmic Wimpout version of the rules.
 
 Cosmic Wimpout is sort of like a cross between poker and cribbage but with dice. In this version, only a maximum of 10 people can play at a time, passing around the Palm. I have the place holders for a computer AI, but that is not implemented yet.
